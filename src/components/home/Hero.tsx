@@ -49,15 +49,7 @@ export function Hero() {
 
         {/* Right Side: Description and Buttons */}
         <div className="flex flex-col justify-center max-w-md">
-          <motion.p
-            className="text-base leading-relaxed text-muted sm:text-lg"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            Thousands of toys. Instant filters. Local payments. Built for
-            Karachi families who want playtime without the hunt.
-          </motion.p>
+
 
           <motion.div
             className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
