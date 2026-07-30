@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { ShoppingBag, Search, Menu, X } from "lucide-react";
+import { ShoppingBag, Search, Menu, X, Heart } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/store/cartStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
+  { href: "/wishlist", label: "Wishlist" },
+  { href: "/account", label: "Account" },
   { href: "/track", label: "Track" },
   { href: "/faq", label: "FAQ" },
   { href: "/checkout", label: "Checkout" },
@@ -21,6 +24,7 @@ export function Header() {
   const totalItems = useCartStore((s) =>
     s.items.reduce((sum, i) => sum + i.quantity, 0)
   );
+  const wishlistCount = useWishlistStore((s) => s.items.length);
   const openCart = useCartStore((s) => s.openCart);
   const [open, setOpen] = useState(false);
 
@@ -69,6 +73,22 @@ export function Header() {
             aria-label="Search shop"
           >
             <Search className="h-4 w-4" />
+          </Link>
+          <Link
+            href="/wishlist"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5"
+            aria-label="Wishlist"
+          >
+            <Heart
+              className={`h-4 w-4 ${
+                wishlistCount > 0 ? "fill-coral text-coral" : ""
+              }`}
+            />
+            {wishlistCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-coral px-1 text-[11px] font-bold text-white">
+                {wishlistCount}
+              </span>
+            )}
           </Link>
           <button
             type="button"

@@ -2,37 +2,85 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";
 import { calcShipping, FREE_SHIPPING_THRESHOLD } from "@/lib/commerce";
 import type { PaymentMethod } from "@/types";
 
+const formSchema = z.object({
+  name: z.string().min(2, "Enter your full name"),
+  email: z.string().email("Enter a valid email"),
+  phone: z.string().min(10, "Enter a valid phone"),
+  address: z.string().min(5, "Enter street address"),
+  city: z.string().min(2, "Enter city"),
+  area: z.string().optional(),
+  notes: z.string().optional(),
+  coupon: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 export function CheckoutForm() {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCartStore();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
-
-  const shipping = calcShipping(subtotal());
-  const total = subtotal() + shipping;
   const onlineEnabled =
     process.env.NEXT_PUBLIC_ENABLE_ONLINE_PAYMENTS === "true";
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { city: "Karachi" },
+  });
+
+  const shipping = calcShipping(subtotal());
+  const total = subtotal() + shipping;
+
+  async function lookupPhone() {
+    const phone = getValues("phone");
+    if (!phone || phone.replace(/\D/g, "").length < 10) return;
+    try {
+      const res = await fetch("/api/checkout/lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.found) return;
+      const p = data.profile;
+      if (p.name) setValue("name", p.name);
+      if (p.email) setValue("email", p.email);
+      if (p.address) setValue("address", p.address);
+      if (p.city) setValue("city", p.city);
+      if (p.area) setValue("area", p.area);
+      toast.message(
+        data.source === "account"
+          ? "Welcome back — details filled from your account"
+          : "Details filled from your last order"
+      );
+    } catch {
+      // never block checkout
+    }
+  }
+
+  async function onSubmit(values: FormValues) {
     if (!items.length) {
-      setError("Your cart is empty.");
+      toast.error("Your cart is empty");
       return;
     }
 
     setLoading(true);
-    setError(null);
-
-    const form = new FormData(e.currentTarget);
-
     try {
-      // Refresh prices/stock against live inventory before placing order
       const validateRes = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,25 +99,9 @@ export function CheckoutForm() {
         throw new Error(bad?.error || "Cart items are no longer available");
       }
 
-      // Sync local cart prices if server returned newer ones
-      for (const v of validated.items || []) {
-        if (v.valid && v.price !== undefined) {
-          const local = items.find((i) => i.productId === v.productId);
-          if (local && local.price !== v.price) {
-            useCartStore.setState({
-              items: items.map((i) =>
-                i.productId === v.productId
-                  ? { ...i, price: v.price, stock: v.stock ?? i.stock }
-                  : i
-              ),
-            });
-          }
-        }
-      }
-
       let discount = 0;
       let couponCode: string | undefined;
-      const coupon = String(form.get("coupon") || "").trim();
+      const coupon = values.coupon?.trim();
       if (coupon) {
         const cRes = await fetch("/api/coupons", {
           method: "PUT",
@@ -80,6 +112,7 @@ export function CheckoutForm() {
         if (!cRes.ok) throw new Error(cData.error || "Invalid coupon");
         discount = cData.discount;
         couponCode = cData.code;
+        toast.success(`Coupon applied — ${formatPKR(discount)} off`);
       }
 
       const res = await fetch("/api/checkout", {
@@ -91,15 +124,15 @@ export function CheckoutForm() {
             quantity: i.quantity,
           })),
           customer: {
-            name: String(form.get("name")),
-            email: String(form.get("email")),
-            phone: String(form.get("phone")),
-            address: String(form.get("address")),
-            city: String(form.get("city")),
-            area: String(form.get("area") || ""),
+            name: values.name,
+            email: values.email,
+            phone: values.phone,
+            address: values.address,
+            city: values.city,
+            area: values.area || "",
           },
           paymentMethod,
-          notes: String(form.get("notes") || ""),
+          notes: values.notes || "",
           couponCode,
           discount,
         }),
@@ -109,6 +142,7 @@ export function CheckoutForm() {
       if (!res.ok) throw new Error(data.error || "Checkout failed");
 
       clearCart();
+      toast.success("Order placed!");
       if (data.paymentRedirect) {
         router.push(data.paymentRedirect);
       } else {
@@ -117,7 +151,7 @@ export function CheckoutForm() {
         );
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Checkout failed");
+      toast.error(err instanceof Error ? err.message : "Checkout failed");
     } finally {
       setLoading(false);
     }
@@ -125,7 +159,7 @@ export function CheckoutForm() {
 
   return (
     <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.2fr_0.8fr]">
-      <form onSubmit={onSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
             Checkout
@@ -136,24 +170,38 @@ export function CheckoutForm() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field name="name" label="Full name" required />
-          <Field name="phone" label="Phone" required placeholder="03XXXXXXXXX" />
-          <Field name="email" label="Email" type="email" required className="sm:col-span-2" />
-          <Field name="address" label="Street address" required className="sm:col-span-2" />
-          <Field name="city" label="City" required defaultValue="Karachi" />
-          <Field name="area" label="Area / landmark" />
-          <div className="sm:col-span-2">
-            <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
-              Coupon code (optional)
-            </label>
-            <input name="coupon" className="input-field" placeholder="EID500" />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
-              Notes
-            </label>
-            <textarea name="notes" rows={3} className="input-field" />
-          </div>
+          <Field label="Full name" error={errors.name?.message}>
+            <input className="input-field" {...register("name")} />
+          </Field>
+          <Field label="Phone" error={errors.phone?.message}>
+            <input
+              className="input-field"
+              placeholder="03XXXXXXXXX"
+              {...register("phone")}
+              onBlur={(e) => {
+                register("phone").onBlur(e);
+                lookupPhone();
+              }}
+            />
+          </Field>
+          <Field label="Email" error={errors.email?.message} className="sm:col-span-2">
+            <input className="input-field" type="email" {...register("email")} />
+          </Field>
+          <Field label="Street address" error={errors.address?.message} className="sm:col-span-2">
+            <input className="input-field" {...register("address")} />
+          </Field>
+          <Field label="City" error={errors.city?.message}>
+            <input className="input-field" {...register("city")} />
+          </Field>
+          <Field label="Area / landmark">
+            <input className="input-field" {...register("area")} />
+          </Field>
+          <Field label="Coupon code (optional)" className="sm:col-span-2">
+            <input className="input-field" placeholder="EID500" {...register("coupon")} />
+          </Field>
+          <Field label="Notes" className="sm:col-span-2">
+            <textarea className="input-field" rows={3} {...register("notes")} />
+          </Field>
         </div>
 
         <div>
@@ -195,17 +243,10 @@ export function CheckoutForm() {
           </div>
           {!onlineEnabled && (
             <p className="mt-2 text-xs text-muted">
-              Online payments (JazzCash / PayFast) will be enabled after gateway
-              credentials are configured.
+              Online payments coming soon. COD is available now.
             </p>
           )}
         </div>
-
-        {error && (
-          <p className="rounded-xl bg-coral/10 px-4 py-3 text-sm text-coral-deep">
-            {error}
-          </p>
-        )}
 
         <button type="submit" disabled={loading || !items.length} className="btn-primary">
           {loading ? "Placing order…" : `Place order · ${formatPKR(total)}`}
@@ -253,20 +294,14 @@ export function CheckoutForm() {
 }
 
 function Field({
-  name,
   label,
-  type = "text",
-  required,
-  placeholder,
-  defaultValue,
+  error,
+  children,
   className = "",
 }: {
-  name: string;
   label: string;
-  type?: string;
-  required?: boolean;
-  placeholder?: string;
-  defaultValue?: string;
+  error?: string;
+  children: React.ReactNode;
   className?: string;
 }) {
   return (
@@ -274,14 +309,8 @@ function Field({
       <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
         {label}
       </label>
-      <input
-        name={name}
-        type={type}
-        required={required}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        className="input-field"
-      />
+      {children}
+      {error && <p className="mt-1 text-xs text-coral-deep">{error}</p>}
     </div>
   );
 }

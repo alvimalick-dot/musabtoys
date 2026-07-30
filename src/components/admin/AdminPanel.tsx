@@ -6,6 +6,7 @@ import { formatPKR } from "@/lib/utils";
 import type { OrderStatus } from "@/types";
 import { ProductAdmin } from "@/components/admin/ProductAdmin";
 import { CouponAdmin } from "@/components/admin/CouponAdmin";
+import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
 
 interface OrderRow {
   _id: string;
@@ -23,7 +24,9 @@ export function AdminPanel() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"upload" | "products" | "orders" | "coupons" | "seed">("upload");
+  const [tab, setTab] = useState<
+    "dashboard" | "upload" | "products" | "orders" | "coupons" | "seed"
+  >("dashboard");
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
   const [uploadBusy, setUploadBusy] = useState(false);
   const [orders, setOrders] = useState<OrderRow[]>([]);
@@ -241,6 +244,7 @@ export function AdminPanel() {
       <div className="mt-8 flex flex-wrap gap-2">
         {(
           [
+            ["dashboard", "Dashboard"],
             ["upload", "Excel upload"],
             ["products", "Products"],
             ["orders", "Orders"],
@@ -260,6 +264,8 @@ export function AdminPanel() {
           </button>
         ))}
       </div>
+
+      {tab === "dashboard" && <AdminAnalytics />}
 
       {tab === "products" && <ProductAdmin />}
 
@@ -282,6 +288,28 @@ export function AdminPanel() {
                 works as-is. Existing IDs update price/stock without duplicates.
               </p>
             </div>
+          </div>
+
+          <div className="mt-6 rounded-2xl bg-[#fff1e0] px-5 py-4 text-sm">
+            <p className="font-bold text-ink">Photos via Excel (easy way)</p>
+            <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted">
+              <li>
+                Put pictures in the project folder{" "}
+                <code className="rounded bg-white px-1.5 py-0.5 text-xs">
+                  public/images/
+                </code>{" "}
+                then push to GitHub.
+              </li>
+              <li>
+                In Excel, add an <strong>Image</strong> column with just the file
+                name, e.g. <code className="text-xs">HW-001.jpg</code>
+              </li>
+              <li>
+                Or name the photo after ProductID (
+                <code className="text-xs">HW-001.jpg</code>) — no Image column
+                needed; it matches automatically.
+              </li>
+            </ol>
           </div>
 
           <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/10 bg-[#fff8f0] px-6 py-14 transition hover:border-coral">
@@ -307,10 +335,13 @@ export function AdminPanel() {
           <div className="mt-8 overflow-x-auto text-sm">
             <p className="mb-2 font-bold">Example headers</p>
             <code className="block rounded-xl bg-ink px-4 py-3 text-xs text-white">
-              name | sku | price | category | brand | ageGroup | stock |
-              description | images
+              ProductID | ProductName | RetailPrice | Brand | Image
               <br />
-              Also accepted: ProductID, ProductName, RetailPrice
+              HW-001 | Hot Wheels Car | 850 | Hot Wheels | HW-001.jpg
+              <br />
+              <br />
+              Image column accepts: HW-001.jpg &nbsp;or&nbsp; images/HW-001.jpg
+              &nbsp;or&nbsp; full URL
             </code>
           </div>
         </div>

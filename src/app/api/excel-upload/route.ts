@@ -6,6 +6,10 @@ import { makeSlug } from "@/lib/utils";
 import { getAdminSession } from "@/lib/auth";
 import { detectColumns, mapExcelRow } from "@/lib/excel-map";
 import { inferAgeGroup, inferCategory } from "@/lib/categorize";
+import {
+  clearProductImageCache,
+  resolveProductImages,
+} from "@/lib/product-images";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -24,6 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     await connectDB();
+    clearProductImageCache();
 
     const formData = await req.formData();
     const file = formData.get("file");
@@ -79,6 +84,7 @@ export async function POST(req: NextRequest) {
       inserted: 0,
       updated: 0,
       failed: 0,
+      imagesLinked: 0,
       errors: [] as { row: number; message: string }[],
     };
 
@@ -117,7 +123,10 @@ export async function POST(req: NextRequest) {
       }
       usedSlugs.add(slug);
 
-      const payload = {
+      const images = resolveProductImages(mapped.images, mapped.sku);
+      if (images.length) results.imagesLinked++;
+
+      const payload: Record<string, unknown> = {
         name: mapped.name,
         description: mapped.description,
         price: mapped.price,
@@ -133,7 +142,6 @@ export async function POST(req: NextRequest) {
             : inferAgeGroup(mapped.name),
         stock: mapped.stock,
         stockStatus: stockStatus(mapped.stock),
-        images: mapped.images,
         specs: {
           ...(mapped.dimensions ? { dimensions: mapped.dimensions } : {}),
           ...(mapped.battery ? { battery: mapped.battery } : {}),
@@ -148,16 +156,18 @@ export async function POST(req: NextRequest) {
           .join(" "),
       };
 
+      // Only set images when we resolved some — don't wipe existing photos
+      if (images.length) {
+        payload.images = images;
+      }
+
       const found = existingBySku.get(mapped.sku);
       if (found) {
         ops.push({
           updateOne: {
             filter: { sku: mapped.sku },
             update: {
-              $set: {
-                ...payload,
-                // keep existing slug for SEO
-              },
+              $set: payload,
             },
           },
         });
@@ -167,7 +177,7 @@ export async function POST(req: NextRequest) {
           updateOne: {
             filter: { sku: mapped.sku },
             update: {
-              $setOnInsert: { slug },
+              $setOnInsert: { slug, images: images.length ? images : [] },
               $set: payload,
             },
             upsert: true,
@@ -187,15 +197,19 @@ export async function POST(req: NextRequest) {
       success: true,
       sheet: sheetName,
       detectedColumns: detected,
-      warnings,
+      warnings: [
+        ...warnings,
+        "Photos: put files in public/images/ and list the filename in the Image column (or name the file after ProductID).",
+      ],
       summary: {
         totalRows: sourceRows.length,
         inserted: results.inserted,
         updated: results.updated,
         failed: results.failed,
+        imagesLinked: results.imagesLinked,
         errors: results.errors,
       },
-      message: `Processed ${sourceRows.length} rows: ${results.inserted} inserted, ${results.updated} updated, ${results.failed} failed.`,
+      message: `Processed ${sourceRows.length} rows: ${results.inserted} inserted, ${results.updated} updated, ${results.imagesLinked} with photos, ${results.failed} failed.`,
     });
   } catch (error) {
     console.error("POST /api/excel-upload", error);

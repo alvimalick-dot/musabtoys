@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import type { ProductDTO } from "@/types";
 import { ProductCard } from "./ProductCard";
+import { ProductSkeletonGrid } from "./ProductSkeleton";
 import { formatPKR } from "@/lib/utils";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface Facets {
   categories: string[];
@@ -170,6 +172,12 @@ export function ShopClient() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="mb-8">
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Shop" },
+          ]}
+        />
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
           Catalog
         </p>
@@ -229,8 +237,9 @@ export function ShopClient() {
         )}
 
         <div className="min-w-0 flex-1">
-          {(loading || pending) && (
-            <p className="mb-4 text-sm text-muted">Loading products…</p>
+          {(loading || pending) && !data && <ProductSkeletonGrid />}
+          {(loading || pending) && data && (
+            <p className="mb-4 text-sm text-muted">Updating results…</p>
           )}
           {error && (
             <div className="mb-6 rounded-2xl bg-coral/10 p-4 text-sm text-coral-deep">

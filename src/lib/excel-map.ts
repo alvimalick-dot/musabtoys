@@ -97,14 +97,20 @@ const ALIASES: Record<string, keyof MappedProductRow | "rawImages"> = {
   details: "description",
   detail: "description",
   remarks: "description",
-  // images
+  // images — file name in public/images/ or full URL
   images: "rawImages",
   image: "rawImages",
   imageurl: "rawImages",
   imageurls: "rawImages",
+  imagepath: "rawImages",
+  imagefile: "rawImages",
+  imagename: "rawImages",
+  filename: "rawImages",
   photo: "rawImages",
   photos: "rawImages",
   picture: "rawImages",
+  pic: "rawImages",
+  img: "rawImages",
   // featured
   featured: "featured",
   isfeatured: "featured",

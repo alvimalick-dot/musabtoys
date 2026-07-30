@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
+import { RelatedProducts } from "@/components/product/RelatedProducts";
+import { ProductReviews } from "@/components/product/ProductReviews";
 import { JsonLd } from "@/components/seo/JsonLd";
 import type { ProductDTO } from "@/types";
 
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const title = `${product.name} — Buy Online in Karachi`;
     const description =
       product.description?.slice(0, 155) ||
-      `Buy ${product.name} online from Karachi Toy Shop. ${product.brand} · ${product.ageGroup}. COD & JazzCash available.`;
+      `Buy ${product.name} online from Karachi Toy Shop. ${product.brand} · ${product.ageGroup}. Cash on Delivery available.`;
     const image = product.images?.[0];
     const url = `${siteUrl}/product/${product.slug}`;
 
@@ -88,6 +90,33 @@ export default async function ProductPage({ params }: Props) {
       sku: product.sku,
     } satisfies ProductDTO;
 
+    const related = await Product.find({
+      category: product.category,
+      _id: { $ne: product._id },
+      stock: { $gt: 0 },
+    })
+      .sort({ featured: -1, createdAt: -1 })
+      .limit(8)
+      .lean();
+
+    const relatedDto: ProductDTO[] = related.map((p) => ({
+      _id: String(p._id),
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      price: p.price,
+      compareAtPrice: p.compareAtPrice,
+      category: p.category,
+      brand: p.brand,
+      ageGroup: p.ageGroup,
+      stock: p.stock,
+      stockStatus: p.stockStatus,
+      images: p.images || [],
+      specs: p.specs || {},
+      featured: p.featured,
+      sku: p.sku,
+    }));
+
     const productJsonLd = {
       "@context": "https://schema.org",
       "@type": "Product",
@@ -121,6 +150,8 @@ export default async function ProductPage({ params }: Props) {
       <>
         <JsonLd data={productJsonLd} />
         <ProductDetailClient product={dto} />
+        <RelatedProducts products={relatedDto} />
+        <ProductReviews slug={product.slug} />
       </>
     );
   } catch {

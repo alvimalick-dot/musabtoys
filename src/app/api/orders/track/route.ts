@@ -56,6 +56,8 @@ export async function POST(req: NextRequest) {
           quantity: i.quantity,
           price: i.price,
         })),
+        // Privacy: never return address / full phone / email on public track API.
+        // Only first name-ish display name + city for confirmation UX.
         customer: {
           name: order.customer.name,
           city: order.customer.city,

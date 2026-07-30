@@ -39,14 +39,35 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     const { id } = await params;
     const body = await req.json();
 
-    const product = await Product.findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true,
-    });
-
+    const product = await Product.findById(id);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
+
+    const allowed = [
+      "name",
+      "sku",
+      "price",
+      "compareAtPrice",
+      "category",
+      "brand",
+      "ageGroup",
+      "stock",
+      "description",
+      "images",
+      "featured",
+      "specs",
+      "slug",
+    ] as const;
+
+    for (const key of allowed) {
+      if (body[key] !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (product as any)[key] = body[key];
+      }
+    }
+
+    await product.save(); // runs validate hook → stockStatus
 
     return NextResponse.json({ product });
   } catch (error) {

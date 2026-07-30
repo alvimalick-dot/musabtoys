@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
 import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
+import { AppToaster } from "@/components/ui/AppToaster";
 import { JsonLd } from "@/components/seo/JsonLd";
 import "./globals.css";
 
@@ -139,6 +140,7 @@ export default function RootLayout({
         <Footer />
         <CartDrawer />
         <WhatsAppFab />
+        <AppToaster />
       </body>
     </html>
   );

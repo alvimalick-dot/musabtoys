@@ -2,51 +2,80 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Heart } from "lucide-react";
 import type { ProductDTO } from "@/types";
 import { formatPKR } from "@/lib/utils";
+import { toast } from "sonner";
 import { useCartStore } from "@/store/cartStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 
 export function ProductCard({ product }: { product: ProductDTO }) {
   const addItem = useCartStore((s) => s.addItem);
+  const wishlistToggle = useWishlistStore((s) => s.toggle);
+  const wished = useWishlistStore((s) => s.has(product._id));
   const image = product.images?.[0];
 
   return (
-    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-lg">
-      <Link
-        href={`/product/${product.slug}`}
-        className="relative block aspect-square bg-[#fff1e0]"
-      >
-        {image ? (
-          <Image
-            src={image}
-            alt={product.name}
-            fill
-            className="object-cover transition duration-500 group-hover:scale-105"
-            sizes="(max-width:640px) 50vw, (max-width:1280px) 33vw, 25vw"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center font-display text-xl text-muted/40">
-            KT
-          </div>
-        )}
+    <article className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-lg">
+      <div className="relative aspect-square bg-[#fff1e0]">
+        <Link href={`/product/${product.slug}`} className="absolute inset-0 block">
+          {image ? (
+            <Image
+              src={image}
+              alt={product.name}
+              fill
+              className="object-cover transition duration-500 group-hover:scale-105"
+              sizes="(max-width:640px) 50vw, (max-width:1280px) 33vw, 25vw"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center font-display text-xl text-muted/40">
+              KT
+            </div>
+          )}
+        </Link>
         {product.stockStatus === "out_of_stock" && (
-          <span className="absolute left-2 top-2 rounded-full bg-ink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+          <span className="pointer-events-none absolute left-2 top-2 z-10 rounded-full bg-ink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
             Sold out
           </span>
         )}
         {product.stockStatus === "low_stock" && (
-          <span className="absolute left-2 top-2 rounded-full bg-coral px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+          <span className="pointer-events-none absolute left-2 top-2 z-10 rounded-full bg-coral px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
             Only {product.stock} left
           </span>
         )}
         {product.featured &&
           product.stockStatus !== "out_of_stock" &&
           product.stockStatus !== "low_stock" && (
-            <span className="absolute left-2 top-2 rounded-full bg-sun px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink">
+            <span className="pointer-events-none absolute left-2 top-2 z-10 rounded-full bg-sun px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink">
               Featured
             </span>
           )}
-      </Link>
+        <button
+          type="button"
+          className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105"
+          aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            wishlistToggle({
+              productId: product._id,
+              slug: product.slug,
+              name: product.name,
+              price: product.price,
+              image: image || "",
+            });
+            toast.success(
+              wished ? "Removed from wishlist" : "Saved to wishlist"
+            );
+          }}
+        >
+          <Heart
+            className={`h-4 w-4 transition ${
+              wished ? "fill-coral text-coral" : "text-ink/70"
+            }`}
+          />
+        </button>
+      </div>
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
         <p className="truncate text-[10px] font-bold uppercase tracking-wider text-muted sm:text-xs">
@@ -71,7 +100,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
         <button
           type="button"
           disabled={product.stockStatus === "out_of_stock"}
-          onClick={() =>
+          onClick={() => {
             addItem({
               productId: product._id,
               slug: product.slug,
@@ -79,8 +108,9 @@ export function ProductCard({ product }: { product: ProductDTO }) {
               price: product.price,
               image: image || "",
               stock: product.stock,
-            })
-          }
+            });
+            toast.success("Added to cart");
+          }}
           className="btn-primary mt-auto w-full py-2 text-xs sm:mt-4 sm:py-3 sm:text-sm disabled:cursor-not-allowed disabled:opacity-50"
         >
           Add to cart
