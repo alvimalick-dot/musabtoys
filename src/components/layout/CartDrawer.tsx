@@ -4,12 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus, Trash2, X } from "lucide-react";
+import { useEffect } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, updateQty, removeItem, subtotal } =
     useCartStore();
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
@@ -25,7 +33,7 @@ export function CartDrawer() {
             onClick={closeCart}
           />
           <motion.aside
-            className="fixed right-0 top-0 z-[70] flex h-full w-full max-w-md flex-col bg-white shadow-2xl"
+            className="fixed right-0 top-0 z-[70] flex h-dvh w-full max-w-md flex-col bg-white shadow-2xl pb-[env(safe-area-inset-bottom)]"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -39,13 +47,14 @@ export function CartDrawer() {
               <button
                 type="button"
                 onClick={closeCart}
-                className="rounded-full bg-black/5 p-2"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-black/5"
+                aria-label="Close cart"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-5 py-4">
+            <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4">
               {items.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center text-center">
                   <p className="font-display text-2xl">Cart is empty</p>
@@ -63,7 +72,7 @@ export function CartDrawer() {
                       key={item.productId}
                       className="flex gap-3 rounded-2xl bg-[#fff8f0] p-3"
                     >
-                      <div className="relative h-20 w-20 overflow-hidden rounded-xl bg-white">
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white">
                         {item.image ? (
                           <Image
                             src={item.image}
@@ -78,19 +87,20 @@ export function CartDrawer() {
                           </div>
                         )}
                       </div>
-                      <div className="flex flex-1 flex-col">
+                      <div className="flex min-w-0 flex-1 flex-col">
                         <div className="flex items-start justify-between gap-2">
                           <Link
                             href={`/product/${item.slug}`}
                             onClick={closeCart}
-                            className="text-sm font-bold leading-snug"
+                            className="min-w-0 flex-1 line-clamp-2 text-sm font-bold leading-snug"
                           >
                             {item.name}
                           </Link>
                           <button
                             type="button"
                             onClick={() => removeItem(item.productId)}
-                            className="text-muted hover:text-coral"
+                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted hover:bg-white hover:text-coral"
+                            aria-label="Remove item"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -98,25 +108,27 @@ export function CartDrawer() {
                         <p className="mt-1 text-sm font-semibold text-coral">
                           {formatPKR(item.price)}
                         </p>
-                        <div className="mt-auto flex items-center gap-2 pt-2">
+                        <div className="mt-auto flex items-center gap-1 pt-2">
                           <button
                             type="button"
-                            className="rounded-full bg-white p-1 ring-1 ring-black/5"
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5"
                             onClick={() =>
                               updateQty(item.productId, item.quantity - 1)
                             }
+                            aria-label="Decrease quantity"
                           >
                             <Minus className="h-3.5 w-3.5" />
                           </button>
-                          <span className="w-6 text-center text-sm font-bold">
+                          <span className="w-8 text-center text-sm font-bold">
                             {item.quantity}
                           </span>
                           <button
                             type="button"
-                            className="rounded-full bg-white p-1 ring-1 ring-black/5"
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5"
                             onClick={() =>
                               updateQty(item.productId, item.quantity + 1)
                             }
+                            aria-label="Increase quantity"
                           >
                             <Plus className="h-3.5 w-3.5" />
                           </button>
@@ -139,7 +151,7 @@ export function CartDrawer() {
                 <Link
                   href="/checkout"
                   onClick={closeCart}
-                  className="btn-primary w-full"
+                  className="btn-primary w-full min-h-12"
                 >
                   Checkout
                 </Link>

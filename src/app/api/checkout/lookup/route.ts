@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
     const customer = await Customer.findOne({ phoneKey: key }).lean();
     if (customer) {
       const def =
-        customer.addresses.find((a) => a.isDefault) || customer.addresses[0];
+        customer.addresses.find((a: { isDefault?: boolean }) => a.isDefault) ||
+        customer.addresses[0];
       return NextResponse.json({
         found: true,
         source: "account",

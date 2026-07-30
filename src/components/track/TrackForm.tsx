@@ -106,10 +106,10 @@ export function TrackForm({
           <ul className="mt-4 space-y-2 text-sm">
             {order.items.map((i) => (
               <li key={i.name} className="flex justify-between gap-3">
-                <span>
+                <span className="min-w-0 flex-1 truncate">
                   {i.name} × {i.quantity}
                 </span>
-                <span className="font-semibold">
+                <span className="shrink-0 font-semibold">
                   {formatPKR(i.price * i.quantity)}
                 </span>
               </li>

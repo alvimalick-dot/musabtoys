@@ -20,7 +20,7 @@ export function RelatedProducts({ products }: { products: ProductDTO[] }) {
             <Link
               key={p._id}
               href={`/product/${p.slug}`}
-              className="min-w-[200px] max-w-[220px] shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md"
+              className="min-w-[160px] max-w-[200px] shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:min-w-[200px] sm:max-w-[220px]"
             >
               <div className="relative aspect-square bg-[#fff1e0]">
                 {p.images?.[0] ? (

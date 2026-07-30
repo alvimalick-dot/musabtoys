@@ -48,7 +48,7 @@ export async function GET() {
       total: o.total,
       paymentMethod: o.paymentMethod,
       createdAt: o.createdAt,
-      itemCount: o.items?.reduce((s, i) => s + i.quantity, 0) || 0,
+      itemCount: o.items?.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0) || 0,
     })),
   });
 }

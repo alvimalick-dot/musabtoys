@@ -52,7 +52,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
           )}
         <button
           type="button"
-          className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105"
+          className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105"
           aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
           onClick={(e) => {
             e.preventDefault();
@@ -77,17 +77,17 @@ export function ProductCard({ product }: { product: ProductDTO }) {
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col p-3 sm:p-4">
+      <div className="flex min-w-0 flex-1 flex-col p-3 sm:p-4">
         <p className="truncate text-[10px] font-bold uppercase tracking-wider text-muted sm:text-xs">
           {product.brand} · {product.ageGroup}
         </p>
         <Link
           href={`/product/${product.slug}`}
-          className="mt-1 line-clamp-2 font-display text-sm font-semibold leading-snug hover:text-coral sm:text-base"
+          className="mt-1 line-clamp-2 min-w-0 font-display text-sm font-semibold leading-snug hover:text-coral sm:text-base"
         >
           {product.name}
         </Link>
-        <div className="mt-2 flex items-baseline gap-2">
+        <div className="mt-2 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="text-base font-bold text-coral sm:text-lg">
             {formatPKR(product.price)}
           </span>
@@ -111,7 +111,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
             });
             toast.success("Added to cart");
           }}
-          className="btn-primary mt-auto w-full py-2 text-xs sm:mt-4 sm:py-3 sm:text-sm disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-primary mt-auto w-full min-h-11 py-2.5 text-xs sm:mt-4 sm:py-3 sm:text-sm disabled:cursor-not-allowed disabled:opacity-50"
         >
           Add to cart
         </button>

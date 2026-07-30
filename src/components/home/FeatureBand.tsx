@@ -34,11 +34,11 @@ export function FeatureBand() {
         animate={{ scale: [1, 1.15, 1] }}
         transition={{ duration: 7, repeat: Infinity }}
       />
-      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
+      <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-sun">
           Why shop with us
         </p>
-        <h2 className="mt-3 max-w-2xl font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-5xl">
           Built for Karachi families who want playtime, not hassle
         </h2>
 

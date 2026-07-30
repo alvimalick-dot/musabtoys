@@ -40,7 +40,7 @@ export default function FaqPage() {
       <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
         Help
       </p>
-      <h1 className="mt-2 font-display text-4xl font-semibold">
+      <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
         FAQ · Delivery & returns
       </h1>
       <p className="mt-3 text-muted">
@@ -53,7 +53,7 @@ export default function FaqPage() {
             key={f.q}
             className="group rounded-2xl bg-white p-5 ring-1 ring-black/5 open:shadow-md"
           >
-            <summary className="cursor-pointer list-none font-display text-xl font-semibold">
+            <summary className="cursor-pointer list-none py-1 pr-2 font-display text-lg font-semibold leading-snug sm:text-xl">
               {f.q}
             </summary>
             <p className="mt-3 text-sm leading-relaxed text-muted">{f.a}</p>
@@ -61,11 +61,11 @@ export default function FaqPage() {
         ))}
       </div>
 
-      <div className="mt-10 flex flex-wrap gap-3">
-        <Link href="/track" className="btn-primary">
+      <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <Link href="/track" className="btn-primary min-h-12 justify-center">
           Track order
         </Link>
-        <Link href="/shop" className="btn-secondary">
+        <Link href="/shop" className="btn-secondary min-h-12 justify-center">
           Back to shop
         </Link>
       </div>

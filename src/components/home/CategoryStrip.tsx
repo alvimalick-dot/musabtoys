@@ -53,7 +53,7 @@ const ages = [
 
 export function CategoryStrip() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -63,17 +63,17 @@ export function CategoryStrip() {
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
           Shop by age
         </p>
-        <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
           What’s right for your kid
         </h2>
       </motion.div>
 
-      <div className="mt-8 flex flex-wrap gap-3">
+      <div className="mt-8 flex gap-3 overflow-x-auto overscroll-x-contain pb-2 sm:flex-wrap sm:overflow-visible">
         {ages.map((a) => (
           <Link
             key={a.label}
             href={a.href}
-            className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md"
           >
             <Users className="h-4 w-4 text-coral" />
             {a.label}
@@ -82,7 +82,7 @@ export function CategoryStrip() {
       </div>
 
       <motion.div
-        className="mt-16"
+        className="mt-14 sm:mt-16"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
@@ -91,7 +91,7 @@ export function CategoryStrip() {
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
           Browse by play
         </p>
-        <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
           Find the right kind of fun
         </h2>
       </motion.div>

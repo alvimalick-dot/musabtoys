@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t border-black/5 bg-[#1a1530] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
+    <footer className="mt-12 border-t border-black/5 bg-[#1a1530] text-white sm:mt-20">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 pb-28 sm:px-6 md:grid-cols-3 md:pb-14">
         <div>
           <p className="font-display text-2xl font-semibold">Karachi Toy Shop</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">

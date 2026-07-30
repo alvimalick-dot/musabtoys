@@ -164,7 +164,7 @@ export function CheckoutForm() {
           <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
             Checkout
           </p>
-          <h1 className="mt-2 font-display text-4xl font-semibold">
+          <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
             Delivery details
           </h1>
         </div>
@@ -248,7 +248,11 @@ export function CheckoutForm() {
           )}
         </div>
 
-        <button type="submit" disabled={loading || !items.length} className="btn-primary">
+        <button
+          type="submit"
+          disabled={loading || !items.length}
+          className="btn-primary min-h-12 w-full sm:w-auto"
+        >
           {loading ? "Placing order…" : `Place order · ${formatPKR(total)}`}
         </button>
       </form>
@@ -261,10 +265,10 @@ export function CheckoutForm() {
           <ul className="mt-4 space-y-3">
             {items.map((item) => (
               <li key={item.productId} className="flex justify-between gap-3 text-sm">
-                <span>
+                <span className="min-w-0 flex-1 truncate">
                   {item.name} × {item.quantity}
                 </span>
-                <span className="font-semibold">
+                <span className="shrink-0 font-semibold">
                   {formatPKR(item.price * item.quantity)}
                 </span>
               </li>

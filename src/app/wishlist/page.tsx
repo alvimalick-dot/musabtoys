@@ -39,15 +39,18 @@ export default function WishlistPage() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <Link href={`/product/${item.slug}`} className="font-semibold hover:text-coral">
+                <Link
+                  href={`/product/${item.slug}`}
+                  className="line-clamp-2 font-semibold hover:text-coral"
+                >
                   {item.name}
                 </Link>
-                <p className="text-sm text-coral font-bold">{formatPKR(item.price)}</p>
+                <p className="text-sm font-bold text-coral">{formatPKR(item.price)}</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex w-full gap-2 sm:w-auto">
                 <button
                   type="button"
-                  className="btn-primary text-xs"
+                  className="btn-primary min-h-11 flex-1 text-xs sm:flex-none"
                   onClick={() => {
                     addItem({
                       productId: item.productId,
@@ -64,7 +67,7 @@ export default function WishlistPage() {
                 </button>
                 <button
                   type="button"
-                  className="btn-secondary text-xs"
+                  className="btn-secondary min-h-11 flex-1 text-xs sm:flex-none"
                   onClick={() => {
                     remove(item.productId);
                     toast.message("Removed from wishlist");

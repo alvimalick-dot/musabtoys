@@ -101,10 +101,11 @@ export async function POST(req: NextRequest) {
       if (body.email) customer.email = body.email;
       if (body.address && body.city) {
         const exists = customer.addresses.some(
-          (a) => a.address === body.address && a.city === body.city
+          (a: { address: string; city: string }) =>
+            a.address === body.address && a.city === body.city
         );
         if (!exists) {
-          customer.addresses.forEach((a) => {
+          customer.addresses.forEach((a: { isDefault?: boolean }) => {
             a.isDefault = false;
           });
           customer.addresses.push({

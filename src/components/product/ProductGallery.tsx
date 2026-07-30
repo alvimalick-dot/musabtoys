@@ -44,13 +44,13 @@ export function ProductGallery({
       </button>
 
       {list.length > 1 && (
-        <div className="mt-4 flex gap-3 overflow-x-auto">
+        <div className="-mx-1 mt-4 flex gap-3 overflow-x-auto overscroll-x-contain px-1 pb-1">
           {list.map((img, i) => (
             <button
               key={img + i}
               type="button"
               onClick={() => setActive(i)}
-              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl ring-2 ${
+              className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl ring-2 sm:h-20 sm:w-20 ${
                 i === active ? "ring-coral" : "ring-transparent"
               }`}
             >
@@ -67,18 +67,19 @@ export function ProductGallery({
       )}
 
       {open && list[active] && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/80 p-4">
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/80 p-4 pt-[max(1rem,env(safe-area-inset-top))]">
           <button
             type="button"
             className="absolute inset-0"
             aria-label="Close lightbox"
             onClick={() => setOpen(false)}
           />
-          <div className="relative z-10 max-h-[90vh] w-full max-w-4xl">
+          <div className="relative z-10 max-h-[100dvh] w-full max-w-4xl">
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="absolute -top-10 right-0 rounded-full bg-white p-2"
+              className="absolute right-2 top-2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-lg"
+              aria-label="Close"
             >
               <X className="h-4 w-4" />
             </button>
@@ -86,7 +87,7 @@ export function ProductGallery({
             <img
               src={list[active]}
               alt={name}
-              className="max-h-[85vh] w-full rounded-2xl object-contain"
+              className="max-h-[85dvh] w-full rounded-2xl object-contain"
             />
           </div>
         </div>

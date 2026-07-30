@@ -52,6 +52,13 @@ export function ShopClient() {
     fetchProducts();
   }, [fetchProducts]);
 
+  useEffect(() => {
+    document.body.style.overflow = filtersOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [filtersOpen]);
+
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
     if (!value) params.delete(key);
@@ -76,11 +83,11 @@ export function ShopClient() {
         </div>
         <button
           type="button"
-          className="rounded-full p-1 text-muted lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-black/5 lg:hidden"
           onClick={() => setFiltersOpen(false)}
           aria-label="Close filters"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5" />
         </button>
       </div>
 
@@ -181,7 +188,7 @@ export function ShopClient() {
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
           Catalog
         </p>
-        <h1 className="mt-2 font-display text-4xl font-semibold sm:text-5xl">
+        <h1 className="mt-2 font-display text-3xl font-semibold sm:text-5xl">
           Shop all toys
         </h1>
         <p className="mt-2 text-muted">
@@ -200,13 +207,13 @@ export function ShopClient() {
             className="input-field pl-11"
           />
         </div>
-        <div className="flex gap-2">
-          <button type="submit" className="btn-primary shrink-0">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto">
+          <button type="submit" className="btn-primary min-h-12 w-full sm:w-auto">
             Search
           </button>
           <button
             type="button"
-            className="btn-secondary shrink-0 lg:hidden"
+            className="btn-secondary min-h-12 w-full lg:hidden"
             onClick={() => setFiltersOpen(true)}
           >
             <SlidersHorizontal className="h-4 w-4" />
@@ -230,7 +237,7 @@ export function ShopClient() {
               aria-label="Close filters overlay"
               onClick={() => setFiltersOpen(false)}
             />
-            <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl">
+            <div className="absolute bottom-0 left-0 right-0 max-h-[min(85vh,100dvh)] overflow-y-auto overscroll-contain rounded-t-3xl bg-white p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl">
               {filterPanel}
             </div>
           </div>
@@ -273,18 +280,18 @@ export function ShopClient() {
           )}
 
           {data && pages > 1 && (
-            <div className="mt-8 flex flex-wrap justify-center gap-2">
+            <div className="mt-8 flex flex-wrap justify-center gap-2 pb-4">
               <button
                 type="button"
                 disabled={currentPage <= 1}
                 onClick={() => updateParam("page", String(currentPage - 1))}
-                className="h-10 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40"
+                className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40"
               >
                 Prev
               </button>
-              {pageButtons.map((page) =>
+              {pageButtons.map((page, idx) =>
                 page === "…" ? (
-                  <span key={`e-${page}`} className="px-1 text-muted">
+                  <span key={`e-${idx}`} className="px-1 text-muted">
                     …
                   </span>
                 ) : (
@@ -292,7 +299,7 @@ export function ShopClient() {
                     key={page}
                     type="button"
                     onClick={() => updateParam("page", String(page))}
-                    className={`h-10 w-10 rounded-full text-sm font-bold ${
+                    className={`h-11 w-11 rounded-full text-sm font-bold ${
                       page === currentPage
                         ? "bg-ink text-white"
                         : "bg-white ring-1 ring-black/5"
@@ -306,7 +313,7 @@ export function ShopClient() {
                 type="button"
                 disabled={currentPage >= pages}
                 onClick={() => updateParam("page", String(currentPage + 1))}
-                className="h-10 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40"
+                className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40"
               >
                 Next
               </button>

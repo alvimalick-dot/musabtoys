@@ -56,12 +56,12 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
             {product.category} · {product.brand}
           </p>
           <div className="mt-2 flex items-start justify-between gap-3">
-            <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="min-w-0 flex-1 break-words font-display text-3xl font-semibold tracking-tight sm:text-5xl">
               {product.name}
             </h1>
             <button
               type="button"
-              className="rounded-full bg-white p-3 ring-1 ring-black/5"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-black/5"
               aria-label="Wishlist"
               onClick={() => {
                 wishlistToggle({
@@ -82,13 +82,13 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
             </button>
           </div>
 
-          <div className="mt-4 flex items-baseline gap-3">
-            <span className="text-3xl font-bold text-coral">
+          <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-2xl font-bold text-coral sm:text-3xl">
               {formatPKR(product.price)}
             </span>
             {product.compareAtPrice &&
               product.compareAtPrice > product.price && (
-                <span className="text-lg text-muted line-through">
+                <span className="text-base text-muted line-through sm:text-lg">
                   {formatPKR(product.compareAtPrice)}
                 </span>
               )}
@@ -139,25 +139,30 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
           {product.stockStatus === "out_of_stock" ? (
             <div className="mt-8 rounded-2xl bg-white p-4 ring-1 ring-black/5">
               <p className="font-bold">Notify me when back</p>
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                 <input
-                  className="input-field"
+                  className="input-field min-w-0 flex-1"
                   placeholder="03XXXXXXXXX"
                   value={alertPhone}
                   onChange={(e) => setAlertPhone(e.target.value)}
                 />
-                <button type="button" className="btn-primary" onClick={notifyStock}>
+                <button
+                  type="button"
+                  className="btn-primary shrink-0"
+                  onClick={notifyStock}
+                >
                   Notify
                 </button>
               </div>
             </div>
           ) : (
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-3 rounded-full bg-white px-3 py-2 ring-1 ring-black/5">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <div className="flex w-fit items-center gap-1 rounded-full bg-white px-2 py-1.5 ring-1 ring-black/5">
                 <button
                   type="button"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  className="rounded-full p-1 hover:bg-black/5"
+                  className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-black/5"
+                  aria-label="Decrease quantity"
                 >
                   <Minus className="h-4 w-4" />
                 </button>
@@ -167,14 +172,15 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
                   onClick={() =>
                     setQty((q) => Math.min(product.stock || 1, q + 1))
                   }
-                  className="rounded-full p-1 hover:bg-black/5"
+                  className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-black/5"
+                  aria-label="Increase quantity"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
               </div>
               <button
                 type="button"
-                className="btn-primary"
+                className="btn-primary min-h-12 w-full sm:w-auto"
                 onClick={() => {
                   addItem(
                     {
