@@ -78,7 +78,7 @@ export function Header() {
           </motion.span>
           <div className="min-w-0 leading-tight">
             <p className="truncate font-display text-sm font-semibold tracking-tight text-ink sm:text-lg">
-              Karachi Toy Shop
+              Karachi Toys
             </p>
             <p className="hidden text-[11px] font-medium uppercase tracking-[0.18em] text-muted sm:block">
               Play · Discover · Delight
