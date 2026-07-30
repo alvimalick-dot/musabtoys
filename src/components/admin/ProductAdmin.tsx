@@ -16,6 +16,7 @@ type ProductRow = {
   ageGroup: string;
   images?: string[];
   featured?: boolean;
+  newArrival?: boolean;
   description?: string;
   slug?: string;
 };
@@ -51,6 +52,7 @@ export function ProductAdmin() {
     description: "",
     images: "",
     featured: false,
+    newArrival: false,
   });
 
   const load = useCallback(
@@ -93,6 +95,7 @@ export function ProductAdmin() {
       description: "",
       images: "",
       featured: false,
+      newArrival: false,
     });
   }
 
@@ -109,6 +112,7 @@ export function ProductAdmin() {
       description: p.description || "",
       images: (p.images || []).join(", "),
       featured: Boolean(p.featured),
+      newArrival: Boolean(p.newArrival),
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -176,6 +180,7 @@ export function ProductAdmin() {
       ageGroup: form.ageGroup,
       description: form.description,
       featured: form.featured,
+      newArrival: form.newArrival,
       images: form.images
         .split(/[,|]/)
         .map((s) => s.trim())
@@ -250,7 +255,7 @@ export function ProductAdmin() {
 
   return (
     <div className="mt-8 space-y-8">
-      <div className="rounded-[1.5rem] bg-white p-6 ring-1 ring-black/5">
+      <div className="rounded-3xl bg-white p-6 ring-1 ring-black/5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="font-display text-2xl font-semibold">
@@ -365,6 +370,16 @@ export function ProductAdmin() {
               }
             />
             Featured on homepage
+          </label>
+          <label className="flex items-center gap-2 self-end pb-3 text-sm font-semibold">
+            <input
+              type="checkbox"
+              checked={form.newArrival}
+              onChange={(e) =>
+                setForm({ ...form, newArrival: e.target.checked })
+              }
+            />
+            New Arrival (show in New Arrivals section)
           </label>
           <div className="sm:col-span-2">
             <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
@@ -543,6 +558,18 @@ export function ProductAdmin() {
                   }
                 >
                   {p.stock > 0 ? "Mark OOS" : "Restock 10"}
+                </button>
+                <button
+                  type="button"
+                  className={
+                    p.newArrival
+                      ? "rounded-full bg-sun px-3 py-1.5 text-xs font-bold text-ink"
+                      : "rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5"
+                  }
+                  disabled={busy}
+                  onClick={() => quickPatch(p._id, { newArrival: !p.newArrival })}
+                >
+                  {p.newArrival ? "★ New Arrival" : "Mark as New Arrival"}
                 </button>
                 <button
                   type="button"

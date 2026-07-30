@@ -15,6 +15,7 @@ export interface IProduct {
   images: string[];
   specs: ProductSpec;
   featured: boolean;
+  newArrival: boolean;
   sku: string;
   searchText: string;
   createdAt?: Date;
@@ -47,6 +48,7 @@ const ProductSchema = new Schema<IProduct>(
     images: { type: [String], default: [] },
     specs: { type: Schema.Types.Mixed, default: {} },
     featured: { type: Boolean, default: false },
+    newArrival: { type: Boolean, default: false, index: true },
     sku: { type: String, index: true },
     searchText: { type: String, default: "" },
   },

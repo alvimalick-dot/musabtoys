@@ -9,6 +9,7 @@ export const productFilterSchema = z.object({
   minPrice: z.coerce.number().min(0).optional(),
   maxPrice: z.coerce.number().min(0).optional(),
   featured: z.coerce.boolean().optional(),
+  newArrival: z.coerce.boolean().optional(),
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(24),
   sort: z
@@ -30,6 +31,14 @@ export const excelRowSchema = z.object({
   stock: z.coerce.number().min(0).optional().default(10),
   images: z.string().optional().default(""),
   featured: z
+    .union([z.boolean(), z.string()])
+    .optional()
+    .transform((v) => {
+      if (typeof v === "boolean") return v;
+      if (!v) return false;
+      return ["true", "1", "yes", "y"].includes(String(v).toLowerCase());
+    }),
+  newArrival: z
     .union([z.boolean(), z.string()])
     .optional()
     .transform((v) => {

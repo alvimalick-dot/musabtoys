@@ -87,6 +87,7 @@ export default async function ProductPage({ params }: Props) {
       images: product.images || [],
       specs: product.specs || {},
       featured: product.featured,
+      newArrival: product.newArrival,
       sku: product.sku,
     } satisfies ProductDTO;
 
@@ -114,6 +115,7 @@ export default async function ProductPage({ params }: Props) {
       images: p.images || [],
       specs: p.specs || {},
       featured: p.featured,
+      newArrival: p.newArrival,
       sku: p.sku,
     }));
 

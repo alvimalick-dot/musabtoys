@@ -15,6 +15,7 @@ function buildFilterQuery(filters: ReturnType<typeof productFilterSchema.parse>)
   if (filters.ageGroup) query.ageGroup = filters.ageGroup;
   if (filters.stockStatus) query.stockStatus = filters.stockStatus;
   if (filters.featured !== undefined) query.featured = filters.featured;
+  if (filters.newArrival !== undefined) query.newArrival = filters.newArrival;
   if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
     query.price = {
       ...(filters.minPrice !== undefined ? { $gte: filters.minPrice } : {}),
@@ -150,6 +151,7 @@ export async function POST(req: NextRequest) {
       images: Array.isArray(body.images) ? body.images : [],
       specs: body.specs || {},
       featured: Boolean(body.featured),
+      newArrival: Boolean(body.newArrival ?? body.featured),
       sku: body.sku || `SKU-${Date.now()}`,
     });
 

@@ -28,6 +28,7 @@ export interface ProductDTO {
   images: string[];
   specs: ProductSpec;
   featured?: boolean;
+  newArrival?: boolean;
   sku?: string;
   createdAt?: string;
   updatedAt?: string;

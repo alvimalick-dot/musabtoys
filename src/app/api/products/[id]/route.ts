@@ -56,6 +56,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       "description",
       "images",
       "featured",
+      "newArrival",
       "specs",
       "slug",
     ] as const;

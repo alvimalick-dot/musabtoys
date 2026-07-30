@@ -43,11 +43,11 @@ export function ProductCard({ product }: { product: ProductDTO }) {
             Only {product.stock} left
           </span>
         )}
-        {product.featured &&
+        {(product.newArrival || product.featured) &&
           product.stockStatus !== "out_of_stock" &&
           product.stockStatus !== "low_stock" && (
             <span className="pointer-events-none absolute left-2 top-2 z-10 rounded-full bg-sun px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink">
-              Featured
+              {product.newArrival ? "New" : "Featured"}
             </span>
           )}
         <button
