@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Truck, ShieldCheck, Search, Gift } from "lucide-react";
+import { Gift, Search, ShieldCheck, Truck } from "lucide-react";
 
 const features = [
   {
@@ -34,6 +34,11 @@ export function FeatureBand() {
         animate={{ scale: [1, 1.15, 1] }}
         transition={{ duration: 7, repeat: Infinity }}
       />
+      <motion.div
+        className="pointer-events-none absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-sky/20 blur-3xl"
+        animate={{ scale: [1.15, 1, 1.15], x: [0, 20, 0] }}
+        transition={{ duration: 9, repeat: Infinity }}
+      />
       <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-sun">
           Why shop with us
@@ -42,19 +47,33 @@ export function FeatureBand() {
           Built for Karachi families who want playtime, not hassle
         </h2>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2">
-          {features.map((f, i) => (
+        <motion.div
+          className="mt-12 grid gap-8 md:grid-cols-2"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={{
+            hidden: {},
+            show: { transition: { staggerChildren: 0.09 } },
+          }}
+        >
+          {features.map((f) => (
             <motion.div
               key={f.title}
-              className="flex gap-4"
-              initial={{ opacity: 0, x: -16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
+              className="group flex gap-4"
+              variants={{
+                hidden: { opacity: 0, x: -16 },
+                show: { opacity: 1, x: 0 },
+              }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10">
+              <motion.span
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/10 transition group-hover:bg-white/15"
+                whileHover={{ rotate: -6, scale: 1.08 }}
+                transition={{ type: "spring", stiffness: 380, damping: 16 }}
+              >
                 <f.icon className="h-5 w-5 text-sun" />
-              </span>
+              </motion.span>
               <div>
                 <p className="font-display text-2xl font-semibold">{f.title}</p>
                 <p className="mt-2 text-sm leading-relaxed text-white/70">
@@ -63,7 +82,7 @@ export function FeatureBand() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

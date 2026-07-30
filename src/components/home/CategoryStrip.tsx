@@ -2,7 +2,18 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Blocks, Car, Baby, Puzzle, Rocket, Gamepad2, Users } from "lucide-react";
+import {
+  ArrowRight,
+  Baby,
+  Blocks,
+  Car,
+  Gamepad2,
+  Puzzle,
+  Rocket,
+  Users,
+} from "lucide-react";
+
+const MotionLink = motion.create(Link);
 
 const categories = [
   {
@@ -64,22 +75,41 @@ export function CategoryStrip() {
           Shop by age
         </p>
         <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-          What’s right for your kid
+          What&rsquo;s right for your kid
         </h2>
       </motion.div>
 
-      <div className="mt-8 flex gap-3 overflow-x-auto overscroll-x-contain pb-2 sm:flex-wrap sm:overflow-visible">
+      <motion.div
+        className="mt-8 flex gap-3 overflow-x-auto overscroll-x-contain pb-2 sm:flex-wrap sm:overflow-visible"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-60px" }}
+        variants={{
+          hidden: {},
+          show: { transition: { staggerChildren: 0.05 } },
+        }}
+      >
         {ages.map((a) => (
-          <Link
+          <motion.div
             key={a.label}
-            href={a.href}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 },
+            }}
           >
-            <Users className="h-4 w-4 text-coral" />
-            {a.label}
-          </Link>
+            <MotionLink
+              href={a.href}
+              className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold ring-1 ring-black/5 transition hover:shadow-md"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 400, damping: 22 }}
+            >
+              <Users className="h-4 w-4 text-coral transition group-hover:scale-110" />
+              {a.label}
+            </MotionLink>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       <motion.div
         className="mt-14 sm:mt-16"
@@ -105,22 +135,28 @@ export function CategoryStrip() {
             viewport={{ once: true, margin: "-40px" }}
             transition={{ delay: i * 0.06, duration: 0.45 }}
           >
-            <Link
+            <MotionLink
               href={cat.href}
-              className="group flex items-center gap-4 rounded-[1.5rem] bg-white p-5 ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-lg"
+              className="group flex items-center gap-4 rounded-[1.5rem] bg-white p-5 ring-1 ring-black/5 transition hover:shadow-lg"
+              whileHover={{ y: -4 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ type: "spring", stiffness: 340, damping: 24 }}
             >
-              <span
+              <motion.span
                 className={`flex h-14 w-14 items-center justify-center rounded-2xl ${cat.tint}`}
+                whileHover={{ rotate: -8, scale: 1.08 }}
+                transition={{ type: "spring", stiffness: 400, damping: 16 }}
               >
                 <cat.icon className="h-6 w-6" />
-              </span>
-              <div>
+              </motion.span>
+              <div className="min-w-0 flex-1">
                 <p className="font-display text-xl font-semibold">{cat.name}</p>
-                <p className="text-sm text-muted group-hover:text-coral">
-                  Shop collection →
+                <p className="mt-0.5 flex items-center gap-1 text-sm text-muted transition group-hover:text-coral">
+                  Shop collection
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </p>
               </div>
-            </Link>
+            </MotionLink>
           </motion.div>
         ))}
       </div>

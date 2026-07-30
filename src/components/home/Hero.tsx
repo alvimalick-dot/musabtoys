@@ -4,6 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
+const MotionLink = motion.create(Link);
+
 export function Hero() {
   return (
     <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden toy-grid-bg">
@@ -30,7 +32,16 @@ export function Hero() {
           >
             Karachi
             <br />
-            <span className="text-coral">Toy Shop</span>
+            <span className="relative inline-block text-coral">
+              Toy Shop
+              <motion.span
+                aria-hidden
+                className="absolute -bottom-1 left-0 right-0 h-[6px] origin-left rounded-full bg-sun/70 sm:-bottom-2 sm:h-[10px]"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.55, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </span>
           </motion.p>
 
           <motion.p
@@ -49,12 +60,24 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.55 }}
           >
-            <Link href="/shop" className="btn-primary min-h-12 w-full justify-center sm:w-auto">
+            <MotionLink
+              href="/shop"
+              className="btn-primary min-h-12 w-full justify-center sm:w-auto"
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 380, damping: 22 }}
+            >
               Shop now <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link href="/shop?featured=true" className="btn-secondary min-h-12 w-full justify-center sm:w-auto">
+            </MotionLink>
+            <MotionLink
+              href="/shop?featured=true"
+              className="btn-secondary min-h-12 w-full justify-center sm:w-auto"
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 380, damping: 22 }}
+            >
               <Sparkles className="h-4 w-4 text-sun" /> Featured picks
-            </Link>
+            </MotionLink>
           </motion.div>
         </div>
 
@@ -66,18 +89,21 @@ export function Hero() {
         >
           <div className="absolute inset-0 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-sky via-coral to-sun shadow-2xl shadow-coral/20 sm:rounded-[2.5rem]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <motion.img
               src="https://images.unsplash.com/photo-1558060370-d644479cb6f7?auto=format&fit=crop&w=1400&q=80"
               alt="Colorful toys spread across a play table"
               className="h-full w-full object-cover mix-blend-luminosity opacity-90"
+              initial={{ scale: 1.08 }}
+              animate={{ scale: [1.08, 1.14, 1.08] }}
+              transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1a1530]/55 via-transparent to-transparent" />
           </div>
 
           <motion.div
             className="absolute bottom-4 left-3 right-auto sm:bottom-16 sm:left-4"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ y: [0, -8, 0], rotate: [-1.2, 1.2, -1.2] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           >
             <div className="rounded-2xl bg-white px-3 py-2.5 shadow-lg sm:px-4 sm:py-3 sm:shadow-xl">
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted sm:text-xs">
@@ -91,8 +117,8 @@ export function Hero() {
 
           <motion.div
             className="absolute right-3 top-3 sm:right-4 sm:top-16"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 5.2, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ y: [0, 10, 0], rotate: [1.5, -1, 1.5] }}
+            transition={{ duration: 5.6, repeat: Infinity, ease: "easeInOut" }}
           >
             <div className="rounded-2xl bg-ink px-3 py-2.5 text-white shadow-xl sm:px-4 sm:py-3">
               <p className="text-[10px] font-bold uppercase tracking-wider text-sun sm:text-xs">
