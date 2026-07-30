@@ -29,7 +29,7 @@ export function Hero() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             Karachi
-            <br />
+            
             <span className="relative inline-block text-coral">
               Toys
               <motion.span
