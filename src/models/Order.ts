@@ -31,6 +31,8 @@ export interface IOrder {
   invoiceUrl?: string;
   couponCode?: string;
   discount?: number;
+  courierName?: string;
+  trackingNumber?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -82,6 +84,8 @@ const OrderSchema = new Schema<IOrder>(
     invoiceUrl: String,
     couponCode: String,
     discount: { type: Number, default: 0 },
+    courierName: String,
+    trackingNumber: String,
   },
   { timestamps: true }
 );

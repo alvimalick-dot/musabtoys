@@ -37,17 +37,26 @@ export async function PATCH(req: NextRequest) {
     await connectDB();
     const body = await req.json();
     const { orderId, ...rest } = body;
-    const { status } = orderStatusSchema.parse(rest);
+    const parsed = orderStatusSchema.parse(rest);
 
     if (!orderId) {
       return NextResponse.json({ error: "orderId is required" }, { status: 400 });
     }
 
-    const order = await Order.findByIdAndUpdate(
-      orderId,
-      { status },
-      { new: true }
-    );
+    const update: Record<string, unknown> = {};
+    if (parsed.status) update.status = parsed.status;
+    if (parsed.courierName !== undefined) {
+      update.courierName = parsed.courierName.trim();
+    }
+    if (parsed.trackingNumber !== undefined) {
+      update.trackingNumber = parsed.trackingNumber.trim();
+    }
+
+    if (!Object.keys(update).length) {
+      return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
+    }
+
+    const order = await Order.findByIdAndUpdate(orderId, update, { new: true });
 
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });

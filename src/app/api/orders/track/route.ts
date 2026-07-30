@@ -51,13 +51,26 @@ export async function POST(req: NextRequest) {
         paymentStatus: order.paymentStatus,
         total: order.total,
         shipping: order.shipping,
-        items: order.items.map((i: { name: string; quantity: number; price: number }) => ({
-          name: i.name,
-          quantity: i.quantity,
-          price: i.price,
-        })),
+        courierName: order.courierName || "",
+        trackingNumber: order.trackingNumber || "",
+        items: order.items.map(
+          (i: {
+            productId: unknown;
+            name: string;
+            slug?: string;
+            quantity: number;
+            price: number;
+            image?: string;
+          }) => ({
+            productId: String(i.productId),
+            name: i.name,
+            slug: i.slug || "",
+            quantity: i.quantity,
+            price: i.price,
+            image: i.image || "",
+          })
+        ),
         // Privacy: never return address / full phone / email on public track API.
-        // Only first name-ish display name + city for confirmation UX.
         customer: {
           name: order.customer.name,
           city: order.customer.city,

@@ -44,7 +44,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "We'll notify you when this toy is back in stock.",
+      message:
+        "Saved! WhatsApp will open so you can also message us about this toy.",
+      whatsappHint: true,
     });
   } catch (error) {
     return NextResponse.json(

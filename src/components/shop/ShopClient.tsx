@@ -222,6 +222,48 @@ export function ShopClient() {
         </div>
       </form>
 
+      {/* Budget chips — mobile-friendly quick filters */}
+      <div className="mb-6 flex gap-2 overflow-x-auto overscroll-x-contain pb-1">
+        {(
+          [
+            { label: "All prices", min: "", max: "" },
+            { label: "Under 500", min: "", max: "500" },
+            { label: "Under 1,000", min: "", max: "1000" },
+            { label: "Under 2,000", min: "", max: "2000" },
+            { label: "Under 5,000", min: "", max: "5000" },
+            { label: "5,000+", min: "5000", max: "" },
+          ] as const
+        ).map((b) => {
+          const active =
+            (searchParams.get("minPrice") || "") === b.min &&
+            (searchParams.get("maxPrice") || "") === b.max;
+          return (
+            <button
+              key={b.label}
+              type="button"
+              onClick={() => {
+                const params = new URLSearchParams(searchParams.toString());
+                if (b.min) params.set("minPrice", b.min);
+                else params.delete("minPrice");
+                if (b.max) params.set("maxPrice", b.max);
+                else params.delete("maxPrice");
+                params.delete("page");
+                startTransition(() => {
+                  router.push(`/shop?${params.toString()}`);
+                });
+              }}
+              className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-bold transition ${
+                active
+                  ? "bg-ink text-white"
+                  : "bg-white text-ink ring-1 ring-black/5 hover:bg-black/5"
+              }`}
+            >
+              {b.label}
+            </button>
+          );
+        })}
+      </div>
+
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
         {/* Desktop sidebar — fixed width, never crushed by product grid */}
         <aside className="hidden w-64 shrink-0 rounded-2xl bg-white p-5 ring-1 ring-black/5 lg:sticky lg:top-24 lg:block">

@@ -237,12 +237,14 @@ export default function AccountPage() {
               </div>
               <div className="text-right">
                 <p className="font-bold text-coral">{formatPKR(o.total)}</p>
-                <Link
-                  href={`/track?order=${o.orderNumber}`}
-                  className="text-xs font-bold text-sky-deep"
-                >
-                  Track
-                </Link>
+                <div className="mt-1 flex flex-col items-end gap-1">
+                  <Link
+                    href={`/track?order=${o.orderNumber}`}
+                    className="text-xs font-bold text-sky-deep"
+                  >
+                    Track / Reorder
+                  </Link>
+                </div>
               </div>
             </li>
           ))}

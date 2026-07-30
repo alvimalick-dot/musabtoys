@@ -2,8 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { formatPKR } from "@/lib/utils";
 import { whatsappOrderUrl } from "@/lib/whatsapp";
+import { useCartStore } from "@/store/cartStore";
+
+type TrackedItem = {
+  productId: string;
+  name: string;
+  slug: string;
+  quantity: number;
+  price: number;
+  image: string;
+};
 
 type Tracked = {
   orderNumber: string;
@@ -11,7 +22,9 @@ type Tracked = {
   paymentMethod: string;
   paymentStatus: string;
   total: number;
-  items: { name: string; quantity: number; price: number }[];
+  courierName?: string;
+  trackingNumber?: string;
+  items: TrackedItem[];
   customer: { name: string; city: string };
   createdAt?: string;
 };
@@ -26,6 +39,8 @@ export function TrackForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [order, setOrder] = useState<Tracked | null>(null);
+  const addItem = useCartStore((s) => s.addItem);
+  const openCart = useCartStore((s) => s.openCart);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,12 +63,40 @@ export function TrackForm({
     }
   }
 
+  function reorder() {
+    if (!order) return;
+    let added = 0;
+    for (const item of order.items) {
+      if (!item.productId) continue;
+      addItem(
+        {
+          productId: item.productId,
+          slug: item.slug || "shop",
+          name: item.name,
+          price: item.price,
+          image: item.image || "",
+          stock: 99,
+        },
+        item.quantity
+      );
+      added++;
+    }
+    if (added) {
+      openCart();
+      toast.success(`Added ${added} item(s) to cart`);
+    } else {
+      toast.error("Could not reorder these items");
+    }
+  }
+
   return (
     <div className="mx-auto max-w-lg px-4 py-12 sm:px-6">
       <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
         Orders
       </p>
-      <h1 className="mt-2 font-display text-4xl font-semibold">Track your order</h1>
+      <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+        Track your order
+      </h1>
       <p className="mt-2 text-sm text-muted">
         Enter your order number and the phone used at checkout.
       </p>
@@ -88,7 +131,7 @@ export function TrackForm({
             {error}
           </p>
         )}
-        <button type="submit" className="btn-primary" disabled={loading}>
+        <button type="submit" className="btn-primary min-h-12 w-full sm:w-auto" disabled={loading}>
           {loading ? "Checking…" : "Track order"}
         </button>
       </form>
@@ -103,9 +146,24 @@ export function TrackForm({
           <p className="mt-1 text-sm text-muted">
             {order.customer.name} · {order.customer.city}
           </p>
+
+          {(order.trackingNumber || order.courierName) && (
+            <div className="mt-4 rounded-xl bg-[#fff8f0] px-4 py-3 text-sm">
+              <p className="font-bold text-ink">Courier tracking</p>
+              {order.courierName && (
+                <p className="mt-1 text-muted">Courier: {order.courierName}</p>
+              )}
+              {order.trackingNumber && (
+                <p className="mt-0.5 font-semibold tracking-wide">
+                  {order.trackingNumber}
+                </p>
+              )}
+            </div>
+          )}
+
           <ul className="mt-4 space-y-2 text-sm">
             {order.items.map((i) => (
-              <li key={i.name} className="flex justify-between gap-3">
+              <li key={`${i.productId}-${i.name}`} className="flex justify-between gap-3">
                 <span className="min-w-0 flex-1 truncate">
                   {i.name} × {i.quantity}
                 </span>
@@ -117,19 +175,27 @@ export function TrackForm({
           </ul>
           <p className="mt-4 text-lg font-bold text-coral">
             Total {formatPKR(order.total)}
+            {order.paymentMethod === "cod" ? (
+              <span className="ml-2 text-sm font-semibold text-muted">
+                (pay on delivery)
+              </span>
+            ) : null}
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <button type="button" className="btn-primary min-h-11" onClick={reorder}>
+              Reorder these toys
+            </button>
             <a
               href={whatsappOrderUrl(order.orderNumber, order.total)}
               target="_blank"
               rel="noreferrer"
-              className="btn-primary"
+              className="btn-secondary min-h-11"
             >
               WhatsApp us about this order
             </a>
             <Link
               href={`/invoice/${order.orderNumber}?phone=${encodeURIComponent(phone)}`}
-              className="btn-secondary"
+              className="btn-secondary min-h-11"
             >
               Print invoice
             </Link>

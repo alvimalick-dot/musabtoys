@@ -17,6 +17,8 @@ interface OrderRow {
   paymentMethod: string;
   createdAt: string;
   items: { name: string; quantity: number }[];
+  courierName?: string;
+  trackingNumber?: string;
 }
 
 export function AdminPanel() {
@@ -138,6 +140,19 @@ export function AdminPanel() {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orderId, status }),
+    });
+    if (res.ok) loadOrders();
+  }
+
+  async function saveTracking(
+    orderId: string,
+    courierName: string,
+    trackingNumber: string
+  ) {
+    const res = await fetch("/api/orders", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId, courierName, trackingNumber }),
     });
     if (res.ok) loadOrders();
   }
@@ -429,6 +444,44 @@ export function AdminPanel() {
                     </button>
                   ))}
                 </div>
+                <form
+                  className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const fd = new FormData(e.currentTarget);
+                    saveTracking(
+                      order._id,
+                      String(fd.get("courier") || ""),
+                      String(fd.get("tracking") || "")
+                    );
+                  }}
+                >
+                  <div className="min-w-0 flex-1">
+                    <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted">
+                      Courier
+                    </label>
+                    <input
+                      name="courier"
+                      className="input-field py-2 text-sm"
+                      placeholder="TCS / Leopards / PostEx"
+                      defaultValue={order.courierName || ""}
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-muted">
+                      Tracking #
+                    </label>
+                    <input
+                      name="tracking"
+                      className="input-field py-2 text-sm"
+                      placeholder="Parcel tracking number"
+                      defaultValue={order.trackingNumber || ""}
+                    />
+                  </div>
+                  <button type="submit" className="btn-secondary shrink-0 text-sm">
+                    Save tracking
+                  </button>
+                </form>
               </div>
             ))}
           </div>

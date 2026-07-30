@@ -113,16 +113,23 @@ export function SuccessClient({
       </p>
       <p className="mt-2 text-sm text-muted">
         Cash on Delivery — pay when it arrives.
+        {total ? (
+          <>
+            {" "}
+            Have ready:{" "}
+            <span className="font-bold text-coral">PKR {total}</span>
+          </>
+        ) : null}
         {emailSent ? " Confirmation email sent." : ""}
       </p>
 
-      <div className="mt-8 flex flex-wrap justify-center gap-3">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
         {whatsappUrl && (
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            className="btn-primary"
+            className="btn-primary min-h-12"
           >
             Confirm on WhatsApp
           </a>
@@ -130,12 +137,12 @@ export function SuccessClient({
         {(trackUrl || order) && (
           <Link
             href={trackUrl || `/track?order=${order}`}
-            className="btn-secondary"
+            className="btn-secondary min-h-12"
           >
             Track order
           </Link>
         )}
-        <Link href="/shop" className="btn-secondary">
+        <Link href="/shop" className="btn-secondary min-h-12">
           Continue shopping
         </Link>
       </div>

@@ -68,13 +68,17 @@ export const checkoutSchema = z.object({
 });
 
 export const orderStatusSchema = z.object({
-  status: z.enum([
-    "pending",
-    "processing",
-    "shipped",
-    "delivered",
-    "cancelled",
-  ]),
+  status: z
+    .enum([
+      "pending",
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+    ])
+    .optional(),
+  courierName: z.string().max(80).optional(),
+  trackingNumber: z.string().max(80).optional(),
 });
 
 export const adminLoginSchema = z.object({
