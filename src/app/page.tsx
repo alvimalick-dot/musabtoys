@@ -18,8 +18,9 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+       <FeaturedProducts />
       <CategoryStrip />
-      <FeaturedProducts />
+     
       <FeatureBand />
       <CtaBanner />
     </>
