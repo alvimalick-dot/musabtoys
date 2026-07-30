@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
         continue;
       }
 
-      let baseSlug = makeSlug(mapped.name) || `product-${rowNum}`;
+      const baseSlug = makeSlug(mapped.name) || `product-${rowNum}`;
       let slug = baseSlug;
       let n = 1;
       while (usedSlugs.has(slug)) {

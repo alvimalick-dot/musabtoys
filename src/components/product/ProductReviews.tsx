@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,7 +21,7 @@ export function ProductReviews({ slug }: { slug: string }) {
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
 
-  async function load() {
+  const load = useCallback(async () => {
     const res = await fetch(`/api/reviews?slug=${encodeURIComponent(slug)}`);
     const data = await res.json();
     if (res.ok) {
@@ -29,11 +29,11 @@ export function ProductReviews({ slug }: { slug: string }) {
       setAverage(data.average || 0);
       setCount(data.count || 0);
     }
-  }
+  }, [slug]);
 
   useEffect(() => {
     load();
-  }, [slug]);
+  }, [load]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
