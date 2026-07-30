@@ -1,0 +1,117 @@
+import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
+import { connectDB } from "@/lib/mongodb";
+import { Product } from "@/models/Product";
+import { Order } from "@/models/Order";
+import { checkoutSchema } from "@/lib/validators";
+
+export const dynamic = "force-dynamic";
+
+function generateOrderNumber() {
+  const stamp = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `KTS-${stamp}-${rand}`;
+}
+
+export async function POST(req: NextRequest) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    await connectDB();
+    const body = checkoutSchema.parse(await req.json());
+
+    const productIds = body.items.map((i) => i.productId);
+    const products = await Product.find({ _id: { $in: productIds } }).session(
+      session
+    );
+    const map = new Map(products.map((p) => [String(p._id), p]));
+
+    const orderItems = [];
+    let subtotal = 0;
+
+    for (const item of body.items) {
+      const product = map.get(item.productId);
+      if (!product) {
+        throw new Error(`Product ${item.productId} not found`);
+      }
+      if (product.stock < item.quantity) {
+        throw new Error(
+          `"${product.name}" has only ${product.stock} left in stock`
+        );
+      }
+
+      orderItems.push({
+        productId: product._id,
+        name: product.name,
+        slug: product.slug,
+        price: product.price,
+        quantity: item.quantity,
+        image: product.images?.[0],
+      });
+
+      subtotal += product.price * item.quantity;
+      product.stock -= item.quantity;
+      await product.save({ session });
+    }
+
+    const shipping = subtotal >= 5000 ? 0 : 250;
+    const total = subtotal + shipping;
+
+    const paymentStatus =
+      body.paymentMethod === "cod" ? "pending" : "pending";
+
+    const [order] = await Order.create(
+      [
+        {
+          orderNumber: generateOrderNumber(),
+          items: orderItems,
+          customer: body.customer,
+          paymentMethod: body.paymentMethod,
+          paymentStatus,
+          status: "pending",
+          subtotal,
+          shipping,
+          total,
+          notes: body.notes,
+        },
+      ],
+      { session }
+    );
+
+    await session.commitTransaction();
+
+    // Payment gateway handoff stubs — wire credentials when ready
+    let paymentRedirect: string | null = null;
+    if (body.paymentMethod === "jazzcash") {
+      paymentRedirect = `/checkout/payment?gateway=jazzcash&order=${order.orderNumber}`;
+    } else if (body.paymentMethod === "payfast") {
+      paymentRedirect = `/checkout/payment?gateway=payfast&order=${order.orderNumber}`;
+    }
+
+    return NextResponse.json({
+      success: true,
+      order: {
+        orderNumber: order.orderNumber,
+        total: order.total,
+        status: order.status,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
+      },
+      paymentRedirect,
+      message:
+        body.paymentMethod === "cod"
+          ? "Order placed. Pay cash on delivery."
+          : "Order created. Complete payment to confirm.",
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("POST /api/checkout", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Checkout failed" },
+      { status: 400 }
+    );
+  } finally {
+    session.endSession();
+  }
+}

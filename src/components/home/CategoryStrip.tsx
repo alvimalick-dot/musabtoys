@@ -1,0 +1,97 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Blocks, Car, Baby, Puzzle, Rocket, Gamepad2 } from "lucide-react";
+
+const categories = [
+  {
+    name: "Building Sets",
+    href: "/shop?category=Building%20Sets",
+    icon: Blocks,
+    tint: "bg-sky/15 text-sky-deep",
+  },
+  {
+    name: "Vehicles",
+    href: "/shop?category=Vehicles",
+    icon: Car,
+    tint: "bg-coral/15 text-coral-deep",
+  },
+  {
+    name: "Baby & Toddler",
+    href: "/shop?category=Baby%20%26%20Toddler",
+    icon: Baby,
+    tint: "bg-sun/25 text-ink",
+  },
+  {
+    name: "Puzzles",
+    href: "/shop?category=Puzzles",
+    icon: Puzzle,
+    tint: "bg-mint/15 text-[#3d8f00]",
+  },
+  {
+    name: "STEM Toys",
+    href: "/shop?category=STEM%20Toys",
+    icon: Rocket,
+    tint: "bg-sky/15 text-sky-deep",
+  },
+  {
+    name: "Games",
+    href: "/shop?category=Games",
+    icon: Gamepad2,
+    tint: "bg-coral/15 text-coral-deep",
+  },
+];
+
+export function CategoryStrip() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5 }}
+      >
+        <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
+          Browse by play
+        </p>
+        <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+          Find the right kind of fun
+        </h2>
+        <p className="mt-3 max-w-xl text-muted">
+          Jump into categories families search for most — from soft first toys to
+          high-voltage STEM kits.
+        </p>
+      </motion.div>
+
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {categories.map((cat, i) => (
+          <motion.div
+            key={cat.name}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ delay: i * 0.06, duration: 0.45 }}
+          >
+            <Link
+              href={cat.href}
+              className="group flex items-center gap-4 rounded-[1.5rem] bg-white p-5 ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <span
+                className={`flex h-14 w-14 items-center justify-center rounded-2xl ${cat.tint}`}
+              >
+                <cat.icon className="h-6 w-6" />
+              </span>
+              <div>
+                <p className="font-display text-xl font-semibold">{cat.name}</p>
+                <p className="text-sm text-muted group-hover:text-coral">
+                  Shop collection →
+                </p>
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}

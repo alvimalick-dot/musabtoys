@@ -1,26 +1,122 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #fff8f0;
+  --bg-deep: #fff1e0;
+  --ink: #1a1530;
+  --ink-muted: #5c5670;
+  --coral: #ff5a36;
+  --coral-deep: #e03d1a;
+  --sky: #1cb0f6;
+  --sky-deep: #0a8fc9;
+  --sun: #ffc800;
+  --mint: #58cc02;
+  --surface: #ffffff;
+  --ring: rgba(255, 90, 54, 0.35);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-coral: var(--coral);
+  --color-coral-deep: var(--coral-deep);
+  --color-sky: var(--sky);
+  --color-sky-deep: var(--sky-deep);
+  --color-sun: var(--sun);
+  --color-mint: var(--mint);
+  --color-ink: var(--ink);
+  --color-muted: var(--ink-muted);
+  --color-surface: var(--surface);
+  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-fredoka);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--sun) 70%, white);
+  color: var(--ink);
+}
+
+.font-display {
+  font-family: var(--font-fredoka), var(--font-jakarta), sans-serif;
+}
+
+.toy-grid-bg {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255, 200, 0, 0.22), transparent 32%),
+    radial-gradient(circle at 88% 12%, rgba(28, 176, 246, 0.18), transparent 34%),
+    radial-gradient(circle at 70% 78%, rgba(255, 90, 54, 0.14), transparent 40%),
+    linear-gradient(180deg, #fff8f0 0%, #fff1e0 55%, #ffe8d2 100%);
+}
+
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--coral);
+  color: white;
+  font-weight: 700;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 24px rgba(255, 90, 54, 0.28);
+}
+
+.btn-primary:hover {
+  background: var(--coral-deep);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: white;
+  color: var(--ink);
+  font-weight: 700;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: 2px solid rgba(26, 21, 48, 0.08);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  border-color: var(--sky);
+}
+
+.input-field {
+  width: 100%;
+  border: 2px solid rgba(26, 21, 48, 0.08);
+  background: white;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-field:focus {
+  border-color: var(--sky);
+  box-shadow: 0 0 0 4px rgba(28, 176, 246, 0.15);
 }
