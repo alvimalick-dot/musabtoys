@@ -63,6 +63,8 @@ export const checkoutSchema = z.object({
   }),
   paymentMethod: z.enum(["cod", "jazzcash", "payfast"]),
   notes: z.string().optional(),
+  couponCode: z.string().optional(),
+  discount: z.coerce.number().min(0).optional(),
 });
 
 export const orderStatusSchema = z.object({

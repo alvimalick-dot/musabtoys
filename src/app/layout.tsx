@@ -3,6 +3,7 @@ import { Fredoka, Plus_Jakarta_Sans } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
+import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
 import { JsonLd } from "@/components/seo/JsonLd";
 import "./globals.css";
 
@@ -25,18 +26,18 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Karachi Toy Shop | Buy Toys Online in Karachi — COD & JazzCash",
+    default: "Karachi Toy Shop | Buy Toys Online in Karachi — Cash on Delivery",
     template: "%s | Karachi Toy Shop",
   },
   description:
-    "Buy toys online in Karachi. Thousands of toys for every age — building sets, RC cars, baby toys, STEM kits & more. Cash on Delivery, JazzCash & card payments. PKR 100 to 150,000+.",
+    "Buy toys online in Karachi. Thousands of toys for every age. Cash on Delivery across Pakistan. From PKR 100 to 150,000+.",
   keywords: [
     "toys in Karachi",
     "buy toys online Pakistan",
     "Karachi toy shop",
     "kids toys Karachi",
     "toys COD Karachi",
-    "JazzCash toys",
+    "Cash on Delivery toys",
     "baby toys Pakistan",
     "STEM toys Karachi",
     "RC cars Karachi",
@@ -55,7 +56,7 @@ export const metadata: Metadata = {
     siteName: "Karachi Toy Shop",
     title: "Karachi Toy Shop | Buy Toys Online in Karachi",
     description:
-      "Thousands of toys for every age. COD, JazzCash & cards. Fast browsing from PKR 100 to 150,000+.",
+      "Thousands of toys for every age. Cash on Delivery across Pakistan. From PKR 100 to 150,000+.",
     images: [
       {
         url: "/og-image.svg",
@@ -69,7 +70,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Karachi Toy Shop | Buy Toys Online in Karachi",
     description:
-      "Thousands of toys for every age. COD, JazzCash & cards across Pakistan.",
+      "Thousands of toys for every age. Cash on Delivery across Pakistan.",
     images: ["/og-image.svg"],
   },
   robots: {
@@ -92,7 +93,7 @@ const orgJsonLd = {
   name: "Karachi Toy Shop",
   url: siteUrl,
   description:
-    "Online toy store in Karachi offering thousands of toys with COD and JazzCash checkout.",
+    "Online toy store in Karachi offering thousands of toys with Cash on Delivery.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Karachi",
@@ -105,7 +106,7 @@ const orgJsonLd = {
   },
   priceRange: "PKR 100 - PKR 150000+",
   currenciesAccepted: "PKR",
-  paymentAccepted: "Cash, JazzCash, Credit Card",
+  paymentAccepted: "Cash on Delivery",
 };
 
 const websiteJsonLd = {
@@ -137,6 +138,7 @@ export default function RootLayout({
         <main className="min-h-[70vh]">{children}</main>
         <Footer />
         <CartDrawer />
+        <WhatsAppFab />
       </body>
     </html>
   );

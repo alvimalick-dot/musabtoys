@@ -5,27 +5,26 @@ import { getAdminSession } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const started = Date.now();
-  const hasUri = Boolean(process.env.MONGODB_URI);
   const session = await getAdminSession();
+  if (!session) {
+    return NextResponse.json({ ok: true, database: "private" }, { status: 200 });
+  }
 
+  const started = Date.now();
   try {
     await connectDB();
     return NextResponse.json({
       ok: true,
       database: "connected",
-      hasUri,
-      adminLoggedIn: Boolean(session),
+      adminLoggedIn: true,
       ms: Date.now() - started,
-      uriHost: process.env.MONGODB_URI?.replace(/:[^:@]+@/, ":****@").slice(0, 120),
     });
   } catch (error) {
     return NextResponse.json(
       {
         ok: false,
         database: "failed",
-        hasUri,
-        adminLoggedIn: Boolean(session),
+        adminLoggedIn: true,
         ms: Date.now() - started,
         error: error instanceof Error ? error.message : "Unknown error",
       },

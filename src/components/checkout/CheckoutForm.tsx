@@ -32,6 +32,56 @@ export function CheckoutForm() {
     const form = new FormData(e.currentTarget);
 
     try {
+      // Refresh prices/stock against live inventory before placing order
+      const validateRes = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((i) => ({
+            productId: i.productId,
+            quantity: i.quantity,
+          })),
+        }),
+      });
+      const validated = await validateRes.json();
+      if (!validateRes.ok || !validated.valid) {
+        const bad = (validated.items || []).find(
+          (i: { valid?: boolean; error?: string }) => !i.valid
+        );
+        throw new Error(bad?.error || "Cart items are no longer available");
+      }
+
+      // Sync local cart prices if server returned newer ones
+      for (const v of validated.items || []) {
+        if (v.valid && v.price !== undefined) {
+          const local = items.find((i) => i.productId === v.productId);
+          if (local && local.price !== v.price) {
+            useCartStore.setState({
+              items: items.map((i) =>
+                i.productId === v.productId
+                  ? { ...i, price: v.price, stock: v.stock ?? i.stock }
+                  : i
+              ),
+            });
+          }
+        }
+      }
+
+      let discount = 0;
+      let couponCode: string | undefined;
+      const coupon = String(form.get("coupon") || "").trim();
+      if (coupon) {
+        const cRes = await fetch("/api/coupons", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: coupon, subtotal: validated.subtotal }),
+        });
+        const cData = await cRes.json();
+        if (!cRes.ok) throw new Error(cData.error || "Invalid coupon");
+        discount = cData.discount;
+        couponCode = cData.code;
+      }
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,6 +100,8 @@ export function CheckoutForm() {
           },
           paymentMethod,
           notes: String(form.get("notes") || ""),
+          couponCode,
+          discount,
         }),
       });
 
@@ -60,7 +112,9 @@ export function CheckoutForm() {
       if (data.paymentRedirect) {
         router.push(data.paymentRedirect);
       } else {
-        router.push(`/checkout/success?order=${data.order.orderNumber}`);
+        router.push(
+          `/checkout/success?order=${data.order.orderNumber}&total=${data.order.total}`
+        );
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Checkout failed");
@@ -88,6 +142,12 @@ export function CheckoutForm() {
           <Field name="address" label="Street address" required className="sm:col-span-2" />
           <Field name="city" label="City" required defaultValue="Karachi" />
           <Field name="area" label="Area / landmark" />
+          <div className="sm:col-span-2">
+            <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
+              Coupon code (optional)
+            </label>
+            <input name="coupon" className="input-field" placeholder="EID500" />
+          </div>
           <div className="sm:col-span-2">
             <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
               Notes

@@ -91,9 +91,9 @@ export function Hero() {
             transition={{ duration: 5.2, repeat: Infinity, ease: "easeInOut" }}
           >
             <p className="text-xs font-bold uppercase tracking-wider text-sun">
-              Delivery
+              Payment
             </p>
-            <p className="font-display text-lg font-semibold">COD · JazzCash</p>
+            <p className="font-display text-lg font-semibold">Cash on Delivery</p>
           </motion.div>
         </motion.div>
       </div>

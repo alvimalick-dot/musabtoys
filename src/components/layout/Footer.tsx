@@ -8,8 +8,7 @@ export function Footer() {
           <p className="font-display text-2xl font-semibold">Karachi Toy Shop</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
             Thousands of toys for every age — from PKR 100 finds to premium
-            playsets. Fast browsing, local payments, delivered across Karachi
-            and beyond.
+            playsets. Cash on Delivery across Karachi and beyond.
           </p>
         </div>
         <div>
@@ -19,6 +18,12 @@ export function Footer() {
           <div className="mt-4 flex flex-col gap-2 text-sm text-white/80">
             <Link href="/shop" className="hover:text-white">
               Shop catalog
+            </Link>
+            <Link href="/track" className="hover:text-white">
+              Track order
+            </Link>
+            <Link href="/faq" className="hover:text-white">
+              FAQ & returns
             </Link>
             <Link href="/checkout" className="hover:text-white">
               Checkout
@@ -30,7 +35,7 @@ export function Footer() {
             Payments
           </p>
           <p className="mt-4 text-sm text-white/80">
-            Cash on Delivery · JazzCash · PayFast / Cards
+            Cash on Delivery (primary). Online wallets coming soon.
           </p>
           <p className="mt-6 text-xs text-white/40">
             © {new Date().getFullYear()} Karachi Toy Shop. All rights reserved.

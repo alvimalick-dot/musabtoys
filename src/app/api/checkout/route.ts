@@ -66,7 +66,8 @@ export async function POST(req: NextRequest) {
     }
 
     const shipping = calcShipping(subtotal);
-    const total = subtotal + shipping;
+    const discount = Math.min(body.discount || 0, subtotal);
+    const total = Math.max(0, subtotal - discount) + shipping;
 
     const paymentStatus =
       body.paymentMethod === "cod" ? "pending" : "pending";
@@ -84,10 +85,21 @@ export async function POST(req: NextRequest) {
           shipping,
           total,
           notes: body.notes,
+          couponCode: body.couponCode,
+          discount,
         },
       ],
       { session }
     );
+
+    if (body.couponCode && discount > 0) {
+      const { Coupon } = await import("@/models/Coupon");
+      await Coupon.updateOne(
+        { code: body.couponCode.toUpperCase() },
+        { $inc: { usedCount: 1 } },
+        { session }
+      );
+    }
 
     await session.commitTransaction();
 

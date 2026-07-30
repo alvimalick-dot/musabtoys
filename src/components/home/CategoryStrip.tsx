@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Blocks, Car, Baby, Puzzle, Rocket, Gamepad2 } from "lucide-react";
+import { Blocks, Car, Baby, Puzzle, Rocket, Gamepad2, Users } from "lucide-react";
 
 const categories = [
   {
@@ -43,10 +43,46 @@ const categories = [
   },
 ];
 
+const ages = [
+  { label: "0–3 yrs", href: "/shop?ageGroup=0-3%20years" },
+  { label: "3–5 yrs", href: "/shop?ageGroup=3-5%20years" },
+  { label: "6–9 yrs", href: "/shop?ageGroup=6-9%20years" },
+  { label: "10+ yrs", href: "/shop?ageGroup=10%2B%20years" },
+  { label: "All ages", href: "/shop?ageGroup=All%20Ages" },
+];
+
 export function CategoryStrip() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
       <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5 }}
+      >
+        <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
+          Shop by age
+        </p>
+        <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+          What’s right for your kid
+        </h2>
+      </motion.div>
+
+      <div className="mt-8 flex flex-wrap gap-3">
+        {ages.map((a) => (
+          <Link
+            key={a.label}
+            href={a.href}
+            className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <Users className="h-4 w-4 text-coral" />
+            {a.label}
+          </Link>
+        ))}
+      </div>
+
+      <motion.div
+        className="mt-16"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
@@ -58,10 +94,6 @@ export function CategoryStrip() {
         <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
           Find the right kind of fun
         </h2>
-        <p className="mt-3 max-w-xl text-muted">
-          Jump into categories families search for most — from soft first toys to
-          high-voltage STEM kits.
-        </p>
       </motion.div>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

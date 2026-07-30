@@ -8,26 +8,28 @@ import { getAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
+function buildFilterQuery(filters: ReturnType<typeof productFilterSchema.parse>) {
+  const query: Record<string, unknown> = {};
+  if (filters.category) query.category = filters.category;
+  if (filters.brand) query.brand = filters.brand;
+  if (filters.ageGroup) query.ageGroup = filters.ageGroup;
+  if (filters.stockStatus) query.stockStatus = filters.stockStatus;
+  if (filters.featured !== undefined) query.featured = filters.featured;
+  if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+    query.price = {
+      ...(filters.minPrice !== undefined ? { $gte: filters.minPrice } : {}),
+      ...(filters.maxPrice !== undefined ? { $lte: filters.maxPrice } : {}),
+    };
+  }
+  return query;
+}
+
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
     const params = Object.fromEntries(req.nextUrl.searchParams);
     const filters = productFilterSchema.parse(params);
-
-    const query: Record<string, unknown> = {};
-
-    if (filters.category) query.category = filters.category;
-    if (filters.brand) query.brand = filters.brand;
-    if (filters.ageGroup) query.ageGroup = filters.ageGroup;
-    if (filters.stockStatus) query.stockStatus = filters.stockStatus;
-    if (filters.featured !== undefined) query.featured = filters.featured;
-
-    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-      query.price = {
-        ...(filters.minPrice !== undefined ? { $gte: filters.minPrice } : {}),
-        ...(filters.maxPrice !== undefined ? { $lte: filters.maxPrice } : {}),
-      };
-    }
+    const query = buildFilterQuery(filters);
 
     const sortMap: Record<string, Record<string, 1 | -1>> = {
       newest: { createdAt: -1 },
@@ -35,23 +37,63 @@ export async function GET(req: NextRequest) {
       price_desc: { price: -1 },
       name: { name: 1 },
     };
+    const sort = sortMap[filters.sort];
 
-    let products = await Product.find(query)
-      .sort(sortMap[filters.sort])
-      .lean();
+    let pageItems;
+    let total: number;
 
-    if (filters.q?.trim()) {
-      const fuse = new Fuse(products, {
-        keys: ["name", "brand", "category", "description", "sku", "searchText"],
-        threshold: 0.35,
-        ignoreLocation: true,
-      });
-      products = fuse.search(filters.q.trim()).map((r) => r.item);
+    const q = filters.q?.trim();
+
+    if (q) {
+      // Narrow candidates in DB first (avoid loading entire catalog)
+      const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const searchQuery = {
+        ...query,
+        $or: [
+          { name: { $regex: escaped, $options: "i" } },
+          { sku: { $regex: escaped, $options: "i" } },
+          { brand: { $regex: escaped, $options: "i" } },
+          { category: { $regex: escaped, $options: "i" } },
+          { searchText: { $regex: escaped, $options: "i" } },
+        ],
+      };
+
+      let candidates = await Product.find(searchQuery)
+        .sort(sort)
+        .limit(400)
+        .lean();
+
+      // Typo-tolerant pass on the narrowed set
+      if (candidates.length > 0) {
+        const fuse = new Fuse(candidates, {
+          keys: ["name", "brand", "category", "sku", "searchText"],
+          threshold: 0.4,
+          ignoreLocation: true,
+        });
+        const fused = fuse.search(q).map((r) => r.item);
+        if (fused.length) candidates = fused;
+      } else {
+        // Fallback: broader fuzzy over a capped newest set
+        const pool = await Product.find(query).sort(sort).limit(800).lean();
+        const fuse = new Fuse(pool, {
+          keys: ["name", "brand", "category", "sku", "searchText"],
+          threshold: 0.45,
+          ignoreLocation: true,
+        });
+        candidates = fuse.search(q).map((r) => r.item);
+      }
+
+      total = candidates.length;
+      const start = (filters.page - 1) * filters.limit;
+      pageItems = candidates.slice(start, start + filters.limit);
+    } else {
+      total = await Product.countDocuments(query);
+      pageItems = await Product.find(query)
+        .sort(sort)
+        .skip((filters.page - 1) * filters.limit)
+        .limit(filters.limit)
+        .lean();
     }
-
-    const total = products.length;
-    const start = (filters.page - 1) * filters.limit;
-    const pageItems = products.slice(start, start + filters.limit);
 
     const [categories, brands, ageGroups] = await Promise.all([
       Product.distinct("category"),
@@ -87,11 +129,27 @@ export async function POST(req: NextRequest) {
 
     await connectDB();
     const body = await req.json();
-    const slug = body.slug || makeSlug(body.name);
+    if (!body.name || body.price === undefined) {
+      return NextResponse.json(
+        { error: "name and price are required" },
+        { status: 400 }
+      );
+    }
 
+    const slug = body.slug || makeSlug(body.name);
     const product = await Product.create({
-      ...body,
+      name: body.name,
       slug,
+      description: body.description || "",
+      price: Number(body.price),
+      compareAtPrice: body.compareAtPrice,
+      category: body.category || "Toys",
+      brand: body.brand || "Generic",
+      ageGroup: body.ageGroup || "All Ages",
+      stock: Number(body.stock ?? 10),
+      images: Array.isArray(body.images) ? body.images : [],
+      specs: body.specs || {},
+      featured: Boolean(body.featured),
       sku: body.sku || `SKU-${Date.now()}`,
     });
 

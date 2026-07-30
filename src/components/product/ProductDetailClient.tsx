@@ -50,7 +50,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
                   i === active ? "ring-coral" : "ring-transparent"
                 }`}
               >
-                <Image src={img} alt="" fill className="object-cover" sizes="80px" />
+                <Image src={img} alt={`${product.name} photo ${i + 1}`} fill className="object-cover" sizes="80px" />
               </button>
             ))}
           </div>

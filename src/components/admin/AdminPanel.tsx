@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Upload, LogOut, Package, RefreshCw } from "lucide-react";
 import { formatPKR } from "@/lib/utils";
 import type { OrderStatus } from "@/types";
+import { ProductAdmin } from "@/components/admin/ProductAdmin";
+import { CouponAdmin } from "@/components/admin/CouponAdmin";
 
 interface OrderRow {
   _id: string;
@@ -21,7 +23,7 @@ export function AdminPanel() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"upload" | "orders" | "seed">("upload");
+  const [tab, setTab] = useState<"upload" | "products" | "orders" | "coupons" | "seed">("upload");
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
   const [uploadBusy, setUploadBusy] = useState(false);
   const [orders, setOrders] = useState<OrderRow[]>([]);
@@ -42,6 +44,10 @@ export function AdminPanel() {
     try {
       const res = await fetch("/api/health");
       const data = await res.json();
+      if (data.database === "private") {
+        setDbStatus("Log in to verify database status");
+        return;
+      }
       setDbStatus(
         data.ok
           ? `Database connected (${data.ms}ms)`
@@ -54,8 +60,11 @@ export function AdminPanel() {
 
   useEffect(() => {
     checkAuth();
-    checkDb();
-  }, [checkAuth, checkDb]);
+  }, [checkAuth]);
+
+  useEffect(() => {
+    if (auth === "in") checkDb();
+  }, [auth, checkDb]);
 
   const loadOrders = useCallback(async () => {
     const qs = statusFilter ? `?status=${statusFilter}` : "";
@@ -233,7 +242,9 @@ export function AdminPanel() {
         {(
           [
             ["upload", "Excel upload"],
+            ["products", "Products"],
             ["orders", "Orders"],
+            ["coupons", "Coupons"],
             ["seed", "Sample data"],
           ] as const
         ).map(([id, label]) => (
@@ -249,6 +260,10 @@ export function AdminPanel() {
           </button>
         ))}
       </div>
+
+      {tab === "products" && <ProductAdmin />}
+
+      {tab === "coupons" && <CouponAdmin />}
 
       {tab === "upload" && (
         <div className="mt-8 rounded-[1.5rem] bg-white p-8 ring-1 ring-black/5">

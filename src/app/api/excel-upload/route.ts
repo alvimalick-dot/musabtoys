@@ -5,6 +5,7 @@ import { Product } from "@/models/Product";
 import { makeSlug } from "@/lib/utils";
 import { getAdminSession } from "@/lib/auth";
 import { detectColumns, mapExcelRow } from "@/lib/excel-map";
+import { inferAgeGroup, inferCategory } from "@/lib/categorize";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -121,9 +122,15 @@ export async function POST(req: NextRequest) {
         description: mapped.description,
         price: mapped.price,
         compareAtPrice: mapped.compareAtPrice,
-        category: mapped.category,
+        category:
+          mapped.category !== "Toys"
+            ? mapped.category
+            : inferCategory(mapped.name),
         brand: mapped.brand,
-        ageGroup: mapped.ageGroup,
+        ageGroup:
+          mapped.ageGroup !== "All Ages"
+            ? mapped.ageGroup
+            : inferAgeGroup(mapped.name),
         stock: mapped.stock,
         stockStatus: stockStatus(mapped.stock),
         images: mapped.images,

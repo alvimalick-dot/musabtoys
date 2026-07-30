@@ -29,6 +29,10 @@ export interface IOrder {
   total: number;
   notes?: string;
   invoiceUrl?: string;
+  couponCode?: string;
+  discount?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const OrderItemSchema = new Schema<IOrderItem>(
@@ -76,6 +80,8 @@ const OrderSchema = new Schema<IOrder>(
     total: { type: Number, required: true },
     notes: String,
     invoiceUrl: String,
+    couponCode: String,
+    discount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

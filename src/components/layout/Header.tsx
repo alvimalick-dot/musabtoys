@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
+  { href: "/track", label: "Track" },
+  { href: "/faq", label: "FAQ" },
   { href: "/checkout", label: "Checkout" },
 ];
 
@@ -18,7 +20,8 @@ export function Header() {
   const pathname = usePathname();
   const totalItems = useCartStore((s) =>
     s.items.reduce((sum, i) => sum + i.quantity, 0)
-  );  const openCart = useCartStore((s) => s.openCart);
+  );
+  const openCart = useCartStore((s) => s.openCart);
   const [open, setOpen] = useState(false);
 
   return (

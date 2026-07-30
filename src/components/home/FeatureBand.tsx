@@ -11,8 +11,8 @@ const features = [
   },
   {
     icon: Truck,
-    title: "Pay your way",
-    text: "Checkout with Cash on Delivery, JazzCash, or card. Free delivery on orders PKR 5,000 and above.",
+    title: "Cash on Delivery",
+    text: "Pay when your order arrives. Free delivery on orders PKR 5,000 and above.",
   },
   {
     icon: Gift,
