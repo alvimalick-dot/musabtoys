@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
+import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { FeatureBand } from "@/components/home/FeatureBand";
 import { CtaBanner } from "@/components/home/CtaBanner";
 
@@ -11,11 +12,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+export const revalidate = 60;
+
 export default function HomePage() {
   return (
     <>
       <Hero />
       <CategoryStrip />
+      <FeaturedProducts />
       <FeatureBand />
       <CtaBanner />
     </>
