@@ -136,7 +136,10 @@ export default function RootLayout({
         <JsonLd data={orgJsonLd} />
         <JsonLd data={websiteJsonLd} />
         <Header />
-        <main className="min-h-[70vh] pb-24">{children}</main>
+        
+        {/* REMOVED pb-24 from this main tag */}
+        <main className="min-h-[70vh]">{children}</main>
+        
         <Footer />
         <CartDrawer />
         <WhatsAppFab />
@@ -144,4 +147,5 @@ export default function RootLayout({
       </body>
     </html>
   );
+
 }
