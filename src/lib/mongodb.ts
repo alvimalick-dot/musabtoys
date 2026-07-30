@@ -1,4 +1,12 @@
+import dns from "dns";
 import mongoose from "mongoose";
+
+// Windows/router DNS often fails Node's SRV lookup for mongodb+srv://
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
+} catch {
+  // ignore if restricted
+}
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -30,6 +38,7 @@ export async function connectDB() {
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 15000,
     });
   }
 

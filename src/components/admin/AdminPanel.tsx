@@ -27,6 +27,7 @@ export function AdminPanel() {
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [seedMsg, setSeedMsg] = useState<string | null>(null);
+  const [dbStatus, setDbStatus] = useState<string>("checking…");
 
   const checkAuth = useCallback(async () => {
     try {
@@ -37,9 +38,24 @@ export function AdminPanel() {
     }
   }, []);
 
+  const checkDb = useCallback(async () => {
+    try {
+      const res = await fetch("/api/health");
+      const data = await res.json();
+      setDbStatus(
+        data.ok
+          ? `Database connected (${data.ms}ms)`
+          : `Database failed: ${data.error || "unknown"}`
+      );
+    } catch {
+      setDbStatus("Database check failed — is the server running?");
+    }
+  }, []);
+
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    checkDb();
+  }, [checkAuth, checkDb]);
 
   const loadOrders = useCallback(async () => {
     const qs = statusFilter ? `?status=${statusFilter}` : "";
@@ -84,8 +100,19 @@ export function AdminPanel() {
     try {
       const res = await fetch("/api/excel-upload", { method: "POST", body: fd });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
-      setUploadMsg(data.message);
+      if (!res.ok) {
+        const extra = data.headers
+          ? ` | Found headers: ${data.headers.join(", ")}`
+          : "";
+        throw new Error((data.error || "Upload failed") + extra);
+      }
+      const warn =
+        data.warnings?.length ? ` | Notes: ${data.warnings.join("; ")}` : "";
+      const detected = data.detectedColumns
+        ? ` | Mapped: ${JSON.stringify(data.detectedColumns)}`
+        : "";
+      setUploadMsg((data.message || "Upload complete") + detected + warn);
+      await checkDb();
     } catch (err) {
       setUploadMsg(err instanceof Error ? err.message : "Upload failed");
     } finally {
@@ -105,9 +132,19 @@ export function AdminPanel() {
 
   async function seedProducts() {
     setSeedMsg(null);
-    const res = await fetch("/api/seed", { method: "POST" });
-    const data = await res.json();
-    setSeedMsg(data.message || data.error || "Done");
+    try {
+      const res = await fetch("/api/seed", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          [data.error, data.hint].filter(Boolean).join(" — ") || "Seed failed"
+        );
+      }
+      setSeedMsg(data.message || "Done");
+      await checkDb();
+    } catch (err) {
+      setSeedMsg(err instanceof Error ? err.message : "Seed failed");
+    }
   }
 
   if (auth === "loading") {
@@ -172,10 +209,24 @@ export function AdminPanel() {
             Store management
           </p>
           <h1 className="mt-2 font-display text-4xl font-semibold">Admin panel</h1>
+          <p
+            className={`mt-2 text-sm font-semibold ${
+              dbStatus.startsWith("Database connected")
+                ? "text-mint"
+                : "text-coral-deep"
+            }`}
+          >
+            {dbStatus}
+          </p>
         </div>
-        <button type="button" onClick={logout} className="btn-secondary">
-          <LogOut className="h-4 w-4" /> Logout
-        </button>
+        <div className="flex gap-2">
+          <button type="button" onClick={checkDb} className="btn-secondary">
+            <RefreshCw className="h-4 w-4" /> Recheck DB
+          </button>
+          <button type="button" onClick={logout} className="btn-secondary">
+            <LogOut className="h-4 w-4" /> Logout
+          </button>
+        </div>
       </div>
 
       <div className="mt-8 flex flex-wrap gap-2">
@@ -210,10 +261,10 @@ export function AdminPanel() {
                 Bulk Excel inventory
               </h2>
               <p className="mt-2 max-w-xl text-sm text-muted">
-                Upload <code>.xlsx</code> / <code>.xls</code> / <code>.csv</code> with
-                columns like name, sku, price, category, brand, ageGroup, stock,
-                images, description. Existing SKUs are upserted (price/stock
-                update, no duplicates).
+                Upload any <code>.xlsx</code> / <code>.xls</code> / <code>.csv</code>.
+                Column names can be anything — the system auto-detects name, price,
+                id/sku, etc. Your sheet with ProductID / ProductName / RetailPrice
+                works as-is. Existing IDs update price/stock without duplicates.
               </p>
             </div>
           </div>
@@ -241,9 +292,10 @@ export function AdminPanel() {
           <div className="mt-8 overflow-x-auto text-sm">
             <p className="mb-2 font-bold">Example headers</p>
             <code className="block rounded-xl bg-ink px-4 py-3 text-xs text-white">
-              name | sku | price | compareAtPrice | category | brand | ageGroup |
-              stock | description | images | featured | dimensions | battery |
-              pieceCount
+              name | sku | price | category | brand | ageGroup | stock |
+              description | images
+              <br />
+              Also accepted: ProductID, ProductName, RetailPrice
             </code>
           </div>
         </div>

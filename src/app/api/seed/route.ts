@@ -148,12 +148,16 @@ export async function POST() {
     return NextResponse.json({
       success: true,
       message: inserted
-        ? `Inserted ${inserted} sample products.`
-        : "Sample products already exist.",
+        ? `Inserted ${inserted} sample products. Open /shop to view them.`
+        : "Sample products already exist. Open /shop to view them.",
     });
   } catch (error) {
+    console.error("POST /api/seed", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Seed failed" },
+      {
+        error: error instanceof Error ? error.message : "Seed failed",
+        hint: "Check /api/health — database must be connected. Then log in again and retry.",
+      },
       { status: 500 }
     );
   }

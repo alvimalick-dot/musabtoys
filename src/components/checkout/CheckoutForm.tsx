@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";
+import { calcShipping, FREE_SHIPPING_THRESHOLD } from "@/lib/commerce";
 import type { PaymentMethod } from "@/types";
 
 export function CheckoutForm() {
@@ -13,8 +14,10 @@ export function CheckoutForm() {
   const [error, setError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
 
-  const shipping = subtotal() >= 5000 || subtotal() === 0 ? 0 : 250;
+  const shipping = calcShipping(subtotal());
   const total = subtotal() + shipping;
+  const onlineEnabled =
+    process.env.NEXT_PUBLIC_ENABLE_ONLINE_PAYMENTS === "true";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -97,28 +100,45 @@ export function CheckoutForm() {
           <p className="mb-3 text-sm font-bold uppercase tracking-wider text-muted">
             Payment method
           </p>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {(
-              [
-                ["cod", "Cash on Delivery"],
-                ["jazzcash", "JazzCash"],
-                ["payfast", "PayFast / Card"],
-              ] as const
-            ).map(([value, label]) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setPaymentMethod(value)}
-                className={`rounded-2xl px-4 py-4 text-left text-sm font-bold ring-2 transition ${
-                  paymentMethod === value
-                    ? "bg-ink text-white ring-ink"
-                    : "bg-white text-ink ring-black/5"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+          <div className={`grid gap-3 ${onlineEnabled ? "sm:grid-cols-3" : ""}`}>
+            <button
+              type="button"
+              onClick={() => setPaymentMethod("cod")}
+              className={`rounded-2xl px-4 py-4 text-left text-sm font-bold ring-2 transition ${
+                paymentMethod === "cod"
+                  ? "bg-ink text-white ring-ink"
+                  : "bg-white text-ink ring-black/5"
+              }`}
+            >
+              Cash on Delivery
+            </button>
+            {onlineEnabled &&
+              (
+                [
+                  ["jazzcash", "JazzCash"],
+                  ["payfast", "PayFast / Card"],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setPaymentMethod(value)}
+                  className={`rounded-2xl px-4 py-4 text-left text-sm font-bold ring-2 transition ${
+                    paymentMethod === value
+                      ? "bg-ink text-white ring-ink"
+                      : "bg-white text-ink ring-black/5"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
           </div>
+          {!onlineEnabled && (
+            <p className="mt-2 text-xs text-muted">
+              Online payments (JazzCash / PayFast) will be enabled after gateway
+              credentials are configured.
+            </p>
+          )}
         </div>
 
         {error && (
@@ -164,7 +184,7 @@ export function CheckoutForm() {
             <span className="text-coral">{formatPKR(total)}</span>
           </div>
           <p className="pt-2 text-xs text-muted">
-            Free shipping on orders PKR 5,000+
+            Free shipping on orders {formatPKR(FREE_SHIPPING_THRESHOLD)}+
           </p>
         </div>
       </aside>

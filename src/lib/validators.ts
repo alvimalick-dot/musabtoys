@@ -18,14 +18,16 @@ export const productFilterSchema = z.object({
 
 export const excelRowSchema = z.object({
   name: z.string().min(1),
-  sku: z.string().optional().default(""),
+  sku: z.union([z.string(), z.number()]).optional().transform((v) =>
+    v === undefined || v === null ? "" : String(v)
+  ),
   description: z.string().optional().default(""),
   price: z.coerce.number().min(0),
   compareAtPrice: z.coerce.number().min(0).optional(),
-  category: z.string().min(1),
+  category: z.string().optional().default("Toys"),
   brand: z.string().optional().default("Generic"),
   ageGroup: z.string().optional().default("All Ages"),
-  stock: z.coerce.number().min(0).default(0),
+  stock: z.coerce.number().min(0).optional().default(10),
   images: z.string().optional().default(""),
   featured: z
     .union([z.boolean(), z.string()])

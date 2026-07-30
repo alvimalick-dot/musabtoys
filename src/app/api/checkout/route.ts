@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { Order } from "@/models/Order";
 import { checkoutSchema } from "@/lib/validators";
+import { calcShipping } from "@/lib/commerce";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,15 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const body = checkoutSchema.parse(await req.json());
+
+    if (
+      body.paymentMethod !== "cod" &&
+      process.env.ENABLE_ONLINE_PAYMENTS !== "true"
+    ) {
+      throw new Error(
+        "Online payment is not available yet. Please choose Cash on Delivery."
+      );
+    }
 
     const productIds = body.items.map((i) => i.productId);
     const products = await Product.find({ _id: { $in: productIds } }).session(
@@ -55,7 +65,7 @@ export async function POST(req: NextRequest) {
       await product.save({ session });
     }
 
-    const shipping = subtotal >= 5000 ? 0 : 250;
+    const shipping = calcShipping(subtotal);
     const total = subtotal + shipping;
 
     const paymentStatus =

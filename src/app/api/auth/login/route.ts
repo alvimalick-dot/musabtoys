@@ -7,6 +7,7 @@ import {
   getAdminSession,
 } from "@/lib/auth";
 import { adminLoginSchema } from "@/lib/validators";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,20 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = clientIp(req);
+    const limited = rateLimit(`admin-login:${ip}`, 5, 15 * 60 * 1000);
+    if (!limited.ok) {
+      return NextResponse.json(
+        {
+          error: `Too many login attempts. Try again in ${limited.retryAfterSec} seconds.`,
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(limited.retryAfterSec) },
+        }
+      );
+    }
+
     const body = adminLoginSchema.parse(await req.json());
     const ok = await validateAdminCredentials(body.email, body.password);
     if (!ok) {

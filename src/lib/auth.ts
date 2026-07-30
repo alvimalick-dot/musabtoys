@@ -3,10 +3,19 @@ import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 
 const COOKIE_NAME = "kts_admin_token";
+const isProd = process.env.NODE_ENV === "production";
 
 function getSecret() {
   const secret = process.env.ADMIN_JWT_SECRET;
   if (!secret) throw new Error("Missing ADMIN_JWT_SECRET");
+  if (
+    isProd &&
+    (secret.includes("change-this") || secret.length < 24)
+  ) {
+    throw new Error(
+      "ADMIN_JWT_SECRET is too weak for production. Use a long random string."
+    );
+  }
   return new TextEncoder().encode(secret);
 }
 
@@ -31,7 +40,7 @@ export async function setAdminCookie(token: string) {
   const jar = await cookies();
   jar.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProd,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
@@ -51,14 +60,39 @@ export async function getAdminSession() {
 }
 
 export async function validateAdminCredentials(email: string, password: string) {
-  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@karachitoys.pk";
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "ChangeMe123!";
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminEmail || !adminPassword) {
+    throw new Error(
+      "ADMIN_EMAIL and ADMIN_PASSWORD must be set in environment variables."
+    );
+  }
+
+  if (
+    isProd &&
+    (adminEmail === "admin@karachitoys.pk" ||
+      adminPassword === "ChangeMe123!" ||
+      adminPassword.toLowerCase().includes("changeme"))
+  ) {
+    throw new Error(
+      "Default admin credentials are not allowed in production. Change ADMIN_EMAIL and ADMIN_PASSWORD."
+    );
+  }
 
   if (email !== adminEmail) return false;
 
-  // Support plain env password for simple setup, or bcrypt hash
+  // Production: bcrypt hash required ($2a$ / $2b$ / $2y$)
   if (adminPassword.startsWith("$2")) {
     return bcrypt.compare(password, adminPassword);
   }
+
+  if (isProd) {
+    throw new Error(
+      "ADMIN_PASSWORD must be a bcrypt hash in production (starts with $2). Generate with: npx bcryptjs-cli hash \"your-password\""
+    );
+  }
+
+  // Dev only: plaintext comparison
   return password === adminPassword;
 }

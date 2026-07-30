@@ -2,64 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
-import { excelRowSchema } from "@/lib/validators";
 import { makeSlug } from "@/lib/utils";
 import { getAdminSession } from "@/lib/auth";
+import { detectColumns, mapExcelRow } from "@/lib/excel-map";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 300;
 
-function normalizeKey(key: string) {
-  return key.trim().toLowerCase().replace(/\s+/g, "");
-}
-
-const KEY_MAP: Record<string, string> = {
-  name: "name",
-  productname: "name",
-  title: "name",
-  sku: "sku",
-  productsku: "sku",
-  description: "description",
-  desc: "description",
-  price: "price",
-  saleprice: "price",
-  compareatprice: "compareAtPrice",
-  mrp: "compareAtPrice",
-  category: "category",
-  brand: "brand",
-  agegroup: "ageGroup",
-  age: "ageGroup",
-  stock: "stock",
-  quantity: "stock",
-  qty: "stock",
-  images: "images",
-  image: "images",
-  imageurl: "images",
-  featured: "featured",
-  dimensions: "dimensions",
-  battery: "battery",
-  piececount: "pieceCount",
-  pieces: "pieceCount",
-  material: "material",
-  weight: "weight",
-};
-
-function mapRow(raw: Record<string, unknown>) {
-  const mapped: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(raw)) {
-    const mappedKey = KEY_MAP[normalizeKey(key)];
-    if (mappedKey && value !== undefined && value !== null && value !== "") {
-      mapped[mappedKey] = value;
-    }
-  }
-  return mapped;
+function stockStatus(stock: number) {
+  if (stock <= 0) return "out_of_stock" as const;
+  if (stock <= 5) return "low_stock" as const;
+  return "in_stock" as const;
 }
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getAdminSession();
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized — please log in again" }, { status: 401 });
     }
 
     await connectDB();
@@ -80,13 +40,40 @@ export async function POST(req: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const workbook = XLSX.read(buffer, { type: "buffer" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
+      defval: "",
+      raw: false,
+    });
+
+    // Also try raw numbers if prices came as strings badly
+    const rowsRaw = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
+      defval: "",
+      raw: true,
+    });
 
     if (!rows.length) {
       return NextResponse.json({ error: "Excel sheet is empty" }, { status: 400 });
     }
 
+    const { headerMap, warnings, detected } = detectColumns(
+      rowsRaw.length ? rowsRaw : rows
+    );
+
+    if (!headerMap.has("name") || !headerMap.has("price")) {
+      return NextResponse.json(
+        {
+          error:
+            "Could not detect product name and price columns. Add headers like ProductName + RetailPrice (any naming is fine).",
+          headers: Object.keys(rows[0]),
+          detected,
+        },
+        { status: 400 }
+      );
+    }
+
+    const sourceRows = rowsRaw.length ? rowsRaw : rows;
     const results = {
       inserted: 0,
       updated: 0,
@@ -95,104 +82,121 @@ export async function POST(req: NextRequest) {
     };
 
     const usedSlugs = new Set<string>();
+    const ops: Parameters<typeof Product.bulkWrite>[0] = [];
 
-    for (let i = 0; i < rows.length; i++) {
+    // Prefetch existing SKUs for faster upserts
+    const skus = sourceRows
+      .map((r, i) => {
+        const mapped = mapExcelRow(r, headerMap, i + 2);
+        return "error" in mapped ? null : mapped.sku;
+      })
+      .filter((s): s is string => Boolean(s));
+
+    const existing = await Product.find({ sku: { $in: skus } })
+      .select("sku slug")
+      .lean();
+    const existingBySku = new Map(existing.map((p) => [p.sku, p]));
+
+    for (let i = 0; i < sourceRows.length; i++) {
       const rowNum = i + 2;
-      try {
-        const mapped = mapRow(rows[i]);
-        const parsed = excelRowSchema.parse(mapped);
-
-        let baseSlug = makeSlug(parsed.name);
-        if (!baseSlug) baseSlug = `product-${Date.now()}-${i}`;
-
-        let slug = baseSlug;
-        let n = 1;
-        while (usedSlugs.has(slug)) {
-          slug = `${baseSlug}-${n++}`;
-        }
-        usedSlugs.add(slug);
-
-        const images = parsed.images
-          ? parsed.images
-              .split(/[,|]/)
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : [];
-
-        const specs: Record<string, string | number> = {};
-        if (parsed.dimensions) specs.dimensions = parsed.dimensions;
-        if (parsed.battery) specs.battery = parsed.battery;
-        if (parsed.pieceCount) specs.pieceCount = parsed.pieceCount;
-        if (parsed.material) specs.material = parsed.material;
-        if (parsed.weight) specs.weight = parsed.weight;
-
-        const payload = {
-          name: parsed.name,
-          slug,
-          description: parsed.description,
-          price: parsed.price,
-          compareAtPrice: parsed.compareAtPrice,
-          category: parsed.category,
-          brand: parsed.brand,
-          ageGroup: parsed.ageGroup,
-          stock: parsed.stock,
-          images,
-          specs,
-          featured: parsed.featured ?? false,
-          sku: parsed.sku || `SKU-${slug.toUpperCase()}`,
-        };
-
-        const filter = parsed.sku
-          ? { sku: parsed.sku }
-          : { slug: payload.slug };
-
-        const existing = await Product.findOne(filter);
-
-        if (existing) {
-          // Upsert by SKU — keep existing slug to avoid breaking SEO links
-          existing.name = payload.name;
-          existing.description = payload.description;
-          existing.price = payload.price;
-          if (payload.compareAtPrice !== undefined) {
-            existing.compareAtPrice = payload.compareAtPrice;
-          }
-          existing.category = payload.category;
-          existing.brand = payload.brand;
-          existing.ageGroup = payload.ageGroup;
-          existing.stock = payload.stock;
-          if (images.length) existing.images = images;
-          existing.specs = { ...existing.specs, ...specs };
-          existing.featured = payload.featured;
-          await existing.save();
-          results.updated++;
-        } else {
-          // Ensure unique slug in DB
-          let finalSlug = payload.slug;
-          let attempt = 1;
-          while (await Product.exists({ slug: finalSlug })) {
-            finalSlug = `${payload.slug}-${attempt++}`;
-          }
-          await Product.create({ ...payload, slug: finalSlug });
-          results.inserted++;
-        }
-      } catch (err) {
+      const mapped = mapExcelRow(sourceRows[i], headerMap, rowNum);
+      if ("error" in mapped) {
         results.failed++;
-        results.errors.push({
-          row: rowNum,
-          message: err instanceof Error ? err.message : "Invalid row",
-        });
+        if (results.errors.length < 25) {
+          results.errors.push({ row: rowNum, message: mapped.error });
+        }
+        continue;
       }
+
+      let baseSlug = makeSlug(mapped.name) || `product-${rowNum}`;
+      let slug = baseSlug;
+      let n = 1;
+      while (usedSlugs.has(slug)) {
+        slug = `${baseSlug}-${n++}`;
+      }
+      usedSlugs.add(slug);
+
+      const payload = {
+        name: mapped.name,
+        description: mapped.description,
+        price: mapped.price,
+        compareAtPrice: mapped.compareAtPrice,
+        category: mapped.category,
+        brand: mapped.brand,
+        ageGroup: mapped.ageGroup,
+        stock: mapped.stock,
+        stockStatus: stockStatus(mapped.stock),
+        images: mapped.images,
+        specs: {
+          ...(mapped.dimensions ? { dimensions: mapped.dimensions } : {}),
+          ...(mapped.battery ? { battery: mapped.battery } : {}),
+          ...(mapped.pieceCount ? { pieceCount: mapped.pieceCount } : {}),
+          ...(mapped.material ? { material: mapped.material } : {}),
+          ...(mapped.weight ? { weight: mapped.weight } : {}),
+        },
+        featured: mapped.featured,
+        sku: mapped.sku,
+        searchText: [mapped.name, mapped.brand, mapped.category, mapped.sku]
+          .filter(Boolean)
+          .join(" "),
+      };
+
+      const found = existingBySku.get(mapped.sku);
+      if (found) {
+        ops.push({
+          updateOne: {
+            filter: { sku: mapped.sku },
+            update: {
+              $set: {
+                ...payload,
+                // keep existing slug for SEO
+              },
+            },
+          },
+        });
+        results.updated++;
+      } else {
+        ops.push({
+          updateOne: {
+            filter: { sku: mapped.sku },
+            update: {
+              $setOnInsert: { slug },
+              $set: payload,
+            },
+            upsert: true,
+          },
+        });
+        results.inserted++;
+      }
+    }
+
+    // Bulk write in chunks of 500
+    for (let i = 0; i < ops.length; i += 500) {
+      const chunk = ops.slice(i, i + 500);
+      await Product.bulkWrite(chunk, { ordered: false });
     }
 
     return NextResponse.json({
       success: true,
-      summary: results,
-      message: `Processed ${rows.length} rows: ${results.inserted} inserted, ${results.updated} updated, ${results.failed} failed.`,
+      sheet: sheetName,
+      detectedColumns: detected,
+      warnings,
+      summary: {
+        totalRows: sourceRows.length,
+        inserted: results.inserted,
+        updated: results.updated,
+        failed: results.failed,
+        errors: results.errors,
+      },
+      message: `Processed ${sourceRows.length} rows: ${results.inserted} inserted, ${results.updated} updated, ${results.failed} failed.`,
     });
   } catch (error) {
     console.error("POST /api/excel-upload", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Upload failed" },
+      {
+        error: error instanceof Error ? error.message : "Upload failed",
+        hint: "If this mentions querySrv/ECONNREFUSED, restart npm run dev after updating .env.local",
+      },
       { status: 500 }
     );
   }
