@@ -19,10 +19,11 @@ export default function HomePage() {
     <>
       <Hero />
        <FeaturedProducts />
+       <CtaBanner />
       <CategoryStrip />
      
       <FeatureBand />
-      <CtaBanner />
+      
     </>
   );
 }
