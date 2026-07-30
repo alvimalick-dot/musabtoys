@@ -25,26 +25,27 @@ export function Hero() {
       <div className="relative mx-auto flex max-w-5xl flex-col lg:flex-row lg:items-center justify-center gap-10 lg:gap-16 px-4 sm:px-6">
         
         {/* Left Side: Title */}
-        <div>
-          <motion.p
-            className="font-display text-4xl leading-[0.95] tracking-tight text-ink min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          >
-            Karachi{" "}
-            <span className="relative inline-block text-coral">
-              Toys
-              <motion.span
-                aria-hidden
-                className="absolute -bottom-1 left-0 right-0 h-1.5 origin-left rounded-full bg-sun/70 sm:-bottom-2 sm:h-2.5"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.55, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-              />
-            </span>
-          </motion.p>
-        </div>
+      <div>
+  <motion.p
+    // Added whitespace-nowrap here
+    className="whitespace-nowrap font-display text-4xl leading-[0.95] tracking-tight text-ink min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
+    initial={{ opacity: 0, y: 40 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+  >
+    Karachi
+    <span className="relative inline-block text-coral">
+      Toys
+      <motion.span
+        aria-hidden
+        className="absolute -bottom-1 left-0 right-0 h-1.5 origin-left rounded-full bg-sun/70 sm:-bottom-2 sm:h-2.5"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ delay: 0.55, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+      />
+    </span>
+  </motion.p>
+</div>
 
         {/* Right Side: Description and Buttons */}
         <div className="flex flex-col justify-center max-w-md">
