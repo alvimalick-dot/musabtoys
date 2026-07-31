@@ -62,8 +62,8 @@ export function Header() {
       className={cn(
         "sticky top-0 z-50 border-b transition-[background,box-shadow,border-color,backdrop-filter] duration-300",
         scrolled
-          ? "border-black/5 bg-[#fff8f0]/85 shadow-[0_8px_28px_-16px_rgba(26,21,48,0.25)] backdrop-blur-xl"
-          : "border-transparent bg-[#fff8f0]/70 backdrop-blur-md"
+          ? "border-black/5 bg-[#faf5ff]/85 shadow-[0_8px_28px_-16px_rgba(26,21,48,0.25)] backdrop-blur-xl"
+          : "border-transparent bg-[#faf5ff]/70 backdrop-blur-md"
       )}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6">
@@ -204,7 +204,7 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-black/5 bg-[#fff8f0] px-4 py-3 lg:hidden"
+            className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-black/5 bg-[#faf5ff] px-4 py-3 lg:hidden"
           >
             {links.map((link, i) => (
               <motion.div

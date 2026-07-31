@@ -32,13 +32,13 @@ const categories = [
     name: "Baby & Toddler",
     href: "/shop?category=Baby%20%26%20Toddler",
     icon: Baby,
-    tint: "bg-sun/25 text-ink",
+    tint: "bg-sun/20 text-[#b91c1c]",
   },
   {
     name: "Puzzles",
     href: "/shop?category=Puzzles",
     icon: Puzzle,
-    tint: "bg-mint/15 text-[#3d8f00]",
+    tint: "bg-mint/15 text-[#15803d]",
   },
   {
     name: "STEM Toys",

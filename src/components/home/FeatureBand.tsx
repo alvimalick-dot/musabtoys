@@ -35,7 +35,7 @@ export function FeatureBand() {
         transition={{ duration: 7, repeat: Infinity }}
       />
       <motion.div
-        className="pointer-events-none absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-sky/20 blur-3xl"
+        className="pointer-events-none absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-sky/25 blur-3xl"
         animate={{ scale: [1.15, 1, 1.15], x: [0, 20, 0] }}
         transition={{ duration: 9, repeat: Infinity }}
       />

@@ -6,7 +6,7 @@ export function Footer() {
       {/* Changed py-14 to pt-8 pb-28 (and sm:pt-10) to reduce the inner top space */}
       <div className="mx-auto grid max-w-7xl gap-10 px-4 pt-8 pb-28 sm:px-6 sm:pt-10 md:grid-cols-3 md:pb-14">
         <div>
-          <p className="font-display text-2xl font-semibold">Karachi Toy Shop</p>
+          <p className="font-display text-2xl font-semibold">Karachi Toys</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
             Thousands of toys for every age — from PKR 100 finds to premium
             playsets. Cash on Delivery across Karachi and beyond.

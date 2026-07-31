@@ -11,7 +11,7 @@ export function Hero() {
       <div className="noise-overlay pointer-events-none absolute inset-0" />
 
       <motion.div
-        className="pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full bg-sun/40 blur-3xl"
+        className="pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full bg-coral/30 blur-3xl"
         animate={{ y: [0, 30, 0], x: [0, 20, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
