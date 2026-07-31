@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
+import { put } from "@vercel/blob";
 import { getAdminSession } from "@/lib/auth";
 import { uploadImage } from "@/lib/cloudinary";
 
@@ -96,10 +97,26 @@ export async function POST(req: NextRequest) {
     // Normalize: resize + optimise to standard product photo
     const normalizedBuffer = await normalizeImage(rawBuffer);
 
-    // Try Cloudinary first; fallback to local if it fails
+    // 1. Vercel Blob — persistent cloud storage, survives deployments
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      try {
+        const blob = await put(`products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`, normalizedBuffer, {
+          contentType: "image/jpeg",
+          access: "public",
+        });
+        return NextResponse.json({
+          url: blob.url,
+          storage: "vercel-blob",
+        });
+      } catch (blobErr) {
+        console.warn("Vercel Blob upload failed, trying Cloudinary:", blobErr);
+        // fall through to Cloudinary below
+      }
+    }
+
+    // 2. Cloudinary — persistent cloud storage
     if (hasCloudinary()) {
       try {
-        // Cloudinary auto-resize via transformation in uploadImage
         const result = await uploadImage(normalizedBuffer, "image/jpeg");
         return NextResponse.json({
           url: result.url,
@@ -112,7 +129,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Local fallback — saves under /public/uploads
+    // 3. Local fallback — dev only; files won't persist on Vercel
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadsDir, { recursive: true });
 

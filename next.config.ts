@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**.cloudinary.com",
       },
+      {
+        protocol: "https",
+        hostname: "**.public.blob.vercel-storage.com",
+      },
     ],
     // Allow local /uploads/ images (dev mode)
     unoptimized: process.env.NODE_ENV === "development",

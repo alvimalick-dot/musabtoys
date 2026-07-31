@@ -1,3 +1,4 @@
+
 # Theme Color Update TODO
 
 ## Color Palette
@@ -180,3 +181,26 @@
 - [x] `src/app/api/upload/route.ts`: Added `maxDuration: 30`, `runtime: "nodejs"`, stricter `hasCloudinary()` check (all 3 vars validated), try/catch with local fallback on Cloudinary failure
 - [x] `src/lib/cloudinary.ts`: `uploadImage()` now accepts optional `mimeType` to build correct data URI per file type
 - [x] `next.config.ts`: Added `**.cloudinary.com` wildcard pattern + `unoptimized: true` in dev mode for local uploads
+
+## Round 8: Vercel Blob Storage + Image Normalization
+
+### Problem: Uploads don't persist on Vercel
+- [x] Root cause: Vercel filesystem is **ephemeral** — files written to `public/uploads/` at runtime are wiped on redeploy and never reach Git
+- [x] Images show on localhost but show broken image icons on Vercel after deployment
+
+### Fix: Persistent cloud storage with Vercel Blob
+- [x] Installed `@vercel/blob` package
+- [x] Updated `src/app/api/upload/route.ts` upload flow to try in order:
+  1. **Vercel Blob** (`BLOB_READ_WRITE_TOKEN` set) — persistent, survives deployments
+  2. **Cloudinary** (real credentials) — persistent cloud fallback
+  3. **Local `/public/uploads/`** — dev-only last resort
+- [x] `next.config.ts`: added `**.public.blob.vercel-storage.com` image pattern
+- [x] Created `BLOB_SETUP.md` with step-by-step Vercel Blob configuration guide
+
+### Image Normalization (any image uploads look organized)
+- [x] Installed `sharp` for server-side image processing
+- [x] All uploads auto-resized to fit 1200×1200 box (preserves aspect ratio, no upscaling)
+- [x] Converted to optimized JPEG (85% quality, mozjpeg)
+- [x] EXIF metadata stripped
+- [x] Results: uniform product photos, faster loads, no broken layout from huge images
+
