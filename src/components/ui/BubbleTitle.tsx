@@ -13,6 +13,10 @@ type BubbleTitleProps = {
   colorClass?: string;
   /** For "logo" variant — palette used for per-letter colors. */
   palette?: string[];
+  /** Gentle idle bob on the whole wordmark (default true for logo variant). */
+  animate?: boolean;
+  /** Playful alternating tilt per letter (default true for logo variant). */
+  tilt?: boolean;
 };
 
 const DEFAULT_PALETTE = [
@@ -22,19 +26,24 @@ const DEFAULT_PALETTE = [
   "linear-gradient(180deg, #fdba74 0%, #f97316 45%, #ea580c 100%)", // orange
 ];
 
+const TILTS = [-3, 2.5, -2, 3, -2.5, 2];
+
 export function BubbleTitle({
   children,
   variant = "standard",
   className,
   colorClass = "text-slate-800",
   palette = DEFAULT_PALETTE,
+  animate = true,
+  tilt = true,
 }: BubbleTitleProps) {
   if (variant === "logo") {
     const letters = children.split("");
     return (
       <span
         className={cn(
-          "font-display font-semibold select-none whitespace-nowrap",
+          "bubble-title-hover font-display font-semibold select-none whitespace-nowrap",
+          animate && "kt-bubble-idle",
           className
         )}
         aria-label={children}
@@ -45,13 +54,19 @@ export function BubbleTitle({
           if (letter === " ") {
             return <span key={i}>&nbsp;</span>;
           }
+          const letterTilt = tilt ? TILTS[i % TILTS.length] : 0;
           return (
             <span
               key={i}
               className="bubble-gel-letter"
-              style={{
-                backgroundImage: palette[i % palette.length],
-              }}
+              style={
+                {
+                  backgroundImage: palette[i % palette.length],
+                  // Staggered bounce-in + per-letter tilt
+                  animationDelay: `${i * 0.07}s`,
+                  "--tilt": `${letterTilt}deg`,
+                } as React.CSSProperties
+              }
             >
               {letter}
             </span>

@@ -87,10 +87,56 @@ textarea:focus-visible {
   color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-stroke: 0.06em #ffffff;
-  text-stroke: 0.06em #ffffff;
-  filter: drop-shadow(0 0.07em 0 rgba(0, 0, 0, 0.3))
-    drop-shadow(0 0.18em 0.12em rgba(0, 0, 0, 0.22));
+  -webkit-text-stroke: 0.07em #ffffff;
+  text-stroke: 0.07em #ffffff;
+  filter: drop-shadow(0 0.05em 0 rgba(0, 0, 0, 0.26))
+    drop-shadow(0 0.1em 0.06em rgba(0, 0, 0, 0.14))
+    drop-shadow(0 0.22em 0.18em rgba(0, 0, 0, 0.18));
+  transform-origin: 50% 85%;
+  will-change: transform;
+}
+
+/* Entrance: each letter bounces in with a little wobble (staggered via inline delay) */
+@keyframes kt-bubble-bounce {
+  0% {
+    opacity: 0;
+    transform: translateY(0.9em) scale(0.6) rotate(calc(var(--tilt, 0deg) - 8deg));
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-0.14em) scale(1.08) rotate(calc(var(--tilt, 0deg) + 3deg));
+  }
+  75% {
+    transform: translateY(0.04em) scale(0.98) rotate(calc(var(--tilt, 0deg) - 1deg));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(var(--tilt, 0deg));
+  }
+}
+.bubble-gel-letter {
+  animation: kt-bubble-bounce 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Gentle idle bob for the whole wordmark */
+@keyframes kt-bubble-idle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-0.1em) rotate(-0.6deg);
+  }
+}
+.kt-bubble-idle {
+  display: inline-block;
+  animation: kt-bubble-idle 4.2s ease-in-out infinite;
+}
+
+/* Hover: letters lift playfully */
+.bubble-title-hover:hover .bubble-gel-letter {
+  transform: translateY(-0.12em) scale(1.04);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .toy-grid-bg {

@@ -158,3 +158,12 @@
 ### Integration
 - [x] Hero.tsx: "Karachi" uses standard variant (dark ink), "Toys" uses logo/gel variant
 - [x] ProductCard.tsx: product names use `BubbleTitle variant="standard"` (heavy dark-slate title)
+
+### Font Enhancements (Round 7b — "make fonts more cool")
+- [x] **Bounce entrance animation** — each letter bounces in from below with a wobble (staggered by 0.07s per letter, 1.5s cubic-bezier spring)
+- [x] **Per-letter tilt** — alternating -3° / +2.5° / -2° / +3° tilt per letter for playful hand-lettered feel
+- [x] **Idle bob** — entire wordmark gently floats up/down + rocks (-0.6°) in a slow 4.2s loop
+- [x] **Hover lift** — hovering the wordmark makes all letters bounce up 0.12em and scale 1.04x
+- [x] **Thicker white stroke** — 0.07em (was 0.06em) for more prominent 3D gel outline
+- [x] **Layered drop-shadows** — 3 layers: tight hard shadow + mid soft + deep wide blur for depth
+- [x] **`will-change: transform`** — GPU-accelerated rendering for smooth animations
