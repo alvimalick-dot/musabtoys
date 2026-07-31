@@ -81,3 +81,19 @@
 - [x] Updated all hardcoded CSS color references (shadows, gradients, focus rings, shimmer)
 - [x] Added `--sun-deep` CSS variable
 - [x] Updated CategoryStrip hardcoded hex colors to use theme tokens
+
+## Round 4: Skin-tone BG + Gold Accent + Silver
+
+- [x] Changed bg → warm skin tone `#fef6ed`
+- [x] Changed bg-deep → deeper skin tone `#fde8d4`
+- [x] Changed sky → gold `#d4a017` (premium secondary accent)
+- [x] Changed sky-deep → dark gold `#b8860b`
+- [x] Replaced all `#f3e8ff` → `#fde8d4` (skin tone)
+- [x] Replaced all `#faf5ff` → `#fef6ed` (skin tone)
+- [x] Replaced `#e9d5ff` border → `#f6d9c4` (skin-tone border)
+- [x] Replaced CtaBanner gradient via-color `#a855f7` → `#f97316` (orange)
+- [x] Updated ProductCard glow palette to match new theme colors
+- [x] Updated shimmer gradient to skin tones
+- [x] Updated toy-grid-bg gradient to skin tones + gold overlay
+- [x] Updated all focus ring rgba values to gold `rgba(212, 160, 23, ...)`
+- [x] Fixed CtaBanner indentation

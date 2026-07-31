@@ -148,7 +148,7 @@ export function TrackForm({
           </p>
 
           {(order.trackingNumber || order.courierName) && (
-            <div className="mt-4 rounded-xl bg-[#faf5ff] px-4 py-3 text-sm">
+            <div className="mt-4 rounded-xl bg-[#fef6ed] px-4 py-3 text-sm">
               <p className="font-bold text-ink">Courier tracking</p>
               {order.courierName && (
                 <p className="mt-1 text-muted">Courier: {order.courierName}</p>

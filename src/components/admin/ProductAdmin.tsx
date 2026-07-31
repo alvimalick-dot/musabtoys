@@ -396,7 +396,7 @@ export function ProductAdmin() {
             />
           </div>
 
-          <div className="sm:col-span-2 rounded-2xl border-2 border-dashed border-black/10 bg-[#faf5ff] p-4">
+          <div className="sm:col-span-2 rounded-2xl border-2 border-dashed border-black/10 bg-[#fef6ed] p-4">
             <p className="text-xs font-bold uppercase tracking-wider text-muted">
               Product photos
             </p>
@@ -499,7 +499,7 @@ export function ProductAdmin() {
           {products.map((p) => (
             <div
               key={p._id}
-              className="flex flex-col gap-3 rounded-xl bg-[#faf5ff] p-3 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-3 rounded-xl bg-[#fef6ed] p-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0">
                 <p className="truncate font-semibold">{p.name}</p>

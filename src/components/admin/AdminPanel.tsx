@@ -305,7 +305,7 @@ export function AdminPanel() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl bg-[#f3e8ff] px-5 py-4 text-sm">
+          <div className="mt-6 rounded-2xl bg-[#fde8d4] px-5 py-4 text-sm">
             <p className="font-bold text-ink">Photos via Excel (easy way)</p>
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted">
               <li>
@@ -327,7 +327,7 @@ export function AdminPanel() {
             </ol>
           </div>
 
-          <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/10 bg-[#faf5ff] px-6 py-14 transition hover:border-coral">
+          <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/10 bg-[#fef6ed] px-6 py-14 transition hover:border-coral">
             <Upload className="h-8 w-8 text-coral" />
             <span className="mt-3 font-bold">
               {uploadBusy ? "Uploading…" : "Choose Excel file"}
@@ -437,7 +437,7 @@ export function AdminPanel() {
                       className={`rounded-full px-3 py-1.5 text-xs font-bold capitalize ${
                         order.status === status
                           ? "bg-ink text-white"
-                          : "bg-[#faf5ff] text-ink"
+                          : "bg-[#fef6ed] text-ink"
                       }`}
                     >
                       {status}

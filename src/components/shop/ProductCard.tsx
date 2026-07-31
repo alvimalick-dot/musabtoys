@@ -18,7 +18,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
   const [glowColor, setGlowColor] = useState<string | null>(null);
 
   const activateGlow = () => {
-    const palette = ["#ec4899", "#8b5cf6", "#f43f5e", "#22c55e", "#a855f7", "#e11d48"];
+    const palette = ["#e11d48", "#d4a017", "#0891b2", "#22c55e", "#f97316", "#be123c"];
     const nextColor = palette[Math.floor(Math.random() * palette.length)];
     setGlowColor(nextColor);
   };
@@ -40,9 +40,9 @@ export function ProductCard({ product }: { product: ProductDTO }) {
             }
           : undefined
       }
-      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-[#e9d5ff] bg-white transition-all duration-300 hover:-translate-y-0.5"
+      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-[#f6d9c4] bg-white transition-all duration-300 hover:-translate-y-0.5"
     >
-      <div className="relative aspect-square bg-[#f3e8ff]">
+      <div className="relative aspect-square bg-[#fde8d4]">
         <Link href={`/product/${product.slug}`} className="absolute inset-0 block">
           {image ? (
             <Image

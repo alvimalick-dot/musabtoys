@@ -98,7 +98,7 @@ export function CartDrawer() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35 }}
                 >
-                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-[#f3e8ff] text-coral">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-[#fde8d4] text-coral">
                     <ShoppingBag className="h-8 w-8" />
                   </div>
                   <p className="mt-5 font-display text-2xl">Cart is empty</p>
@@ -124,7 +124,7 @@ export function CartDrawer() {
                           stiffness: 380,
                           damping: 32,
                         }}
-                        className="flex gap-3 rounded-2xl bg-[#faf5ff] p-3"
+                        className="flex gap-3 rounded-2xl bg-[#fef6ed] p-3"
                       >
                         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white">
                           {item.image ? (

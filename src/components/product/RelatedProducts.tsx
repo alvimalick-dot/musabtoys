@@ -22,7 +22,7 @@ export function RelatedProducts({ products }: { products: ProductDTO[] }) {
               href={`/product/${p.slug}`}
               className="min-w-[160px] max-w-[200px] shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:min-w-[200px] sm:max-w-[220px]"
             >
-              <div className="relative aspect-square bg-[#f3e8ff]">
+              <div className="relative aspect-square bg-[#fde8d4]">
                 {p.images?.[0] ? (
                   <Image
                     src={p.images[0]}

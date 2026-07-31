@@ -31,7 +31,7 @@ export default function WishlistPage() {
               key={item.productId}
               className="flex flex-wrap items-center gap-4 rounded-2xl bg-white p-4 ring-1 ring-black/5"
             >
-              <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-[#f3e8ff]">
+              <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-[#fde8d4]">
                 {item.image ? (
                   <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
                 ) : (
