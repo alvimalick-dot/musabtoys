@@ -197,14 +197,15 @@ export function ShopClient() {
         </p>
       </div>
 
-      <form onSubmit={onSearch} className="mb-6 flex flex-col gap-3 sm:flex-row">
+<form onSubmit={onSearch} className="mb-6 flex flex-col gap-3 sm:flex-row">
         <div className="relative min-w-0 flex-1">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search toys, brands, SKUs…"
-            className="input-field pl-11"
+            className="input-field"
+            style={{ paddingLeft: "2.75rem" }}
           />
         </div>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto">

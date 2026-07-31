@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #faf5ff;
-  --bg-deep: #f3e8ff;
+  --bg: #fef6ed;
+  --bg-deep: #fde8d4;
   --ink: #1a1530;
   --ink-muted: #5c5670;
-  --coral: #ec4899;
-  --coral-deep: #db2777;
-  --sky: #8b5cf6;
-  --sky-deep: #7c3aed;
-  --sun: #f43f5e;
+  --coral: #e11d48;
+  --coral-deep: #be123c;
+  --sky: #d4a017;
+  --sky-deep: #b8860b;
+  --sun: #0891b2;
+  --sun-deep: #0e7490;
   --mint: #22c55e;
   --surface: #ffffff;
-  --ring: rgba(236, 72, 153, 0.35);
+  --ring: rgba(225, 29, 72, 0.35);
 }
 
 @theme inline {
@@ -23,6 +24,7 @@
   --color-sky: var(--sky);
   --color-sky-deep: var(--sky-deep);
   --color-sun: var(--sun);
+  --color-sun-deep: var(--sun-deep);
   --color-mint: var(--mint);
   --color-ink: var(--ink);
   --color-muted: var(--ink-muted);
@@ -64,7 +66,7 @@ video {
 /* Global focus ring — keyboard only, keeps mouse clean */
 :where(a, button, [role="button"], input, select, textarea):focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.35);
+  box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.35);
   border-radius: 999px;
 }
 input:focus-visible,
@@ -80,10 +82,10 @@ textarea:focus-visible {
 .toy-grid-bg {
   background-color: var(--bg);
   background-image:
-    radial-gradient(circle at 12% 18%, rgba(244, 63, 94, 0.18), transparent 32%),
-    radial-gradient(circle at 88% 12%, rgba(139, 92, 246, 0.15), transparent 34%),
-    radial-gradient(circle at 70% 78%, rgba(236, 72, 153, 0.12), transparent 40%),
-    linear-gradient(180deg, #faf5ff 0%, #f3e8ff 55%, #ede9fe 100%);
+    radial-gradient(circle at 12% 18%, rgba(225, 29, 72, 0.12), transparent 32%),
+    radial-gradient(circle at 88% 12%, rgba(212, 160, 23, 0.1), transparent 34%),
+    radial-gradient(circle at 70% 78%, rgba(8, 145, 178, 0.08), transparent 40%),
+    linear-gradient(180deg, #fef6ed 0%, #fde8d4 55%, #fce4c8 100%);
 }
 
 .noise-overlay {
@@ -110,8 +112,8 @@ textarea:focus-visible {
     box-shadow 0.25s ease,
     filter 0.2s ease;
   box-shadow:
-    0 10px 24px -6px rgba(236, 72, 153, 0.5),
-    0 2px 4px rgba(219, 39, 119, 0.25),
+    0 10px 24px -6px rgba(225, 29, 72, 0.5),
+    0 2px 4px rgba(190, 18, 60, 0.25),
     inset 0 -2px 0 rgba(0, 0, 0, 0.08);
   will-change: transform;
 }
@@ -120,15 +122,15 @@ textarea:focus-visible {
   background: var(--coral-deep);
   transform: translateY(-2px);
   box-shadow:
-    0 16px 30px -6px rgba(236, 72, 153, 0.55),
-    0 4px 8px rgba(219, 39, 119, 0.28),
+    0 16px 30px -6px rgba(225, 29, 72, 0.55),
+    0 4px 8px rgba(190, 18, 60, 0.28),
     inset 0 -2px 0 rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:active {
   transform: translateY(0);
   box-shadow:
-    0 4px 10px -2px rgba(236, 72, 153, 0.5),
+    0 4px 10px -2px rgba(225, 29, 72, 0.5),
     inset 0 3px 6px rgba(0, 0, 0, 0.18);
   filter: brightness(0.98);
 }
@@ -136,7 +138,7 @@ textarea:focus-visible {
 .btn-primary:disabled,
 .btn-primary[disabled] {
   transform: none;
-  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.15);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
   filter: grayscale(0.2);
 }
 
@@ -175,7 +177,7 @@ textarea:focus-visible {
 .btn-secondary:hover {
   transform: translateY(-2px);
   border-color: var(--sky);
-  box-shadow: 0 10px 24px -12px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 10px 24px -12px rgba(212, 160, 23, 0.5);
 }
 
 .btn-secondary:active {
@@ -192,7 +194,10 @@ textarea:focus-visible {
   border: 2px solid rgba(26, 21, 48, 0.08);
   background: white;
   border-radius: 1rem;
-  padding: 0.75rem 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -207,7 +212,7 @@ select.input-field {
 
 .input-field:focus {
   border-color: var(--sky);
-  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 0 0 4px rgba(212, 160, 23, 0.15);
 }
 
 /* ------------------------------------------------------------------
@@ -245,9 +250,9 @@ select.input-field {
 .kt-shimmer {
   background: linear-gradient(
     90deg,
-    #f3e8ff 0%,
-    #faf5ff 50%,
-    #f3e8ff 100%
+    #fde8d4 0%,
+    #fef6ed 50%,
+    #fde8d4 100%
   );
   background-size: 800px 100%;
   animation: kt-shimmer 1.6s ease-in-out infinite;

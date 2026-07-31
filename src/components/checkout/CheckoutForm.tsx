@@ -29,6 +29,15 @@ export function CheckoutForm() {
   const { items, subtotal, clearCart } = useCartStore();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount: number;
+    type: string;
+    value: number;
+  } | null>(null);
+  const [couponMsg, setCouponMsg] = useState<string | null>(null);
+  const [couponBusy, setCouponBusy] = useState(false);
   const onlineEnabled =
     process.env.NEXT_PUBLIC_ENABLE_ONLINE_PAYMENTS === "true";
 
@@ -43,8 +52,52 @@ export function CheckoutForm() {
     defaultValues: { city: "Karachi" },
   });
 
-  const shipping = calcShipping(subtotal());
-  const total = subtotal() + shipping;
+  const sub = subtotal();
+  const shipping = calcShipping(sub);
+  const discount = appliedCoupon?.discount ?? 0;
+  const total = Math.max(0, sub - discount) + shipping;
+
+  async function applyCoupon() {
+    const code = couponInput.trim();
+    if (!code) {
+      setCouponMsg("Enter a coupon code first");
+      return;
+    }
+    setCouponBusy(true);
+    setCouponMsg(null);
+    try {
+      const res = await fetch("/api/coupons", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, subtotal: sub }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Invalid coupon");
+      setAppliedCoupon({
+        code: data.code,
+        discount: data.discount,
+        type: data.type,
+        value: data.value,
+      });
+      setCouponInput("");
+      setCouponMsg(
+        `✓ Coupon ${data.code} applied — ${formatPKR(data.discount)} off`
+      );
+    } catch (err) {
+      setAppliedCoupon(null);
+      setCouponMsg(
+        err instanceof Error ? err.message : "Could not apply coupon"
+      );
+    } finally {
+      setCouponBusy(false);
+    }
+  }
+
+  function removeCoupon() {
+    setAppliedCoupon(null);
+    setCouponMsg(null);
+    setCouponInput("");
+  }
 
   async function lookupPhone() {
     const phone = getValues("phone");
@@ -99,14 +152,16 @@ export function CheckoutForm() {
         throw new Error(bad?.error || "Cart items are no longer available");
       }
 
-      let discount = 0;
-      let couponCode: string | undefined;
-      const coupon = values.coupon?.trim();
-      if (coupon) {
+      let discount = appliedCoupon?.discount ?? 0;
+      let couponCode = appliedCoupon?.code;
+
+      // If a code was typed but not applied yet, apply it now (server-side validation)
+      const typedCoupon = couponInput.trim();
+      if (typedCoupon && typedCoupon.toUpperCase() !== (appliedCoupon?.code || "").toUpperCase()) {
         const cRes = await fetch("/api/coupons", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code: coupon, subtotal: validated.subtotal }),
+          body: JSON.stringify({ code: typedCoupon, subtotal: validated.subtotal }),
         });
         const cData = await cRes.json();
         if (!cRes.ok) throw new Error(cData.error || "Invalid coupon");
@@ -114,6 +169,9 @@ export function CheckoutForm() {
         couponCode = cData.code;
         toast.success(`Coupon applied — ${formatPKR(discount)} off`);
       }
+
+      // Guard: discount can never exceed validated subtotal
+      discount = Math.min(discount, validated.subtotal);
 
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -196,8 +254,43 @@ export function CheckoutForm() {
           <Field label="Area / landmark">
             <input className="input-field" {...register("area")} />
           </Field>
-          <Field label="Coupon code (optional)" className="sm:col-span-2">
-            <input className="input-field" placeholder="EID500" {...register("coupon")} />
+          <Field label="Coupon code" className="sm:col-span-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <input
+                className="input-field min-w-0 flex-1"
+                placeholder="EID500"
+                value={appliedCoupon ? appliedCoupon.code : couponInput}
+                disabled={!!appliedCoupon}
+                onChange={(e) => setCouponInput(e.target.value)}
+              />
+              {appliedCoupon ? (
+                <button
+                  type="button"
+                  className="btn-secondary min-h-11 shrink-0"
+                  onClick={removeCoupon}
+                >
+                  Remove
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-primary min-h-11 shrink-0"
+                  disabled={couponBusy}
+                  onClick={applyCoupon}
+                >
+                  {couponBusy ? "Applying…" : "Apply"}
+                </button>
+              )}
+            </div>
+            {couponMsg && (
+              <p
+                className={`mt-2 text-sm font-semibold ${
+                  appliedCoupon ? "text-mint" : "text-coral-deep"
+                }`}
+              >
+                {couponMsg}
+              </p>
+            )}
           </Field>
           <Field label="Notes" className="sm:col-span-2">
             <textarea className="input-field" rows={3} {...register("notes")} />
@@ -253,7 +346,11 @@ export function CheckoutForm() {
           disabled={loading || !items.length}
           className="btn-primary min-h-12 w-full sm:w-auto"
         >
-          {loading ? "Placing order…" : `Place order · ${formatPKR(total)}`}
+          {loading
+            ? "Placing order…"
+            : `Place order · ${formatPKR(total)}${
+                discount > 0 ? ` (was ${formatPKR(sub + shipping)})` : ""
+              }`}
         </button>
       </form>
 
@@ -278,8 +375,20 @@ export function CheckoutForm() {
         <div className="mt-6 space-y-2 border-t border-black/5 pt-4 text-sm">
           <div className="flex justify-between">
             <span className="text-muted">Subtotal</span>
-            <span>{formatPKR(subtotal())}</span>
+            <span>{formatPKR(sub)}</span>
           </div>
+          {discount > 0 && appliedCoupon && (
+            <div className="flex justify-between text-mint">
+              <span>
+                Coupon {appliedCoupon.code} (−
+                {appliedCoupon.type === "percent"
+                  ? `${appliedCoupon.value}%`
+                  : formatPKR(appliedCoupon.value)}
+                )
+              </span>
+              <span>−{formatPKR(discount)}</span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-muted">Shipping</span>
             <span>{shipping === 0 ? "Free" : formatPKR(shipping)}</span>

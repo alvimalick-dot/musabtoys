@@ -1,11 +1,22 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 
 export function Hero() {
-  // Removed min-h-[calc(100vh-4rem)] and added py-20 to reduce height
+  const router = useRouter();
+  const [searchQ, setSearchQ] = useState("");
+
+  function onSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const q = searchQ.trim();
+    if (q) router.push(`/shop?q=${encodeURIComponent(q)}`);
+    else router.push("/shop");
+  }
+
   return (
     <section className="relative overflow-hidden py-8 sm:py-10 toy-grid-bg">
       <div className="noise-overlay pointer-events-none absolute inset-0" />
@@ -21,38 +32,57 @@ export function Hero() {
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Reduced width to max-w-5xl and used justify-center to bring items closer */}
       <div className="relative mx-auto flex max-w-5xl flex-col lg:flex-row lg:items-center justify-center gap-10 lg:gap-16 px-4 sm:px-6">
         
         {/* Left Side: Title */}
-      <div>
-  <motion.p
-    // Added whitespace-nowrap here
-    className="whitespace-nowrap font-display text-4xl leading-[0.95] tracking-tight text-ink min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
-    initial={{ opacity: 0, y: 40 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-  >
-    Karachi
-    <span className="relative inline-block text-coral">
-      Toys
-      <motion.span
-        aria-hidden
-        className="absolute -bottom-1 left-0 right-0 h-1.5 origin-left rounded-full bg-sun/70 sm:-bottom-2 sm:h-2.5"
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ delay: 0.55, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      />
-    </span>
-  </motion.p>
-</div>
+        <div>
+          <motion.p
+            className="whitespace-nowrap font-display text-4xl leading-[0.95] tracking-tight text-ink min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            Karachi
+            <span className="relative inline-block text-coral">
+              Toys
+              <motion.span
+                aria-hidden
+                className="absolute -bottom-1 left-0 right-0 h-1.5 origin-left rounded-full bg-sun/70 sm:-bottom-2 sm:h-2.5"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.55, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </span>
+          </motion.p>
+        </div>
 
-        {/* Right Side: Description and Buttons */}
+        {/* Right Side: Search + CTA */}
         <div className="flex flex-col justify-center max-w-md">
-
+          <motion.form
+            onSubmit={onSearch}
+            className="relative w-full"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.55 }}
+          >
+<Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+            <input
+              value={searchQ}
+              onChange={(e) => setSearchQ(e.target.value)}
+              
+              className="input-field h-14 w-full rounded-full pr-4 text-base shadow-md"
+              style={{ paddingLeft: "2.75rem" }}
+            />
+            <button
+              type="submit"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-coral px-5 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-coral-deep"
+            >
+              Search
+            </button>
+          </motion.form>
 
           <motion.div
-            className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+            className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.55 }}
