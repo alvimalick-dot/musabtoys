@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const product = await Product.findOne({ slug }).lean();
     if (!product) return { title: "Product not found" };
 
-    const title = `${product.name} — Buy Online in Karachi`;
+    const title = `${product.name} — Buy Online in Multan`;
     const description =
       product.description?.slice(0, 155) ||
       `Buy ${product.name} online from Karachi Toy Shop. ${product.brand} · ${product.ageGroup}. Cash on Delivery available.`;
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         product.name,
         product.brand,
         product.category,
-        "toys Karachi",
+        "toys Multan",
         "buy online Pakistan",
       ],
       alternates: { canonical: url },

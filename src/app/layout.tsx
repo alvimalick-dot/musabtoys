@@ -27,21 +27,21 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Karachi Toy Shop | Buy Toys Online in Karachi — Cash on Delivery",
+    default: "Karachi Toy Shop | Buy Toys Online — Cash on Delivery",
     template: "%s | Karachi Toy Shop",
   },
   description:
-    "Buy toys online in Karachi. Thousands of toys for every age. Cash on Delivery across Pakistan. From PKR 100 to 150,000+.",
+    "Buy toys online from Karachi Toy Shop. Thousands of toys for every age. Cash on Delivery across Pakistan. From PKR 100 to 150,000+.",
   keywords: [
-    "toys in Karachi",
+    "toys online Pakistan",
     "buy toys online Pakistan",
     "Karachi toy shop",
-    "kids toys Karachi",
-    "toys COD Karachi",
+    "kids toys online",
+    "toys COD Pakistan",
     "Cash on Delivery toys",
     "baby toys Pakistan",
-    "STEM toys Karachi",
-    "RC cars Karachi",
+    "STEM toys online",
+    "RC cars Pakistan",
     "toy store Pakistan",
   ],
   authors: [{ name: "Karachi Toy Shop" }],
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     locale: "en_PK",
     url: siteUrl,
     siteName: "Karachi Toy Shop",
-    title: "Karachi Toy Shop | Buy Toys Online in Karachi",
+    title: "Karachi Toy Shop | Buy Toys Online",
     description:
       "Thousands of toys for every age. Cash on Delivery across Pakistan. From PKR 100 to 150,000+.",
     images: [
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Karachi Toy Shop | Buy Toys Online in Karachi",
+    title: "Karachi Toy Shop | Buy Toys Online",
     description:
       "Thousands of toys for every age. Cash on Delivery across Pakistan.",
     images: ["/og-image.svg"],
@@ -94,11 +94,11 @@ const orgJsonLd = {
   name: "Karachi Toy Shop",
   url: siteUrl,
   description:
-    "Online toy store in Karachi offering thousands of toys with Cash on Delivery.",
+    "Online toy store from Multan offering thousands of toys with Cash on Delivery across Pakistan.",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Karachi",
-    addressRegion: "Sindh",
+    addressLocality: "Multan",
+    addressRegion: "Punjab",
     addressCountry: "PK",
   },
   areaServed: {

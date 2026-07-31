@@ -4,17 +4,17 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "FAQ · Delivery & Returns",
   description:
-    "Delivery, Cash on Delivery, returns and replacement policy for Karachi Toy Shop.",
+    "Delivery, Cash on Delivery, returns and replacement policy for Karachi Toy Shop — delivered from Multan.",
 };
 
 const faqs = [
   {
     q: "Do you offer Cash on Delivery?",
-    a: "Yes. COD is our primary payment method across Karachi and major cities in Pakistan. Pay when your order arrives.",
+    a: "Yes. COD is our primary payment method across Multan and major cities in Pakistan. Pay when your order arrives.",
   },
   {
     q: "How long does delivery take?",
-    a: "Karachi orders usually arrive in 1–3 working days. Other cities typically take 3–7 working days depending on courier availability.",
+    a: "Multan orders usually arrive in 1–3 working days. Other cities typically take 3–7 working days depending on courier availability.",
   },
   {
     q: "Is shipping free?",

@@ -44,7 +44,7 @@ export function FeatureBand() {
           Why shop with us
         </p>
         <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-          Built for Karachi families who want playtime, not hassle
+          Built for families who want playtime, not hassle
         </h2>
 
         <motion.div

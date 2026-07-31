@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
           name: customer.name,
           email: customer.email || "",
           address: def?.address || "",
-          city: def?.city || "Karachi",
+          city: def?.city || "Multan",
           area: def?.area || "",
         },
       });

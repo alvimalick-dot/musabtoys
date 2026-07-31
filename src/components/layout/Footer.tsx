@@ -9,7 +9,7 @@ export function Footer() {
           <p className="font-display text-2xl font-semibold">Karachi Toys</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
             Thousands of toys for every age — from PKR 100 finds to premium
-            playsets. Cash on Delivery across Karachi and beyond.
+            playsets. Cash on Delivery across Pakistan.
           </p>
         </div>
         <div>

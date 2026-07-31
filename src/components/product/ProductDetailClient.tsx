@@ -124,7 +124,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
             <span className="text-muted"> · Age: {product.ageGroup}</span>
           </p>
           <p className="mt-2 text-sm text-muted">
-            Karachi usually 1–3 days · COD available · Pay when it arrives
+            Usually 1–3 days · COD available · Pay when it arrives
           </p>
 
           <div className="mt-4 flex flex-wrap gap-2">

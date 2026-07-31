@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";
 import { calcShipping, FREE_SHIPPING_THRESHOLD } from "@/lib/commerce";
+import { CitySelect } from "@/components/ui/CitySelect";
 import type { PaymentMethod } from "@/types";
 
 const formSchema = z.object({
@@ -49,7 +50,7 @@ export function CheckoutForm() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { city: "Karachi" },
+    defaultValues: { city: "Multan" },
   });
 
   const sub = subtotal();
@@ -249,7 +250,11 @@ export function CheckoutForm() {
             <input className="input-field" {...register("address")} />
           </Field>
           <Field label="City" error={errors.city?.message}>
-            <input className="input-field" {...register("city")} />
+            <CitySelect
+              value={getValues("city")}
+              onChange={(v) => setValue("city", v, { shouldValidate: true })}
+              error={errors.city?.message}
+            />
           </Field>
           <Field label="Area / landmark">
             <input className="input-field" {...register("area")} />

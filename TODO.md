@@ -121,3 +121,24 @@
 - [x] Account page: "Rate your toys" links shown for delivered orders
 - [x] ProductReviews: added `id="reviews"` + `scroll-mt-24` anchor
 - [x] AdminPanel: "✓ Feedback email sent" indicator on delivered orders
+
+## Round 6: Multan Location Migration + Pakistan City Selector
+
+### Pakistan-wide City Selector at Checkout
+- [x] Created `src/components/ui/CitySelect.tsx` — full A–Z list of Pakistan cities
+- [x] Typeable combobox: search/filter as you type, select from dropdown, or type a custom city
+- [x] Enter-to-select when exactly one match; Escape closes; outside-click closes
+- [x] CheckoutForm: replaced plain city input with CitySelect; default city now "Multan"
+- [x] react-hook-form integration via `setValue("city", v, { shouldValidate: true })`
+
+### Location Copy: Karachi → Multan (brand stays "Karachi Toy Shop")
+- [x] layout.tsx: metadata title/description/keywords de-localized; JSON-LD address → Multan, Punjab
+- [x] page.tsx (home): metadata de-localized
+- [x] shop/page.tsx: metadata → "Shop Toys Online in Multan", keywords "toys Multan"
+- [x] product/[slug]/page.tsx: metadata title "Buy Online in Multan", keyword "toys Multan"
+- [x] ProductDetailClient.tsx: "Karachi usually 1–3 days" → "Usually 1–3 days"
+- [x] FeatureBand.tsx: "Built for Karachi families" → "Built for families"
+- [x] Footer.tsx: "across Karachi and beyond" → "across Pakistan"
+- [x] faq/page.tsx: FAQ answers → Multan-centric delivery times
+- [x] api/checkout/lookup/route.ts: default fallback city "Multan"
+- [x] Kept "Karachi" only where it's the brand name, a city in the picker, or product brand "SpeedKarachi"
