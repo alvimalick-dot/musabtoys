@@ -9,6 +9,7 @@ import { formatPKR } from "@/lib/utils";
 import { toast } from "sonner";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
+import { BubbleTitle } from "@/components/ui/BubbleTitle";
 
 export function ProductCard({ product }: { product: ProductDTO }) {
   const addItem = useCartStore((s) => s.addItem);
@@ -111,7 +112,9 @@ export function ProductCard({ product }: { product: ProductDTO }) {
           href={`/product/${product.slug}`}
           className="mt-1 line-clamp-2 min-w-0 font-display text-sm font-semibold leading-snug hover:text-coral sm:text-base"
         >
-          {product.name}
+          <BubbleTitle variant="standard" colorClass="text-slate-800">
+            {product.name}
+          </BubbleTitle>
         </Link>
         <div className="mt-2 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="text-base font-bold text-coral sm:text-lg">

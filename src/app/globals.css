@@ -79,6 +79,20 @@ textarea:focus-visible {
   font-family: var(--font-fredoka), var(--font-jakarta), sans-serif;
 }
 
+/* ------------------------------------------------------------------
+   Playful bubble / gel letters — used by <BubbleTitle variant="logo">
+------------------------------------------------------------------- */
+.bubble-gel-letter {
+  display: inline-block;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-stroke: 0.06em #ffffff;
+  text-stroke: 0.06em #ffffff;
+  filter: drop-shadow(0 0.07em 0 rgba(0, 0, 0, 0.3))
+    drop-shadow(0 0.18em 0.12em rgba(0, 0, 0, 0.22));
+}
+
 .toy-grid-bg {
   background-color: var(--bg);
   background-image:

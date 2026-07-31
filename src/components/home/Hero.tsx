@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Search } from "lucide-react";
+import { BubbleTitle } from "@/components/ui/BubbleTitle";
 
 export function Hero() {
   const router = useRouter();
@@ -42,17 +43,15 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            Karachi
-            <span className="relative inline-block text-coral">
+            <BubbleTitle variant="standard" colorClass="text-ink">
+              Karachi
+            </BubbleTitle>{" "}
+            <BubbleTitle
+              variant="logo"
+              className="text-4xl min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
+            >
               Toys
-              <motion.span
-                aria-hidden
-                className="absolute -bottom-1 left-0 right-0 h-1.5 origin-left rounded-full bg-sun/70 sm:-bottom-2 sm:h-2.5"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.55, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-              />
-            </span>
+            </BubbleTitle>
           </motion.p>
         </div>
 

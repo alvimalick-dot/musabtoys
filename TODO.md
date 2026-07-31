@@ -142,3 +142,19 @@
 - [x] faq/page.tsx: FAQ answers → Multan-centric delivery times
 - [x] api/checkout/lookup/route.ts: default fallback city "Multan"
 - [x] Kept "Karachi" only where it's the brand name, a city in the picker, or product brand "SpeedKarachi"
+
+## Round 7: Playful Bubble Typography — BubbleTitle component
+
+### Created `src/components/ui/BubbleTitle.tsx`
+- [x] `variant="standard"` — heavy-weight, dark slate (text-slate-800) product title using Fredoka display font
+- [x] `variant="logo"` — 3D glossy gel effect: alternating bright per-letter colors (purple/green/blue/orange)
+- [x] Gel effect uses `background-clip: text` + `-webkit-text-stroke` (thick white) + `drop-shadow` for depth
+- [x] Shiny plastic look via vertical `linear-gradient` per letter (light → saturated → dark)
+- [x] Handles spaces with `&nbsp;`, exposes `aria-label` + `role="text"` for screen readers
+
+### CSS added (`globals.css`)
+- [x] `.bubble-gel-letter` class — transparent text, white text-stroke, layered drop-shadows
+
+### Integration
+- [x] Hero.tsx: "Karachi" uses standard variant (dark ink), "Toys" uses logo/gel variant
+- [x] ProductCard.tsx: product names use `BubbleTitle variant="standard"` (heavy dark-slate title)
