@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export function Hero() {
   // Removed min-h-[calc(100vh-4rem)] and added py-20 to reduce height
@@ -57,11 +57,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.55 }}
           >
-            <Link href="/shop" className="btn-primary min-h-12 w-full justify-center sm:w-auto">
-              Shop now <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link href="/shop?newArrival=true" className="btn-secondary min-h-12 w-full justify-center sm:w-auto">
-              <Sparkles className="h-4 w-4 text-sun" /> New Arrivals
+            <Link href="/shop" className="btn-primary btn-primary-lg w-full justify-center sm:w-auto">
+              Shop now <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" />
             </Link>
           </motion.div>
         </div>

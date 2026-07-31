@@ -140,6 +140,19 @@ textarea:focus-visible {
   filter: grayscale(0.2);
 }
 
+.btn-primary-lg {
+  padding: 1.15rem 2.5rem;
+  font-size: 1.15rem;
+  gap: 0.65rem;
+}
+
+@media (min-width: 640px) {
+  .btn-primary-lg {
+    padding: 1.35rem 3rem;
+    font-size: 1.3rem;
+  }
+}
+
 .btn-secondary {
   display: inline-flex;
   align-items: center;

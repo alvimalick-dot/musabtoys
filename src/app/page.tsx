@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
+import { NewArrivalProducts } from "@/components/home/NewArrivalProducts";
 import { FeatureBand } from "@/components/home/FeatureBand";
 import { CtaBanner } from "@/components/home/CtaBanner";
 
@@ -19,7 +20,8 @@ export default function HomePage() {
     <>
       <Hero />
        <FeaturedProducts />
-       <CtaBanner />
+       <NewArrivalProducts />
+       
        <CategoryStrip />
      
         <FeatureBand />
