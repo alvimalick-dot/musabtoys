@@ -68,6 +68,14 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       }
     }
 
+    // Enforce mutual exclusivity: a product is either Featured or New Arrival
+    if (body.featured === true && body.newArrival !== true) {
+      product.newArrival = false;
+    }
+    if (body.newArrival === true && body.featured !== true) {
+      product.featured = false;
+    }
+
     await product.save(); // runs validate hook → stockStatus
 
     return NextResponse.json({ product });

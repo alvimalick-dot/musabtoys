@@ -58,23 +58,24 @@ export function ProductCard({ product }: { product: ProductDTO }) {
             </div>
           )}
         </Link>
-        {product.stockStatus === "out_of_stock" && (
+        {product.stockStatus === "out_of_stock" ? (
           <span className="pointer-events-none absolute left-2 top-2 z-10 rounded-full bg-ink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
             Sold out
           </span>
+        ) : (
+          <>
+            {(product.newArrival || product.featured) && (
+              <span className="pointer-events-none absolute left-2 top-2 z-10 rounded-full bg-sun px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink">
+                {product.newArrival ? "New" : "Featured"}
+              </span>
+            )}
+            {product.stockStatus === "low_stock" && product.stock > 0 && (
+              <span className="pointer-events-none absolute bottom-2 left-2 z-10 rounded-full bg-coral px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                Only {product.stock} left
+              </span>
+            )}
+          </>
         )}
-        {product.stockStatus === "low_stock" && (
-          <span className="pointer-events-none absolute left-2 top-2 z-10 rounded-full bg-coral px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-            Only {product.stock} left
-          </span>
-        )}
-        {(product.newArrival || product.featured) &&
-          product.stockStatus !== "out_of_stock" &&
-          product.stockStatus !== "low_stock" && (
-            <span className="pointer-events-none absolute left-2 top-2 z-10 rounded-full bg-sun px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink">
-              {product.newArrival ? "New" : "Featured"}
-            </span>
-          )}
         <button
           type="button"
           className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105"

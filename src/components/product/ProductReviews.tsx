@@ -59,7 +59,7 @@ export function ProductReviews({ slug }: { slug: string }) {
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <section id="reviews" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-display text-3xl font-semibold">Reviews</h2>

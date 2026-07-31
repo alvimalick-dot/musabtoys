@@ -24,6 +24,7 @@ type AccountData = {
     paymentMethod: string;
     createdAt?: string;
     itemCount: number;
+    items?: { name: string; slug: string }[];
   }[];
 };
 
@@ -244,6 +245,24 @@ export default function AccountPage() {
                   >
                     Track / Reorder
                   </Link>
+                  {o.status === "delivered" &&
+                    o.items &&
+                    o.items.length > 0 && (
+                      <div className="mt-1 flex flex-col items-end gap-1">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted">
+                          Rate your toys
+                        </p>
+                        {o.items.map((item) => (
+                          <Link
+                            key={item.slug}
+                            href={`/product/${item.slug}#reviews`}
+                            className="text-xs font-bold text-coral hover:underline"
+                          >
+                            {item.name} ⭐
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                 </div>
               </div>
             </li>

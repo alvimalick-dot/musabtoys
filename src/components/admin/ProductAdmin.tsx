@@ -366,7 +366,11 @@ export function ProductAdmin() {
               type="checkbox"
               checked={form.featured}
               onChange={(e) =>
-                setForm({ ...form, featured: e.target.checked })
+                setForm({
+                  ...form,
+                  featured: e.target.checked,
+                  newArrival: e.target.checked ? false : form.newArrival,
+                })
               }
             />
             Featured on homepage
@@ -376,7 +380,11 @@ export function ProductAdmin() {
               type="checkbox"
               checked={form.newArrival}
               onChange={(e) =>
-                setForm({ ...form, newArrival: e.target.checked })
+                setForm({
+                  ...form,
+                  newArrival: e.target.checked,
+                  featured: e.target.checked ? false : form.featured,
+                })
               }
             />
             New Arrival (show in New Arrivals section)
@@ -567,9 +575,31 @@ export function ProductAdmin() {
                       : "rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5"
                   }
                   disabled={busy}
-                  onClick={() => quickPatch(p._id, { newArrival: !p.newArrival })}
+                  onClick={() =>
+                    quickPatch(p._id, {
+                      newArrival: !p.newArrival,
+                      featured: !p.newArrival ? false : Boolean(p.featured),
+                    })
+                  }
                 >
                   {p.newArrival ? "★ New Arrival" : "Mark as New Arrival"}
+                </button>
+                <button
+                  type="button"
+                  className={
+                    p.featured
+                      ? "rounded-full bg-coral px-3 py-1.5 text-xs font-bold text-white"
+                      : "rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5"
+                  }
+                  disabled={busy}
+                  onClick={() =>
+                    quickPatch(p._id, {
+                      featured: !p.featured,
+                      newArrival: !p.featured ? false : Boolean(p.newArrival),
+                    })
+                  }
+                >
+                  {p.featured ? "★ Featured" : "Mark as Featured"}
                 </button>
                 <button
                   type="button"

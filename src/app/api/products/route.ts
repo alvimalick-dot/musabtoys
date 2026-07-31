@@ -138,6 +138,8 @@ export async function POST(req: NextRequest) {
     }
 
     const slug = body.slug || makeSlug(body.name);
+    const featured = Boolean(body.featured);
+    const newArrival = Boolean(body.newArrival);
     const product = await Product.create({
       name: body.name,
       slug,
@@ -150,8 +152,9 @@ export async function POST(req: NextRequest) {
       stock: Number(body.stock ?? 10),
       images: Array.isArray(body.images) ? body.images : [],
       specs: body.specs || {},
-      featured: Boolean(body.featured),
-      newArrival: Boolean(body.newArrival ?? body.featured),
+      featured,
+      // Enforce mutual exclusivity: a product is either Featured or New Arrival
+      newArrival: newArrival && !featured,
       sku: body.sku || `SKU-${Date.now()}`,
     });
 

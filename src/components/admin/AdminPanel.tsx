@@ -19,6 +19,7 @@ interface OrderRow {
   items: { name: string; quantity: number }[];
   courierName?: string;
   trackingNumber?: string;
+  feedbackRequested?: boolean;
 }
 
 export function AdminPanel() {
@@ -443,6 +444,19 @@ export function AdminPanel() {
                       {status}
                     </button>
                   ))}
+                  {order.status === "delivered" && (
+                    <span
+                      className={`rounded-full px-3 py-1.5 text-xs font-bold ${
+                        order.feedbackRequested
+                          ? "bg-mint/15 text-mint"
+                          : "bg-sun/15 text-sun-deep"
+                      }`}
+                    >
+                      {order.feedbackRequested
+                        ? "✓ Feedback email sent"
+                        : "Feedback pending"}
+                    </span>
+                  )}
                 </div>
                 <form
                   className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end"

@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
 import { getAdminSession } from "@/lib/auth";
 import { orderStatusSchema } from "@/lib/validators";
+import { sendFeedbackEmail } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,10 @@ export async function GET(req: NextRequest) {
     const status = req.nextUrl.searchParams.get("status");
     const query = status ? { status } : {};
 
-    const orders = await Order.find(query).sort({ createdAt: -1 }).lean();
+    const orders = await Order.find(query)
+      .sort({ createdAt: -1 })
+      .select("+feedbackRequested")
+      .lean();
     return NextResponse.json({ orders });
   } catch (error) {
     return NextResponse.json(
@@ -62,7 +66,30 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ order });
+    // When an order transitions to "delivered" for the first time,
+    // send a one-time feedback-request email to the customer.
+    let feedbackSent = false;
+    if (
+      parsed.status === "delivered" &&
+      !order.feedbackRequested &&
+      order.customer.email
+    ) {
+      order.feedbackRequested = true;
+      order.status = "delivered";
+      await order.save();
+
+      feedbackSent = await sendFeedbackEmail({
+        email: order.customer.email,
+        orderNumber: order.orderNumber,
+        customerName: order.customer.name,
+        items: order.items.map((i: { name: string; slug?: string }) => ({
+          name: i.name,
+          slug: i.slug,
+        })),
+      });
+    }
+
+    return NextResponse.json({ order, feedbackSent });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to update order" },

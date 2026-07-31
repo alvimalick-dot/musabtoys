@@ -97,3 +97,27 @@
 - [x] Updated toy-grid-bg gradient to skin tones + gold overlay
 - [x] Updated all focus ring rgba values to gold `rgba(212, 160, 23, ...)`
 - [x] Fixed CtaBanner indentation
+
+## Round 5: Dynamic Stock Badges + Featured/New Mutual Exclusivity + Delivered Feedback
+
+### Dynamic Low-Stock Badge
+- [x] ProductCard: "Only N left" (dynamic stock, ≤5) shows at bottom-left, below the New/Featured badge
+- [x] New/Featured badges show at top-left and no longer hide when stock is low
+- [x] "Sold out" replaces all badges when stock = 0
+- [x] Works across Featured, New Arrivals, Shop, Related, Wishlist (shared ProductCard)
+
+### Featured / New Arrival Mutual Exclusivity
+- [x] ProductAdmin form: checking "Featured" unchecks "New Arrival" and vice versa
+- [x] ProductAdmin quick buttons: "Mark as Featured" clears New Arrival, "Mark as New Arrival" clears Featured
+- [x] Server-side enforcement in POST /api/products (newArrival = newArrival && !featured)
+- [x] Server-side enforcement in PATCH /api/products/[id] (mutual exclusivity on save)
+
+### Delivered-Order Feedback
+- [x] Order model: added `feedbackRequested` flag
+- [x] notify.ts: added `buildFeedbackEmail` + `sendFeedbackEmail` (Resend, best-effort)
+- [x] PATCH /api/orders: first transition to "delivered" → sets flag + sends feedback email with per-product review links
+- [x] GET /api/orders: includes `feedbackRequested` for admin panel
+- [x] Customer me route: includes delivered order items (name, slug) for review links
+- [x] Account page: "Rate your toys" links shown for delivered orders
+- [x] ProductReviews: added `id="reviews"` + `scroll-mt-24` anchor
+- [x] AdminPanel: "✓ Feedback email sent" indicator on delivered orders

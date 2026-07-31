@@ -30,7 +30,7 @@ export async function GET() {
   })
     .sort({ createdAt: -1 })
     .limit(50)
-    .select("orderNumber status total paymentMethod createdAt items.name items.quantity")
+    .select("orderNumber status total paymentMethod createdAt items.name items.quantity items.slug")
     .lean();
 
   return NextResponse.json({
@@ -49,6 +49,11 @@ export async function GET() {
       paymentMethod: o.paymentMethod,
       createdAt: o.createdAt,
       itemCount: o.items?.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0) || 0,
+      // Items only needed for delivered orders → "Rate your toys" links
+      items:
+        o.status === "delivered"
+          ? o.items?.map((i: { name: string; slug?: string }) => ({ name: i.name, slug: i.slug })) || []
+          : undefined,
     })),
   });
 }
