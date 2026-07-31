@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import { useState } from "react";
 import type { ProductDTO } from "@/types";
 import { formatPKR } from "@/lib/utils";
 import { toast } from "sonner";
@@ -14,9 +15,33 @@ export function ProductCard({ product }: { product: ProductDTO }) {
   const wishlistToggle = useWishlistStore((s) => s.toggle);
   const wished = useWishlistStore((s) => s.has(product._id));
   const image = product.images?.[0];
+  const [glowColor, setGlowColor] = useState<string | null>(null);
+
+  const activateGlow = () => {
+    const palette = ["#f97316", "#ec4899", "#8b5cf6", "#06b6d4", "#22c55e", "#f59e0b"];
+    const nextColor = palette[Math.floor(Math.random() * palette.length)];
+    setGlowColor(nextColor);
+  };
+
+  const resetGlow = () => setGlowColor(null);
 
   return (
-    <article className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-lg">
+    <article
+      onMouseEnter={activateGlow}
+      onMouseLeave={resetGlow}
+      onTouchStart={activateGlow}
+      onTouchEnd={resetGlow}
+      onTouchCancel={resetGlow}
+      style={
+        glowColor
+          ? {
+              borderColor: glowColor,
+              boxShadow: `0 0 0 1px ${glowColor} inset, 0 0 24px ${glowColor}55, 0 12px 30px -12px ${glowColor}33`,
+            }
+          : undefined
+      }
+      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-[#f1e2ca] bg-white transition-all duration-300 hover:-translate-y-0.5"
+    >
       <div className="relative aspect-square bg-[#fff1e0]">
         <Link href={`/product/${product.slug}`} className="absolute inset-0 block">
           {image ? (
