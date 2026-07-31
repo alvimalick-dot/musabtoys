@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 export function Hero() {
   // Removed min-h-[calc(100vh-4rem)] and added py-20 to reduce height
   return (
-    <section className="relative overflow-hidden py-20 toy-grid-bg">
+    <section className="relative overflow-hidden py-8 sm:py-10 toy-grid-bg">
       <div className="noise-overlay pointer-events-none absolute inset-0" />
 
       <motion.div
@@ -52,7 +52,7 @@ export function Hero() {
 
 
           <motion.div
-            className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+            className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.55 }}
