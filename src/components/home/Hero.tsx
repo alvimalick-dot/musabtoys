@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, Search, Rocket, Puzzle, Gamepad2, Blocks } from "lucide-react";
 import { BubbleTitle } from "@/components/ui/BubbleTitle";
 
 export function Hero() {
@@ -32,6 +32,36 @@ export function Hero() {
         animate={{ y: [0, -40, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
+
+      {/* Floating Toy Icons */}
+      <motion.div
+        className="pointer-events-none absolute left-[8%] top-[15%] text-coral/25"
+        animate={{ y: [0, -18, 0], rotate: [0, 10, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <Rocket className="h-10 w-10 sm:h-14 sm:w-14" />
+      </motion.div>
+      <motion.div
+        className="pointer-events-none absolute right-[12%] top-[25%] text-sky/25"
+        animate={{ y: [0, 15, 0], rotate: [0, -15, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+      >
+        <Puzzle className="h-8 w-8 sm:h-12 sm:w-12" />
+      </motion.div>
+      <motion.div
+        className="pointer-events-none absolute left-[5%] bottom-[20%] text-sun/25"
+        animate={{ y: [0, -12, 0], rotate: [0, -8, 0] }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      >
+        <Gamepad2 className="h-9 w-9 sm:h-12 sm:w-12" />
+      </motion.div>
+      <motion.div
+        className="pointer-events-none absolute right-[18%] bottom-[25%] text-mint/25"
+        animate={{ y: [0, 20, 0], rotate: [0, 12, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+      >
+        <Blocks className="h-8 w-8 sm:h-11 sm:w-11" />
+      </motion.div>
 
       <div className="relative mx-auto flex max-w-5xl flex-col lg:flex-row lg:items-center justify-center gap-10 lg:gap-16 px-4 sm:px-6">
         

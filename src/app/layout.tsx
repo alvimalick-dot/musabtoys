@@ -6,6 +6,7 @@ import { CartDrawer } from "@/components/layout/CartDrawer";
 import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
 import { AppToaster } from "@/components/ui/AppToaster";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { PageTransition } from "@/components/ui/PageTransition";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -131,14 +132,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-PK">
+    <html lang="en-PK" data-scroll-behavior="smooth">
       <body className={`${fredoka.variable} ${jakarta.variable} antialiased`}>
         <JsonLd data={orgJsonLd} />
         <JsonLd data={websiteJsonLd} />
         <Header />
         
-        {/* REMOVED pb-24 from this main tag */}
-        <main className="min-h-[70vh]">{children}</main>
+        <main className="min-h-[70vh]">
+          <PageTransition>{children}</PageTransition>
+        </main>
         
         <Footer />
         <CartDrawer />

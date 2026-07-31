@@ -7,6 +7,7 @@ import { checkoutSchema } from "@/lib/validators";
 import { calcShipping } from "@/lib/commerce";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 function generateOrderNumber() {
   const stamp = Date.now().toString(36).toUpperCase();
@@ -45,9 +46,18 @@ export async function POST(req: NextRequest) {
       if (!product) {
         throw new Error(`Product ${item.productId} not found`);
       }
-      if (product.stock < item.quantity) {
+
+      // Atomic stock decrement with overselling guard
+      const updated = await Product.findOneAndUpdate(
+        { _id: product._id, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } },
+        { new: true, session }
+      );
+
+      if (!updated) {
+        const fresh = await Product.findById(product._id).session(session);
         throw new Error(
-          `"${product.name}" has only ${product.stock} left in stock`
+          `"${product.name}" has only ${fresh?.stock ?? 0} left in stock`
         );
       }
 
@@ -61,16 +71,13 @@ export async function POST(req: NextRequest) {
       });
 
       subtotal += product.price * item.quantity;
-      product.stock -= item.quantity;
-      await product.save({ session });
     }
 
     const shipping = calcShipping(subtotal);
     const discount = Math.min(body.discount || 0, subtotal);
     const total = Math.max(0, subtotal - discount) + shipping;
 
-    const paymentStatus =
-      body.paymentMethod === "cod" ? "pending" : "pending";
+    const paymentStatus = "pending";
 
     const [order] = await Order.create(
       [

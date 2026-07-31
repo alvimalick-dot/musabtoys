@@ -10,7 +10,7 @@ export function CtaBanner() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
       <motion.div
-        className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-r from-coral via-[#f97316] to-sky px-5 py-10 text-white sm:rounded-[2.5rem] sm:px-12 sm:py-14"
+        className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-r from-coral via-[var(--coral)] to-sky px-5 py-10 text-white sm:rounded-[2.5rem] sm:px-12 sm:py-14"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}

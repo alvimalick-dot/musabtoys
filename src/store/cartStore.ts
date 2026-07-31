@@ -27,23 +27,22 @@ export const useCartStore = create<CartState>()(
       closeCart: () => set({ isOpen: false }),
       toggleCart: () => set((s) => ({ isOpen: !s.isOpen })),
       addItem: (item, qty = 1) => {
+        const maxAllowed = item.stock || 99;
+        const safeQty = Math.min(qty, maxAllowed);
+        if (safeQty <= 0) return;
         set((state) => {
           const existing = state.items.find((i) => i.productId === item.productId);
           if (existing) {
+            const newQty = Math.min(existing.quantity + safeQty, maxAllowed);
             return {
               items: state.items.map((i) =>
-                i.productId === item.productId
-                  ? {
-                      ...i,
-                      quantity: Math.min(i.quantity + qty, i.stock || 99),
-                    }
-                  : i
+                i.productId === item.productId ? { ...i, quantity: newQty } : i
               ),
               isOpen: true,
             };
           }
           return {
-            items: [...state.items, { ...item, quantity: qty }],
+            items: [...state.items, { ...item, quantity: safeQty }],
             isOpen: true,
           };
         });

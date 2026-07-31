@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { ProductDTO } from "@/types";
 import { ProductCard } from "./ProductCard";
 import { ProductSkeletonGrid } from "./ProductSkeleton";
@@ -31,6 +33,7 @@ export function ShopClient() {
   const [pending, startTransition] = useTransition();
   const [q, setQ] = useState(searchParams.get("q") || "");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [productListRef] = useAutoAnimate({ duration: 250 });
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -307,11 +310,30 @@ export function ShopClient() {
             </p>
           )}
 
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-            {data?.products.map((p) => (
-              <ProductCard key={p._id} product={p} />
+          <motion.div
+            ref={productListRef}
+            className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.12 } },
+            }}
+          >
+            {data?.products.map((p, i) => (
+              <motion.div
+                key={p._id}
+                custom={i}
+                variants={{
+                  hidden: { opacity: 0, y: 40, scale: 0.9 },
+                  show: { opacity: 1, y: 0, scale: 1 },
+                }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+              >
+                <ProductCard product={p} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {data && data.products.length === 0 && !error && (
             <div className="rounded-[1.5rem] bg-white p-12 text-center ring-1 ring-black/5">
@@ -323,10 +345,12 @@ export function ShopClient() {
           )}
 
           {data && pages > 1 && (
-            <div className="mt-8 flex flex-wrap justify-center gap-2 pb-4">
+            <nav className="mt-8 flex flex-wrap justify-center gap-2 pb-4" aria-label="Product pagination">
               <button
                 type="button"
                 disabled={currentPage <= 1}
+                aria-disabled={currentPage <= 1}
+                aria-label="Previous page"
                 onClick={() => updateParam("page", String(currentPage - 1))}
                 className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40"
               >
@@ -334,13 +358,15 @@ export function ShopClient() {
               </button>
               {pageButtons.map((page, idx) =>
                 page === "…" ? (
-                  <span key={`e-${idx}`} className="px-1 text-muted">
+                  <span key={`e-${idx}`} className="px-1 text-muted" aria-hidden="true">
                     …
                   </span>
                 ) : (
                   <button
                     key={page}
                     type="button"
+                    aria-label={`Page ${page}`}
+                    aria-current={page === currentPage ? "page" : undefined}
                     onClick={() => updateParam("page", String(page))}
                     className={`h-11 w-11 rounded-full text-sm font-bold ${
                       page === currentPage
@@ -355,12 +381,14 @@ export function ShopClient() {
               <button
                 type="button"
                 disabled={currentPage >= pages}
+                aria-disabled={currentPage >= pages}
+                aria-label="Next page"
                 onClick={() => updateParam("page", String(currentPage + 1))}
                 className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40"
               >
                 Next
               </button>
-            </div>
+            </nav>
           )}
         </div>
       </div>

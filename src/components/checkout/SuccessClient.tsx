@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import Confetti from "react-confetti";
 
 export function SuccessClient({
   order,
@@ -24,6 +26,16 @@ export function SuccessClient({
   const [debugOtp, setDebugOtp] = useState<string | null>(null);
   const [step, setStep] = useState<"ask" | "otp" | "done">("ask");
   const [busy, setBusy] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!order) return;
@@ -99,8 +111,31 @@ export function SuccessClient({
 
   return (
     <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-16 text-center">
-      <CheckCircle2 className="h-16 w-16 text-mint" />
-      <h1 className="mt-6 font-display text-4xl font-semibold">Order confirmed</h1>
+      {windowSize.width > 0 && (
+        <Confetti
+          width={windowSize.width}
+          height={windowSize.height}
+          numberOfPieces={200}
+          recycle={false}
+          colors={["#e11d48", "#f59e0b", "#0891b2", "#22c55e", "#8b5cf6", "#f97316"]}
+          tweenDuration={4000}
+        />
+      )}
+      <motion.div
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      >
+        <CheckCircle2 className="h-16 w-16 text-mint" />
+      </motion.div>
+      <motion.h1
+        className="mt-6 font-display text-4xl font-semibold"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
+        Order confirmed
+      </motion.h1>
       <p className="mt-3 text-muted">
         Thanks for shopping with Karachi Toy Shop.
         {order ? (

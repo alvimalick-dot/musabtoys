@@ -63,8 +63,13 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
 
     for (const key of allowed) {
       if (body[key] !== undefined) {
+        let value = body[key];
+        // Round monetary values to 2 decimal places
+        if (key === "price" || key === "compareAtPrice") {
+          value = Math.round(Number(value) * 100) / 100;
+        }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (product as any)[key] = body[key];
+        (product as any)[key] = value;
       }
     }
 

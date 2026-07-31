@@ -137,15 +137,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const slug = body.slug || makeSlug(body.name);
+    const baseSlug = body.slug || makeSlug(body.name);
+    let slug = baseSlug;
+    let slugCounter = 1;
+    while (await Product.findOne({ slug })) {
+      slug = `${baseSlug}-${slugCounter}`;
+      slugCounter++;
+    }
+
     const featured = Boolean(body.featured);
     const newArrival = Boolean(body.newArrival);
+    const price = Math.round(Number(body.price) * 100) / 100;
     const product = await Product.create({
       name: body.name,
       slug,
       description: body.description || "",
-      price: Number(body.price),
-      compareAtPrice: body.compareAtPrice,
+      price,
+      compareAtPrice: body.compareAtPrice ? Math.round(Number(body.compareAtPrice) * 100) / 100 : undefined,
       category: body.category || "Toys",
       brand: body.brand || "Generic",
       ageGroup: body.ageGroup || "All Ages",
