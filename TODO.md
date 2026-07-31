@@ -167,3 +167,16 @@
 - [x] **Thicker white stroke** — 0.07em (was 0.06em) for more prominent 3D gel outline
 - [x] **Layered drop-shadows** — 3 layers: tight hard shadow + mid soft + deep wide blur for depth
 - [x] **`will-change: transform`** — GPU-accelerated rendering for smooth animations
+
+## Bug Fix: Product Admin Image Upload Not Working
+
+### Root Cause
+- [x] `hasCloudinary()` returned `true` even when Cloudinary env vars were dummy/placeholder values (only checked `CLOUDINARY_CLOUD_NAME` for "your_cloud", but not the API key/secret)
+- [x] `cloudinary.ts` used hardcoded `image/jpeg` MIME type for data URI, causing PNG/WebP uploads to fail silently
+- [x] No Cloudinary → local fallback chain — if Cloudinary failed, the whole request errored with no local fallback
+- [x] `next.config.ts` didn't whitelist non-standard Cloudinary subdomains, and local `/uploads/` images were blocked by Next.js Image optimization in dev mode
+
+### Fixes Applied
+- [x] `src/app/api/upload/route.ts`: Added `maxDuration: 30`, `runtime: "nodejs"`, stricter `hasCloudinary()` check (all 3 vars validated), try/catch with local fallback on Cloudinary failure
+- [x] `src/lib/cloudinary.ts`: `uploadImage()` now accepts optional `mimeType` to build correct data URI per file type
+- [x] `next.config.ts`: Added `**.cloudinary.com` wildcard pattern + `unoptimized: true` in dev mode for local uploads
