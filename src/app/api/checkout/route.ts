@@ -16,11 +16,13 @@ function generateOrderNumber() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  let session: mongoose.ClientSession | null = null;
 
   try {
     await connectDB();
+    session = await mongoose.startSession();
+    session.startTransaction();
+
     const body = checkoutSchema.parse(await req.json());
 
     if (
@@ -134,13 +136,17 @@ export async function POST(req: NextRequest) {
           : "Order created. Complete payment to confirm.",
     });
   } catch (error) {
-    await session.abortTransaction();
+    if (session) {
+      await session.abortTransaction();
+    }
     console.error("POST /api/checkout", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Checkout failed" },
       { status: 400 }
     );
   } finally {
-    session.endSession();
+    if (session) {
+      session.endSession();
+    }
   }
 }
