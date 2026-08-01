@@ -33,7 +33,7 @@ export function CartDrawer() {
           <motion.button
             type="button"
             aria-label="Close cart overlay"
-            className="fixed inset-0 z-[60] bg-ink/40 backdrop-blur-sm"
+            className="fixed inset-0 z-60 bg-ink/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -41,7 +41,7 @@ export function CartDrawer() {
             onClick={closeCart}
           />
           <motion.aside
-            className="fixed right-0 top-0 z-[70] flex h-dvh w-full max-w-md flex-col bg-white shadow-2xl pb-[env(safe-area-inset-bottom)]"
+            className="fixed right-0 top-0 z-70 flex h-dvh w-full max-w-md flex-col bg-white shadow-2xl pb-[env(safe-area-inset-bottom)]"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -82,7 +82,7 @@ export function CartDrawer() {
                 </div>
                 <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-black/5">
                   <motion.div
-                    className="h-full rounded-full bg-gradient-to-r from-coral via-sun to-mint"
+                    className="h-full rounded-full bg-linear-to-r from-coral via-sun to-mint"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress * 100}%` }}
                     transition={{ type: "spring", stiffness: 180, damping: 22 }}

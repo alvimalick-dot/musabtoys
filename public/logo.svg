@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Karachi Toys logo">
+  <defs>
+    <linearGradient id="kt-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff6b6b"/>
+      <stop offset="1" stop-color="#f43f5e"/>
+    </linearGradient>
+    <linearGradient id="kt-toy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff7ed"/>
+      <stop offset="1" stop-color="#ffe4d6"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#kt-bg)"/>
+  <!-- Cute teddy / building-block inspired mark -->
+  <g transform="translate(256 236)">
+    <!-- Block stack -->
+    <rect x="-80" y="-70" width="160" height="60" rx="14" fill="url(#kt-toy)"/>
+    <rect x="-80" y="10" width="160" height="60" rx="14" fill="url(#kt-toy)"/>
+    <!-- Block studs -->
+    <circle cx="-52" cy="-40" r="12" fill="#f43f5e"/>
+    <circle cx="-12" cy="-40" r="12" fill="#f43f5e"/>
+    <circle cx="28" cy="-40" r="12" fill="#f43f5e"/>
+    <circle cx="68" cy="-40" r="12" fill="#f43f5e"/>
+    <!-- Star accent -->
+    <path d="M0 -58 l7 14 15 2 -11 11 3 15 -14 -7 -14 7 3 -15 -11 -11 15 -2 z" fill="#ffd166" transform="translate(0 40) scale(0.9)"/>
+  </g>
+  <!-- Brand name -->
+  <text x="256" y="452" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1">KARACHI TOYS</text>
+</svg>
+

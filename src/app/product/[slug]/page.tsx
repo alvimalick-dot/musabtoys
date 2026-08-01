@@ -2,33 +2,31 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
+import { Review } from "@/models/Review";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { ProductReviews } from "@/components/product/ProductReviews";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
 import type { ProductDTO } from "@/types";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export const revalidate = 60;
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-  "http://localhost:3000";
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   try {
     await connectDB();
     const product = await Product.findOne({ slug }).lean();
-    if (!product) return { title: "Product not found" };
+    if (!product) return { title: "Product not found", robots: { index: false } };
 
     const title = `Buy ${product.name} Online in Pakistan | Karachi Toys`;
     const description =
       product.description?.slice(0, 155) ||
       `Buy ${product.name} online in Pakistan. ${product.brand ? product.brand + " · " : ""}${product.ageGroup ? product.ageGroup + ". " : ""}Cash on Delivery available across Pakistan.`;
     const image = product.images?.[0];
-    const url = `${siteUrl}/product/${product.slug}`;
+    const url = absoluteUrl(`/product/${product.slug}`);
 
     return {
       title,
@@ -43,6 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         `${product.category} toys Pakistan`,
         product.ageGroup,
         "toys Karachi",
+        "toys Multan",
         "buy toys online Pakistan",
         "Cash on Delivery toys",
       ].filter(Boolean) as string[],
@@ -56,17 +55,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         locale: "en_PK",
         images: image
           ? [{ url: image, width: 1200, height: 1200, alt: product.name }]
-          : [{ url: "/og-image.svg", alt: product.name }],
+          : [{ url: "/opengraph-image", width: 1200, height: 630, alt: product.name }],
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: image ? [image] : ["/og-image.svg"],
+        images: image ? [image] : ["/twitter-image"],
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
       },
     };
   } catch {
-    return { title: "Product" };
+    return { title: "Product", robots: { index: false } };
   }
 }
 
@@ -125,73 +134,65 @@ export default async function ProductPage({ params }: Props) {
       sku: p.sku,
     }));
 
-    const productJsonLd = {
-      "@context": "https://schema.org",
-      "@type": "Product",
+    // Load approved reviews for aggregateRating + review structured data
+    type ReviewDoc = { authorName: string; rating: number; comment: string; createdAt?: Date };
+    let reviews: ReviewDoc[] = [];
+    let aggregateRating: { ratingValue: number; reviewCount: number } | undefined;
+    try {
+      reviews = await Review.find({ productSlug: product.slug, approved: true })
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .lean();
+      if (reviews.length > 0) {
+        const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+        aggregateRating = {
+          ratingValue: Math.round(avg * 10) / 10,
+          reviewCount: reviews.length,
+        };
+      }
+    } catch {
+      reviews = [];
+      aggregateRating = undefined;
+    }
+
+    const productLd = productJsonLd({
       name: product.name,
+      slug: product.slug,
       description: product.description,
       sku: product.sku,
-      brand: { "@type": "Brand", name: product.brand },
+      brand: product.brand,
       category: product.category,
-      image: product.images?.length ? product.images : undefined,
-      offers: {
-        "@type": "Offer",
-        url: `${siteUrl}/product/${product.slug}`,
-        priceCurrency: "PKR",
-        price: product.price,
-        priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0],
-        availability:
-          product.stock > 0
-            ? "https://schema.org/InStock"
-            : "https://schema.org/OutOfStock",
-        itemCondition: "https://schema.org/NewCondition",
-        seller: { "@type": "Organization", name: "Karachi Toys" },
-        shippingDetails: {
-          "@type": "OfferShippingDetails",
-          shippingRate: {
-            "@type": "MonetaryAmount",
-            value: "0",
-            currency: "PKR",
-          },
-          deliveryTime: {
-            "@type": "ShippingDeliveryTime",
-            handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
-            transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 5, unitCode: "DAY" },
-          },
-        },
-        hasMerchantReturnPolicy: {
-          "@type": "MerchantReturnPolicy",
-          applicableCountry: "PK",
-          returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-          merchantReturnDays: 7,
-          returnMethod: "https://schema.org/ReturnByMail",
-          returnFees: "https://schema.org/FreeReturn",
-        },
-      },
-    };
+      images: product.images || [],
+      price: product.price,
+      compareAtPrice: product.compareAtPrice,
+      inStock: product.stock > 0,
+      stockCount: product.stock,
+      ageGroup: product.ageGroup,
+      specs: product.specs,
+      aggregateRating,
+      reviews: reviews.map((r) => ({
+        author: r.authorName,
+        rating: r.rating,
+        comment: r.comment,
+        createdAt: r.createdAt ? new Date(r.createdAt).toISOString() : undefined,
+      })),
+      updatedAt: product.updatedAt ? new Date(product.updatedAt).toISOString() : undefined,
+    });
 
-    const breadcrumbJsonLd = {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
-        { "@type": "ListItem", position: 2, name: "Shop", item: `${siteUrl}/shop` },
-        {
-          "@type": "ListItem",
-          position: 3,
-          name: product.category,
-          item: `${siteUrl}/shop?category=${encodeURIComponent(product.category)}`,
-        },
-        { "@type": "ListItem", position: 4, name: product.name, item: url },
-      ],
-    };
+    const breadcrumb = breadcrumbJsonLd([
+      { name: "Home", url: "/" },
+      { name: "Shop", url: "/shop" },
+      {
+        name: product.category,
+        url: `/shop?category=${encodeURIComponent(product.category)}`,
+      },
+      { name: product.name, url: `/product/${product.slug}` },
+    ]);
 
     return (
       <>
-        <JsonLd data={productJsonLd} />
-        <JsonLd data={breadcrumbJsonLd} />
+        <JsonLd data={productLd} />
+        <JsonLd data={breadcrumb} />
         <ProductDetailClient product={dto} />
         <RelatedProducts products={relatedDto} />
         <ProductReviews slug={product.slug} />
@@ -201,3 +202,4 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 }
+
