@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useCartStore } from "@/store/cartStore";
+import type { WishlistItem } from "@/store/wishlistStore";
 import { formatPKR } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -11,6 +13,36 @@ export default function WishlistPage() {
   const items = useWishlistStore((s) => s.items);
   const remove = useWishlistStore((s) => s.remove);
   const addItem = useCartStore((s) => s.addItem);
+  const [addingId, setAddingId] = useState<string | null>(null);
+
+  async function addWishlistItem(item: WishlistItem) {
+    setAddingId(item.productId);
+    try {
+      const res = await fetch(`/api/products/${item.productId}`);
+      const data = await res.json();
+      if (!res.ok || !data.product) {
+        throw new Error("Product not found");
+      }
+      const product = data.product;
+      if (product.stock <= 0) {
+        toast.error(`"${item.name}" is out of stock`);
+        return;
+      }
+      addItem({
+        productId: item.productId,
+        slug: item.slug,
+        name: item.name,
+        price: product.price ?? item.price,
+        image: item.image,
+        stock: product.stock,
+      });
+      toast.success("Added to cart");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not add to cart");
+    } finally {
+      setAddingId(null);
+    }
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
@@ -50,20 +82,13 @@ export default function WishlistPage() {
               <div className="flex w-full gap-2 sm:w-auto">
                 <button
                   type="button"
-                  className="btn-primary min-h-11 flex-1 text-xs sm:flex-none"
-                  onClick={() => {
-                    addItem({
-                      productId: item.productId,
-                      slug: item.slug,
-                      name: item.name,
-                      price: item.price,
-                      image: item.image,
-                      stock: 99,
-                    });
-                    toast.success("Added to cart");
-                  }}
+                  disabled={addingId === item.productId}
+                  className="btn-primary min-h-11 flex-1 text-xs sm:flex-none disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => addWishlistItem(item)}
                 >
-                  Add to cart
+                  {addingId === item.productId
+                    ? "Adding…"
+                    : "Add to cart"}
                 </button>
                 <button
                   type="button"

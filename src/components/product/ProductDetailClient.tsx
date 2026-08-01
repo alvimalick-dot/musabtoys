@@ -22,6 +22,11 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
   const [qty, setQty] = useState(1);
   const [alertPhone, setAlertPhone] = useState("");
   const images = product.images?.length ? product.images : [];
+  // Always derive stock state from the actual number so UI never shows an
+  // Add-to-cart button for a sold-out product even if stockStatus is stale
+  const isOutOfStock =
+    product.stockStatus === "out_of_stock" || product.stock <= 0;
+  const availableStock = product.stock > 0 ? product.stock : 1;
 
   async function notifyStock() {
     try {
@@ -183,7 +188,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
             </div>
           )}
 
-          {product.stockStatus === "out_of_stock" ? (
+          {isOutOfStock ? (
             <div className="mt-8 rounded-2xl bg-white p-4 ring-1 ring-black/5">
               <p className="font-bold">Notify me when back</p>
               <p className="mt-1 text-sm text-muted">
@@ -231,7 +236,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
                 <button
                   type="button"
                   onClick={() =>
-                    setQty((q) => Math.min(product.stock || 1, q + 1))
+                    setQty((q) => Math.min(availableStock, q + 1))
                   }
                   className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-black/5"
                   aria-label="Increase quantity"
@@ -243,6 +248,10 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
                 type="button"
                 className="btn-primary min-h-12 w-full sm:w-auto"
                 onClick={() => {
+                  if (isOutOfStock) {
+                    toast.error("This product is out of stock");
+                    return;
+                  }
                   addItem(
                     {
                       productId: product._id,

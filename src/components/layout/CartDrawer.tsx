@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/commerce";
+import { LottieAnimation } from "@/components/ui/LottieAnimation";
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, updateQty, removeItem, subtotal } =
@@ -98,10 +99,10 @@ export function CartDrawer() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35 }}
                 >
-                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-[#fde8d4] text-coral">
-                    <ShoppingBag className="h-8 w-8" />
+                  <div className="flex h-24 w-24 items-center justify-center">
+                    <LottieAnimation path="/lottie/cart-jump.json" size={96} />
                   </div>
-                  <p className="mt-5 font-display text-2xl">Cart is empty</p>
+                  <p className="mt-2 font-display text-2xl">Cart is empty</p>
                   <p className="mt-2 text-sm text-muted">
                     Discover toys that spark imagination.
                   </p>
@@ -239,3 +240,4 @@ export function CartDrawer() {
     </AnimatePresence>
   );
 }
+

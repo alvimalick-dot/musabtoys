@@ -65,28 +65,66 @@ export function TrackForm({
 
   function reorder() {
     if (!order) return;
-    let added = 0;
-    for (const item of order.items) {
-      if (!item.productId) continue;
-      addItem(
-        {
-          productId: item.productId,
-          slug: item.slug || "shop",
-          name: item.name,
-          price: item.price,
-          image: item.image || "",
-          stock: 99,
-        },
-        item.quantity
-      );
-      added++;
-    }
-    if (added) {
-      openCart();
-      toast.success(`Added ${added} item(s) to cart`);
-    } else {
-      toast.error("Could not reorder these items");
-    }
+    (async () => {
+      // Validate all items against live stock
+      try {
+        const validateRes = await fetch("/api/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: order.items
+              .filter((i) => i.productId)
+              .map((i) => ({
+                productId: i.productId,
+                quantity: i.quantity,
+              })),
+          }),
+        });
+        const validated = await validateRes.json();
+        if (!validateRes.ok || !validated) {
+          throw new Error(validated?.error || "Validation failed");
+        }
+
+        let added = 0;
+        const skipped: string[] = [];
+        for (const v of validated.items || []) {
+          if (!v.valid) {
+            skipped.push(v.product?.name || v.productId || "Unknown item");
+            continue;
+          }
+          const realQty = Math.min(v.quantity, v.stock || 99);
+          addItem(
+            {
+              productId: v.productId,
+              slug: v.slug || "shop",
+              name: v.name,
+              price: v.price,
+              image: v.image || "",
+              stock: v.stock,
+            },
+            realQty
+          );
+          added++;
+        }
+        if (skipped.length > 0) {
+          toast.warning(
+            `${skipped.join(", ")} ${
+              skipped.length === 1 ? "is" : "are"
+            } no longer available`
+          );
+        }
+        if (added) {
+          openCart();
+          toast.success(`Added ${added} item(s) to cart`);
+        } else {
+          toast.error("None of these items are available");
+        }
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : "Could not reorder items"
+        );
+      }
+    })();
   }
 
   return (

@@ -1,206 +1,46 @@
+# Theme & Animation TODO
 
-# Theme Color Update TODO
-
-## Color Palette
-- coral → Pink `#ec4899` (primary CTA, prices)
-- coral-deep → Deep Pink `#db2777` (hover)
-- sky → Purple `#8b5cf6` (secondary accent)
-- sky-deep → Deep Purple `#7c3aed` (hover)
-- sun → Rose-Red `#f43f5e` (badges, highlights)
-- mint → Green `#22c55e` (stock, success)
-- bg → Soft Lavender `#faf5ff`
-- bg-deep → Deeper Lavender `#f3e8ff`
-
-## Steps
-
-### Step 1: globals.css ✅
-- [x] Update CSS variables
-- [x] Update toy-grid-bg gradients
-- [x] Update ::selection colors
-- [x] Update btn-primary shadows
-- [x] Update kt-shimmer gradient
-- [x] Update focus ring colors
-
-### Step 2: Home Components
-- [x] Hero.tsx — gradient bg classes, blur blobs
-- [x] CtaBanner.tsx — gradient from-coral via-* to-sun
-- [x] FeatureBand.tsx — accent colors, blur blobs
-- [x] CategoryStrip.tsx — category tint classes
-- [x] FeaturedProducts.tsx — coral accent text (auto via CSS var)
-- [x] NewArrivalProducts.tsx — sky accent text (auto via CSS var)
-
-### Step 3: Layout Components
-- [x] Header.tsx — background, shadow, logo, nav active
-- [x] Footer.tsx — accent colors (auto via CSS var)
-- [x] CartDrawer.tsx — gradient, backgrounds, icons
-- [x] WhatsAppFab.tsx — keep green bg (brand color)
-
-### Step 4: Shop & Product Components
-- [x] ProductCard.tsx — backgrounds, borders, accent colors
-- [x] ShopClient.tsx — accent colors (auto via CSS var)
-- [x] ProductDetailClient.tsx — accent colors (auto via CSS var)
-
-### Step 5: Checkout Components
-- [x] CheckoutForm.tsx — accent colors (auto via CSS var)
-- [x] SuccessClient.tsx — accent colors (auto via CSS var)
-
-### Step 6: Other Components
-- [x] ProductGallery.tsx
-- [x] ProductReviews.tsx
-- [x] RelatedProducts.tsx
-- [x] TrackForm.tsx
-- [x] Breadcrumbs.tsx
-- [x] Admin components
-- [x] Search for hardcoded hex colors (#fff8f0, #fff1e0, #ffe8d2, #f1e2ca etc.) — all updated
-
-### Step 7: Verify
-- [x] Run build/lint to check for errors — passed, no lint errors
-
-## Round 2: User Feedback Fixes
-
-### Issue 1: Coupon feature — discount not reflected in Place Order / summary
-- [x] Diagnosed: coupon only validated on submit, summary total computed without discount
-- [x] Add "Apply coupon" button with client-side validation (PUT /api/coupons)
-- [x] Show discount line in order summary
-- [x] Update "Place order" button total with discount
-- [x] Re-validate coupon on submit using applied code
-
-### Issue 2: Home page search bar
-- [x] Add search bar in Hero that navigates to /shop?q=...
-
-### Issue 3: Shop search bar — text overlaps search icon
-- [x] Diagnosed: .input-field padding shorthand overrode Tailwind pl-11
-- [x] Changed .input-field to use individual padding properties (top/bottom/left/right)
-- [x] Used inline style as extra safety for Hero and Shop search inputs
-
-## Round 3: Theme Refinement — Balanced 3-Color Palette
-
-- [x] Tuned down pink → crimson-rose `#e11d48` (red-shade of pink)
-- [x] Changed sky (purple) → amber `#f59e0b` (warmth)
-- [x] Changed sun (rose-red) → teal `#0891b2` (cool balance)
-- [x] Changed bg from lavender → warm off-white `#fffcf9`
-- [x] Updated all hardcoded CSS color references (shadows, gradients, focus rings, shimmer)
-- [x] Added `--sun-deep` CSS variable
-- [x] Updated CategoryStrip hardcoded hex colors to use theme tokens
-
-## Round 4: Skin-tone BG + Gold Accent + Silver
-
-- [x] Changed bg → warm skin tone `#fef6ed`
-- [x] Changed bg-deep → deeper skin tone `#fde8d4`
-- [x] Changed sky → gold `#d4a017` (premium secondary accent)
-- [x] Changed sky-deep → dark gold `#b8860b`
-- [x] Replaced all `#f3e8ff` → `#fde8d4` (skin tone)
-- [x] Replaced all `#faf5ff` → `#fef6ed` (skin tone)
-- [x] Replaced `#e9d5ff` border → `#f6d9c4` (skin-tone border)
-- [x] Replaced CtaBanner gradient via-color `#a855f7` → `#f97316` (orange)
-- [x] Updated ProductCard glow palette to match new theme colors
-- [x] Updated shimmer gradient to skin tones
-- [x] Updated toy-grid-bg gradient to skin tones + gold overlay
-- [x] Updated all focus ring rgba values to gold `rgba(212, 160, 23, ...)`
-- [x] Fixed CtaBanner indentation
-
-## Round 5: Dynamic Stock Badges + Featured/New Mutual Exclusivity + Delivered Feedback
-
-### Dynamic Low-Stock Badge
-- [x] ProductCard: "Only N left" (dynamic stock, ≤5) shows at bottom-left, below the New/Featured badge
-- [x] New/Featured badges show at top-left and no longer hide when stock is low
-- [x] "Sold out" replaces all badges when stock = 0
-- [x] Works across Featured, New Arrivals, Shop, Related, Wishlist (shared ProductCard)
-
-### Featured / New Arrival Mutual Exclusivity
-- [x] ProductAdmin form: checking "Featured" unchecks "New Arrival" and vice versa
-- [x] ProductAdmin quick buttons: "Mark as Featured" clears New Arrival, "Mark as New Arrival" clears Featured
-- [x] Server-side enforcement in POST /api/products (newArrival = newArrival && !featured)
-- [x] Server-side enforcement in PATCH /api/products/[id] (mutual exclusivity on save)
-
-### Delivered-Order Feedback
-- [x] Order model: added `feedbackRequested` flag
-- [x] notify.ts: added `buildFeedbackEmail` + `sendFeedbackEmail` (Resend, best-effort)
-- [x] PATCH /api/orders: first transition to "delivered" → sets flag + sends feedback email with per-product review links
-- [x] GET /api/orders: includes `feedbackRequested` for admin panel
-- [x] Customer me route: includes delivered order items (name, slug) for review links
-- [x] Account page: "Rate your toys" links shown for delivered orders
-- [x] ProductReviews: added `id="reviews"` + `scroll-mt-24` anchor
-- [x] AdminPanel: "✓ Feedback email sent" indicator on delivered orders
-
-## Round 6: Multan Location Migration + Pakistan City Selector
-
-### Pakistan-wide City Selector at Checkout
-- [x] Created `src/components/ui/CitySelect.tsx` — full A–Z list of Pakistan cities
-- [x] Typeable combobox: search/filter as you type, select from dropdown, or type a custom city
-- [x] Enter-to-select when exactly one match; Escape closes; outside-click closes
-- [x] CheckoutForm: replaced plain city input with CitySelect; default city now "Multan"
-- [x] react-hook-form integration via `setValue("city", v, { shouldValidate: true })`
-
-### Location Copy: Karachi → Multan (brand stays "Karachi Toy Shop")
-- [x] layout.tsx: metadata title/description/keywords de-localized; JSON-LD address → Multan, Punjab
-- [x] page.tsx (home): metadata de-localized
-- [x] shop/page.tsx: metadata → "Shop Toys Online in Multan", keywords "toys Multan"
-- [x] product/[slug]/page.tsx: metadata title "Buy Online in Multan", keyword "toys Multan"
-- [x] ProductDetailClient.tsx: "Karachi usually 1–3 days" → "Usually 1–3 days"
-- [x] FeatureBand.tsx: "Built for Karachi families" → "Built for families"
-- [x] Footer.tsx: "across Karachi and beyond" → "across Pakistan"
-- [x] faq/page.tsx: FAQ answers → Multan-centric delivery times
-- [x] api/checkout/lookup/route.ts: default fallback city "Multan"
-- [x] Kept "Karachi" only where it's the brand name, a city in the picker, or product brand "SpeedKarachi"
-
-## Round 7: Playful Bubble Typography — BubbleTitle component
-
-### Created `src/components/ui/BubbleTitle.tsx`
-- [x] `variant="standard"` — heavy-weight, dark slate (text-slate-800) product title using Fredoka display font
-- [x] `variant="logo"` — 3D glossy gel effect: alternating bright per-letter colors (purple/green/blue/orange)
-- [x] Gel effect uses `background-clip: text` + `-webkit-text-stroke` (thick white) + `drop-shadow` for depth
-- [x] Shiny plastic look via vertical `linear-gradient` per letter (light → saturated → dark)
-- [x] Handles spaces with `&nbsp;`, exposes `aria-label` + `role="text"` for screen readers
-
-### CSS added (`globals.css`)
-- [x] `.bubble-gel-letter` class — transparent text, white text-stroke, layered drop-shadows
-
-### Integration
-- [x] Hero.tsx: "Karachi" uses standard variant (dark ink), "Toys" uses logo/gel variant
-- [x] ProductCard.tsx: product names use `BubbleTitle variant="standard"` (heavy dark-slate title)
-
-### Font Enhancements (Round 7b — "make fonts more cool")
-- [x] **Bounce entrance animation** — each letter bounces in from below with a wobble (staggered by 0.07s per letter, 1.5s cubic-bezier spring)
-- [x] **Per-letter tilt** — alternating -3° / +2.5° / -2° / +3° tilt per letter for playful hand-lettered feel
-- [x] **Idle bob** — entire wordmark gently floats up/down + rocks (-0.6°) in a slow 4.2s loop
-- [x] **Hover lift** — hovering the wordmark makes all letters bounce up 0.12em and scale 1.04x
-- [x] **Thicker white stroke** — 0.07em (was 0.06em) for more prominent 3D gel outline
-- [x] **Layered drop-shadows** — 3 layers: tight hard shadow + mid soft + deep wide blur for depth
-- [x] **`will-change: transform`** — GPU-accelerated rendering for smooth animations
-
-## Bug Fix: Product Admin Image Upload Not Working
+## Round 10: Prevent Out-of-Stock Items from Being Added to Cart
 
 ### Root Cause
-- [x] `hasCloudinary()` returned `true` even when Cloudinary env vars were dummy/placeholder values (only checked `CLOUDINARY_CLOUD_NAME` for "your_cloud", but not the API key/secret)
-- [x] `cloudinary.ts` used hardcoded `image/jpeg` MIME type for data URI, causing PNG/WebP uploads to fail silently
-- [x] No Cloudinary → local fallback chain — if Cloudinary failed, the whole request errored with no local fallback
-- [x] `next.config.ts` didn't whitelist non-standard Cloudinary subdomains, and local `/uploads/` images were blocked by Next.js Image optimization in dev mode
+- `src/store/cartStore.ts` used `item.stock || 99` — when `stock = 0` (out of stock), `0 || 99 = 99`, so sold-out items still got added.
 
 ### Fixes Applied
-- [x] `src/app/api/upload/route.ts`: Added `maxDuration: 30`, `runtime: "nodejs"`, stricter `hasCloudinary()` check (all 3 vars validated), try/catch with local fallback on Cloudinary failure
-- [x] `src/lib/cloudinary.ts`: `uploadImage()` now accepts optional `mimeType` to build correct data URI per file type
-- [x] `next.config.ts`: Added `**.cloudinary.com` wildcard pattern + `unoptimized: true` in dev mode for local uploads
+- [x] `src/store/cartStore.ts` — `addItem` bails out when `stock <= 0`; safe max via `stock > 0 ? stock : 99`; `updateQty` clamps the same way.
+- [x] `src/app/wishlist/page.tsx` — "Add to cart" now fetches live stock (`/api/products/:id`) and blocks out-of-stock items with an error toast; passes real stock to the cart store.
+- [x] `src/components/track/TrackForm.tsx` — "Reorder" now validates items via `/api/cart` POST; skips unavailable items, clamps quantities to live stock, and warns which items were skipped.
+- [x] `src/app/api/cart/route.ts` — Invalid-item response now includes `stock` so clients can read available quantity.
+- [x] `src/components/product/ProductDetailClient.tsx` — Derives `isOutOfStock` from `stock <= 0` (not just stale `stockStatus`); shows "Notify me" for sold-out; guards Add-to-cart click; uses `availableStock` for qty limits.
 
-## Round 8: Vercel Blob Storage + Image Normalization
+## Round 9: GSAP + Lottie + Confetti — Heavy UI/UX Animations
 
-### Problem: Uploads don't persist on Vercel
-- [x] Root cause: Vercel filesystem is **ephemeral** — files written to `public/uploads/` at runtime are wiped on redeploy and never reach Git
-- [x] Images show on localhost but show broken image icons on Vercel after deployment
+### New Components Created
+- [x] `src/components/ui/ScrollReveal.tsx` — GSAP ScrollTrigger wrapper (up/down/left/right/scale/blur variants)
+- [x] `src/components/ui/LottieAnimation.tsx` — Loads Lottie JSON animations via lottie-web
+- [x] `src/components/ui/AnimatedCounter.tsx` — GSAP + ScrollTrigger number counter (count-up on scroll)
+- [x] `src/components/ui/TeddyMascot.tsx` — Pure SVG teddy bear character (happy/sad mood, bouncing idle, blinking eyes)
+- [x] `src/components/ui/MouseTrail.tsx` — Sparkle particles follow the mouse cursor on homepage
 
-### Fix: Persistent cloud storage with Vercel Blob
-- [x] Installed `@vercel/blob` package
-- [x] Updated `src/app/api/upload/route.ts` upload flow to try in order:
-  1. **Vercel Blob** (`BLOB_READ_WRITE_TOKEN` set) — persistent, survives deployments
-  2. **Cloudinary** (real credentials) — persistent cloud fallback
-  3. **Local `/public/uploads/`** — dev-only last resort
-- [x] `next.config.ts`: added `**.public.blob.vercel-storage.com` image pattern
-- [x] Created `BLOB_SETUP.md` with step-by-step Vercel Blob configuration guide
+### Assets Copied to `public/lottie/`
+- [x] `cart-jump.json` — Animated trolley jumping (empty cart state in CartDrawer)
+- [x] `heartbeat.json` — Animated heart pulse (wishlist)
+- [x] `star-rating.json` — Star rating animation
+- [x] `avatar.json` — Avatar animation
+- [x] `loading.json` — Loading spinner (ProductSkeleton)
+- [x] `activity.json` — Activity animation
 
-### Image Normalization (any image uploads look organized)
-- [x] Installed `sharp` for server-side image processing
-- [x] All uploads auto-resized to fit 1200×1200 box (preserves aspect ratio, no upscaling)
-- [x] Converted to optimized JPEG (85% quality, mozjpeg)
-- [x] EXIF metadata stripped
-- [x] Results: uniform product photos, faster loads, no broken layout from huge images
+### Updated Components
+- [x] **Hero.tsx** — TeddyMascot placed next to "Karachi Toys" heading; GSAP ScrollTrigger text color shift (ink → teal)
+- [x] **FeatureBand.tsx** — ScrollReveal wraps section heading; AnimatedCounter stats row (4500+ toys, 12000+ families, etc.)
+- [x] **CartDrawer.tsx** — Empty cart state shows LottieAnimation (cart-jump.json) instead of static icon
+- [x] **ProductCard.tsx** — 3D mouse tilt effect (perspective rotateX/Y on mousemove); confetti burst on "Add to cart"
+- [x] **ProductSkeleton.tsx** — Loading state shows LottieAnimation (loading.json) spinning in the image area
+- [x] **layout.tsx** — MouseTrail component added (sparkle cursor effect across the whole site)
 
+### Dependencies Installed
+- [x] `gsap` (already installed)
+- [x] `lottie-web` (already installed)
+- [x] `canvas-confetti` (already installed) + `@types/canvas-confetti`
+- [x] `@formkit/auto-animate` (already installed)
+
+n 

@@ -7,6 +7,7 @@ import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
 import { AppToaster } from "@/components/ui/AppToaster";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageTransition } from "@/components/ui/PageTransition";
+import { MouseTrail } from "@/components/ui/MouseTrail";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -136,6 +137,7 @@ export default function RootLayout({
       <body className={`${fredoka.variable} ${jakarta.variable} antialiased`}>
         <JsonLd data={orgJsonLd} />
         <JsonLd data={websiteJsonLd} />
+        <MouseTrail />
         <Header />
         
         <main className="min-h-[70vh]">

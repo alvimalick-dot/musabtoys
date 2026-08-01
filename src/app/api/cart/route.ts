@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
           error: `Only ${product.stock} left in stock`,
           product,
           requested: item.quantity,
+          stock: product.stock,
         };
       }
       return {

@@ -27,7 +27,9 @@ export const useCartStore = create<CartState>()(
       closeCart: () => set({ isOpen: false }),
       toggleCart: () => set((s) => ({ isOpen: !s.isOpen })),
       addItem: (item, qty = 1) => {
-        const maxAllowed = item.stock || 99;
+        // Don't allow adding out-of-stock products
+        if (item.stock <= 0) return;
+        const maxAllowed = item.stock > 0 ? item.stock : 99;
         const safeQty = Math.min(qty, maxAllowed);
         if (safeQty <= 0) return;
         set((state) => {
@@ -56,7 +58,13 @@ export const useCartStore = create<CartState>()(
           items: state.items
             .map((i) =>
               i.productId === productId
-                ? { ...i, quantity: Math.max(0, Math.min(quantity, i.stock || 99)) }
+                ? {
+                    ...i,
+                    quantity: Math.max(
+                      0,
+                      Math.min(quantity, i.stock > 0 ? i.stock : 99)
+                    ),
+                  }
                 : i
             )
             .filter((i) => i.quantity > 0),

@@ -1,15 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Search, Rocket, Puzzle, Gamepad2, Blocks } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BubbleTitle } from "@/components/ui/BubbleTitle";
+import { TeddyMascot } from "@/components/ui/TeddyMascot";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function Hero() {
   const router = useRouter();
   const [searchQ, setSearchQ] = useState("");
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   function onSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -17,6 +23,24 @@ export function Hero() {
     if (q) router.push(`/shop?q=${encodeURIComponent(q)}`);
     else router.push("/shop");
   }
+
+  // Text color shift as user scrolls (coral → sky → sun)
+  useEffect(() => {
+    const el = headingRef.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      gsap.to(el, {
+        color: "#0891b2",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 20%",
+          end: "top -30%",
+          scrub: 1,
+        },
+      });
+    }, el);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section className="relative overflow-hidden py-8 sm:py-10 toy-grid-bg">
@@ -65,24 +89,36 @@ export function Hero() {
 
       <div className="relative mx-auto flex max-w-5xl flex-col lg:flex-row lg:items-center justify-center gap-10 lg:gap-16 px-4 sm:px-6">
         
-        {/* Left Side: Title */}
-        <div>
-          <motion.p
-            className="whitespace-nowrap font-display text-4xl leading-[0.95] tracking-tight text-ink min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <BubbleTitle variant="standard" colorClass="text-ink">
-              Karachi
-            </BubbleTitle>{" "}
-            <BubbleTitle
-              variant="logo"
-              className="text-4xl min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
+        {/* Left Side: Title + Teddy Mascot */}
+        <div className="flex items-center gap-4">
+          <div>
+            <motion.p
+              ref={headingRef}
+              className="whitespace-nowrap font-display text-4xl leading-[0.95] tracking-tight text-ink min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
-              Toys
-            </BubbleTitle>
-          </motion.p>
+              <BubbleTitle variant="standard" colorClass="text-ink">
+                Karachi
+              </BubbleTitle>{" "}
+              <BubbleTitle
+                variant="logo"
+                className="text-4xl min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-8xl"
+              >
+                Toys
+              </BubbleTitle>
+            </motion.p>
+          </div>
+          {/* Teddy Mascot — hidden on small screens */}
+          <motion.div
+            className="hidden sm:block shrink-0"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.5, type: "spring" }}
+          >
+            <TeddyMascot size={100} mood="happy" />
+          </motion.div>
         </div>
 
         {/* Right Side: Search + CTA */}
