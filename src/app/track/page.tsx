@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { TrackForm } from "@/components/track/TrackForm";
 
 export const metadata: Metadata = {
-  title: "Track order",
-  description: "Track your Karachi Toy Shop order with order number and phone.",
+  title: "Track Your Order | Karachi Toys",
+  description: "Track your Karachi Toys order in real-time using your order number and phone.",
+  alternates: { canonical: "/track" },
+  robots: { index: true, follow: true },
 };
 
 type Props = { searchParams: Promise<{ order?: string }> };

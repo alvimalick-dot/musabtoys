@@ -23,10 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const product = await Product.findOne({ slug }).lean();
     if (!product) return { title: "Product not found" };
 
-    const title = `${product.name} — Buy Online in Multan`;
+    const title = `Buy ${product.name} Online in Pakistan | Karachi Toys`;
     const description =
       product.description?.slice(0, 155) ||
-      `Buy ${product.name} online from Karachi Toy Shop. ${product.brand} · ${product.ageGroup}. Cash on Delivery available.`;
+      `Buy ${product.name} online in Pakistan. ${product.brand ? product.brand + " · " : ""}${product.ageGroup ? product.ageGroup + ". " : ""}Cash on Delivery available across Pakistan.`;
     const image = product.images?.[0];
     const url = `${siteUrl}/product/${product.slug}`;
 
@@ -35,21 +35,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       keywords: [
         product.name,
+        `${product.name} price in Pakistan`,
+        `buy ${product.name} online`,
         product.brand,
+        `${product.brand} toys Pakistan`,
         product.category,
-        "toys Multan",
-        "buy online Pakistan",
-      ],
+        `${product.category} toys Pakistan`,
+        product.ageGroup,
+        "toys Karachi",
+        "buy toys online Pakistan",
+        "Cash on Delivery toys",
+      ].filter(Boolean) as string[],
       alternates: { canonical: url },
       openGraph: {
         type: "website",
         url,
         title,
         description,
-        siteName: "Karachi Toy Shop",
+        siteName: "Karachi Toys",
         locale: "en_PK",
         images: image
-          ? [{ url: image, alt: product.name }]
+          ? [{ url: image, width: 1200, height: 1200, alt: product.name }]
           : [{ url: "/og-image.svg", alt: product.name }],
       },
       twitter: {
@@ -125,10 +131,7 @@ export default async function ProductPage({ params }: Props) {
       name: product.name,
       description: product.description,
       sku: product.sku,
-      brand: {
-        "@type": "Brand",
-        name: product.brand,
-      },
+      brand: { "@type": "Brand", name: product.brand },
       category: product.category,
       image: product.images?.length ? product.images : undefined,
       offers: {
@@ -136,21 +139,59 @@ export default async function ProductPage({ params }: Props) {
         url: `${siteUrl}/product/${product.slug}`,
         priceCurrency: "PKR",
         price: product.price,
+        priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
         availability:
           product.stock > 0
             ? "https://schema.org/InStock"
             : "https://schema.org/OutOfStock",
         itemCondition: "https://schema.org/NewCondition",
-        seller: {
-          "@type": "Organization",
-          name: "Karachi Toy Shop",
+        seller: { "@type": "Organization", name: "Karachi Toys" },
+        shippingDetails: {
+          "@type": "OfferShippingDetails",
+          shippingRate: {
+            "@type": "MonetaryAmount",
+            value: "0",
+            currency: "PKR",
+          },
+          deliveryTime: {
+            "@type": "ShippingDeliveryTime",
+            handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+            transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 5, unitCode: "DAY" },
+          },
+        },
+        hasMerchantReturnPolicy: {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "PK",
+          returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+          merchantReturnDays: 7,
+          returnMethod: "https://schema.org/ReturnByMail",
+          returnFees: "https://schema.org/FreeReturn",
         },
       },
+    };
+
+    const breadcrumbJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+        { "@type": "ListItem", position: 2, name: "Shop", item: `${siteUrl}/shop` },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: product.category,
+          item: `${siteUrl}/shop?category=${encodeURIComponent(product.category)}`,
+        },
+        { "@type": "ListItem", position: 4, name: product.name, item: url },
+      ],
     };
 
     return (
       <>
         <JsonLd data={productJsonLd} />
+        <JsonLd data={breadcrumbJsonLd} />
         <ProductDetailClient product={dto} />
         <RelatedProducts products={relatedDto} />
         <ProductReviews slug={product.slug} />

@@ -1,10 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = {
-  title: "FAQ · Delivery & Returns",
+  title: "FAQ · Delivery, Returns & Payments",
   description:
-    "Delivery, Cash on Delivery, returns and replacement policy for Karachi Toy Shop — delivered from Multan.",
+    "Answers about Cash on Delivery, delivery times, returns and payments for Karachi Toys — Pakistan's online toy store.",
+  alternates: { canonical: "/faq" },
+  openGraph: {
+    type: "website",
+    title: "FAQ · Delivery, Returns & Payments | Karachi Toys",
+    description:
+      "COD, delivery times, returns and payment questions answered for Karachi Toys.",
+    url: "/faq",
+  },
+  twitter: {
+    card: "summary",
+    title: "FAQ | Karachi Toys",
+    description: "COD, delivery, returns and payment questions answered.",
+  },
 };
 
 const faqs = [
@@ -34,9 +48,30 @@ const faqs = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+    { "@type": "ListItem", position: 2, name: "FAQ", item: "/faq" },
+  ],
+};
+
 export default function FaqPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <JsonLd data={faqJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
         Help
       </p>

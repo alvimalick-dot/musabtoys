@@ -29,51 +29,71 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Karachi Toy Shop | Buy Toys Online — Cash on Delivery",
-    template: "%s | Karachi Toy Shop",
+    default: "Karachi Toys | #1 Online Toy Store in Pakistan — Cash on Delivery",
+    template: "%s | Karachi Toys",
   },
   description:
-    "Buy toys online from Karachi Toy Shop. Thousands of toys for every age. Cash on Delivery across Pakistan. From PKR 100 to 150,000+.",
+    "Shop 4,500+ toys online at Karachi Toys. Best prices in Pakistan — PKR 100 to 150,000+. Free Cash on Delivery nationwide. LEGO, RC cars, baby toys, board games & more.",
   keywords: [
-    "toys online Pakistan",
+    // High-intent buyer keywords
     "buy toys online Pakistan",
-    "Karachi toy shop",
-    "kids toys online",
+    "toys online Pakistan",
+    "online toy store Pakistan",
+    "toys Cash on Delivery Pakistan",
     "toys COD Pakistan",
-    "Cash on Delivery toys",
-    "baby toys Pakistan",
-    "STEM toys online",
+    // Brand + city
+    "Karachi Toys",
+    "Karachi toy shop",
+    "toy store Karachi",
+    "kids toys Karachi",
+    // Product category keywords
+    "LEGO Pakistan",
     "RC cars Pakistan",
-    "toy store Pakistan",
+    "remote control toys Pakistan",
+    "baby toys Pakistan",
+    "educational toys Pakistan",
+    "STEM toys Pakistan",
+    "board games Pakistan",
+    "action figures Pakistan",
+    "dolls Pakistan",
+    "outdoor toys Pakistan",
+    // Urdu transliteration (how Pakistanis actually search)
+    "khilone online Pakistan",
+    "bachon ke khilone",
+    "sasta khilona",
+    // Long-tail
+    "best toys for kids Pakistan",
+    "affordable toys Pakistan",
+    "toys for 1 year old Pakistan",
+    "toys for 5 year old Pakistan",
+    "birthday gifts for kids Pakistan",
   ],
-  authors: [{ name: "Karachi Toy Shop" }],
-  creator: "Karachi Toy Shop",
-  publisher: "Karachi Toy Shop",
-  alternates: {
-    canonical: "/",
-  },
+  authors: [{ name: "Karachi Toys" }],
+  creator: "Karachi Toys",
+  publisher: "Karachi Toys",
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_PK",
     url: siteUrl,
-    siteName: "Karachi Toy Shop",
-    title: "Karachi Toy Shop | Buy Toys Online",
+    siteName: "Karachi Toys",
+    title: "Karachi Toys | #1 Online Toy Store in Pakistan",
     description:
-      "Thousands of toys for every age. Cash on Delivery across Pakistan. From PKR 100 to 150,000+.",
+      "4,500+ toys for every age. Cash on Delivery across Pakistan. LEGO, RC cars, baby toys & more — starting PKR 100.",
     images: [
       {
         url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "Karachi Toy Shop — Toys for every age",
+        alt: "Karachi Toys — Pakistan's favourite online toy store",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Karachi Toy Shop | Buy Toys Online",
+    title: "Karachi Toys | #1 Online Toy Store in Pakistan",
     description:
-      "Thousands of toys for every age. Cash on Delivery across Pakistan.",
+      "4,500+ toys. Cash on Delivery across Pakistan. Starting PKR 100.",
     images: ["/og-image.svg"],
   },
   robots: {
@@ -93,29 +113,31 @@ export const metadata: Metadata = {
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "ToyStore",
-  name: "Karachi Toy Shop",
+  name: "Karachi Toys",
   url: siteUrl,
+  logo: `${siteUrl}/logo.png`,
   description:
-    "Online toy store from Multan offering thousands of toys with Cash on Delivery across Pakistan.",
+    "Karachi Toys is Pakistan's #1 online toy store offering 4,500+ toys with Cash on Delivery nationwide.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Multan",
     addressRegion: "Punjab",
     addressCountry: "PK",
   },
-  areaServed: {
-    "@type": "Country",
-    name: "Pakistan",
-  },
+  areaServed: { "@type": "Country", name: "Pakistan" },
   priceRange: "PKR 100 - PKR 150000+",
   currenciesAccepted: "PKR",
-  paymentAccepted: "Cash on Delivery",
+  paymentAccepted: "Cash on Delivery, JazzCash, PayFast",
+  openingHours: "Mo-Su 09:00-21:00",
+  sameAs: [
+    `${siteUrl}`,
+  ],
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "Karachi Toy Shop",
+  name: "Karachi Toys",
   url: siteUrl,
   potentialAction: {
     "@type": "SearchAction",
