@@ -75,8 +75,8 @@ export async function POST(req: NextRequest) {
       subtotal += product.price * item.quantity;
     }
 
-    const shipping = calcShipping(subtotal);
     const discount = Math.min(body.discount || 0, subtotal);
+    const shipping = calcShipping(subtotal, discount > 0);
     const total = Math.max(0, subtotal - discount) + shipping;
 
     const paymentStatus = "pending";

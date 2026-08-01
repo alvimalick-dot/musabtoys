@@ -1,5 +1,20 @@
 # Theme & Animation TODO
 
+## Round 11: Shipping Rule — Free ≥ PKR 3000, Coupon Orders Pay 250
+
+### New Rule
+- Subtotal ≥ **PKR 3,000** → **FREE** shipping
+- Subtotal < PKR 3,000 → flat **PKR 250** shipping
+- If a **coupon is applied** → shipping is **always PKR 250** (not free)
+
+### Files Changed
+- [x] `src/lib/commerce.ts` — `FREE_SHIPPING_THRESHOLD` 5000 → 3000; `calcShipping(subtotal, hasCoupon)` — coupon forces the 250 fee
+- [x] `src/app/api/checkout/route.ts` — passes `discount > 0` into `calcShipping` so coupon orders get charged 250
+- [x] `src/components/checkout/CheckoutForm.tsx` — shipping reflects coupon status; note text updates when a coupon is applied
+- [x] `src/components/layout/CartDrawer.tsx` — free-shipping progress bar auto-adjusts to the new 3000 threshold (shared constant)
+- [x] `src/app/faq/page.tsx` — FAQ answer updated to 3,000 threshold + coupon exception
+- [x] `src/components/home/FeatureBand.tsx` — "Free delivery on orders PKR 5,000+" → "PKR 3,000+"
+
 ## Round 10: Prevent Out-of-Stock Items from Being Added to Cart
 
 ### Root Cause

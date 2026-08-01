@@ -172,7 +172,95 @@ MIME, no more broken PNG/WebP uploads).
 |---|---|
 | `src/app/api/upload/route.ts` | The upload endpoint (resize + save) |
 | `src/lib/cloudinary.ts` | Cloudinary SDK config + upload helper |
+| `src/lib/product-images.ts` | Excel image resolution (cell value → public URL) |
+| `src/app/api/excel-upload/route.ts` | Bulk Excel import — resolves & stores image URLs |
 | `src/components/admin/ProductAdmin.tsx` | The "Product photos" upload UI |
 | `next.config.ts` | Whitelists cloud image hosts |
 | `BLOB_SETUP.md` | Quick Vercel Blob setup cheat-sheet |
+
+---
+
+## 10. Excel Import + Cloudinary — How Images Are Resolved
+
+This section explains exactly what happens to the **Image column** when you
+import a catalog via **Admin → Excel upload**, and how Cloudinary fits in.
+
+### 10.1 How an Excel image cell is resolved
+
+Every image value from the Excel `Image` column is processed by
+`resolveProductImages()` in `src/lib/product-images.ts`:
+
+| What you put in the cell | What gets stored in MongoDB | Where the file actually lives |
+|---|---|---|
+| `https://...` (any full URL) | **Stored as-is**, never touched | Whatever host you gave (Unsplash, Cloudinary, S3, …) |
+| `HW-001.jpg` (just a filename) | `/images/HW-001.jpg` | Your repo's `public/images/` folder |
+| `images/HW-001.jpg` | `/images/HW-001.jpg` | Same folder |
+| `public/images/HW-001.jpg` | `/images/HW-001.jpg` | Same folder |
+| `HW-001` (no extension) | Auto-detects `HW-001.jpg` / `.png` / `.webp` / `.gif` | Same folder |
+| *(no Image column at all)* | Auto-matches files named after the **SKU** (e.g. SKU = `HW-001` → `HW-001.jpg`) | Same folder |
+
+> **Important:** The Excel path **never uploads to Cloudinary automatically**.
+> Cloudinary is only used when you upload photos one-by-one with the admin
+> **"Choose photos"** button (`/api/upload`). Excel import either keeps a full
+> URL you typed, or points to `/images/...` inside the repo.
+
+### 10.2 Your 3 options for Excel images + Cloudinary
+
+#### Option A — Keep using `public/images/` (no Cloudinary needed)
+
+- Put photos in `public/images/`, commit to GitHub, reference by filename in Excel.
+- Works on Vercel today because `public/` is deployed as **static files**
+  (this is different from `/uploads`, which gets wiped on every deploy).
+- **Downsides:** Every image bloats your Git repo. Updating one photo means a
+  git push + redeploy. With thousands of images this gets heavy.
+
+#### Option B — Paste Cloudinary URLs directly into Excel (no code changes)
+
+1. Upload your photos to Cloudinary first — either drag & drop on
+   `cloudinary.com`, or use the admin **"Choose photos"** button once Cloudinary
+   env vars are set.
+2. Copy each CDN URL
+   (`https://res.cloudinary.com/<cloud-name>/image/upload/v1234/karachi-toys/HW-001.jpg`).
+3. Paste the URL(s) into the Excel `Image` column (comma-separated for multiple).
+4. Excel stores the URL **as-is** → CDN-hosted, survives every deployment,
+   zero code changes.
+
+- **Downsides:** Manual URL copying per product — painful for a large catalog.
+
+#### Option C — Auto-upload local images to Cloudinary during Excel import *(recommended for big catalogs)*
+
+- You still put photos in `public/images/` and reference by filename in Excel.
+- Code change: the Excel upload route detects images that resolved to a local
+  `/images/...` path, reads the file from disk, uploads it to Cloudinary, and
+  stores the **Cloudinary CDN URL** in MongoDB instead of `/images/...`.
+- Result: your database holds permanent CDN URLs, images are no longer tied to
+  the repo, and you never manually copy URLs. Perfect for migrating a large
+  catalog **once**.
+- Bonus: a **"Sync all images to Cloudinary"** admin action can re-process
+  existing products already stored with `/images/...` paths so they also get CDN
+  URLs.
+
+### 10.3 What I recommend
+
+**Option C** is the only one that is truly production-grade for a catalog with
+many products: full CDN hosting, no manual work, and your MongoDB records become
+permanent Cloudinary URLs that survive any redeploy.
+
+> 📝 **Note for Vercel:** `public/images/` is deployed as read-only static files,
+> but serverless functions **can still read** them from disk, so the auto-upload
+> approach in Option C works on Vercel too.
+
+### 10.4 Implementation sketch for Option C
+
+- **New helper:** `src/lib/cloudinary-sync.ts`
+  - `syncLocalImageToCloudinary(publicPath: string): Promise<string>`
+  - Reads the file from `public/images/...`, calls `uploadImage()` from
+    `src/lib/cloudinary.ts`, returns the CDN URL.
+- **Modify:** `src/app/api/excel-upload/route.ts`
+  - After `resolveProductImages()` returns `/images/...` URLs, upload each to
+    Cloudinary (when env vars are configured) and store the returned CDN URLs.
+  - Keep the original `/images/...` URL as a fallback if Cloudinary is not
+    configured or the upload fails.
+- **Optional admin action:** a button that iterates products with `/images/...`
+  URLs, uploads them to Cloudinary, and updates MongoDB.
 

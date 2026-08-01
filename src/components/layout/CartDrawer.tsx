@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Minus, Plus, ShoppingBag, Trash2, Truck, X } from "lucide-react";
+import { Minus, Plus, Trash2, Truck, X } from "lucide-react";
 import { useEffect } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";

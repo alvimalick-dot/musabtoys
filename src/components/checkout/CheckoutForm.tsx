@@ -54,8 +54,9 @@ export function CheckoutForm() {
   });
 
   const sub = subtotal();
-  const shipping = calcShipping(sub);
   const discount = appliedCoupon?.discount ?? 0;
+  const hasCoupon = !!appliedCoupon;
+  const shipping = calcShipping(sub, hasCoupon);
   const total = Math.max(0, sub - discount) + shipping;
 
   async function applyCoupon() {
@@ -403,7 +404,9 @@ export function CheckoutForm() {
             <span className="text-coral">{formatPKR(total)}</span>
           </div>
           <p className="pt-2 text-xs text-muted">
-            Free shipping on orders {formatPKR(FREE_SHIPPING_THRESHOLD)}+
+            {hasCoupon
+              ? "Coupon orders are charged a flat PKR 250 shipping fee."
+              : `Free shipping on orders ${formatPKR(FREE_SHIPPING_THRESHOLD)}+`}
           </p>
         </div>
       </aside>

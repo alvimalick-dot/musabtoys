@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: "Is shipping free?",
-    a: "Orders of PKR 5,000 or more get free shipping. Below that, a flat PKR 250 shipping fee applies.",
+    a: "Orders of PKR 3,000 or more get free shipping. Below that, a flat PKR 250 shipping fee applies. Note: if a coupon is applied, a flat PKR 250 shipping fee applies regardless of order value.",
   },
   {
     q: "Can I return or replace a toy?",

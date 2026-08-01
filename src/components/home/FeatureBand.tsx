@@ -14,7 +14,7 @@ const features = [
   {
     icon: Truck,
     title: "Cash on Delivery",
-    text: "Pay when your order arrives. Free delivery on orders PKR 5,000 and above.",
+    text: "Pay when your order arrives. Free delivery on orders PKR 3,000 and above.",
   },
   {
     icon: Gift,
