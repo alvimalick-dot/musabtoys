@@ -4,6 +4,10 @@ import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
 import { formatPKR } from "@/lib/utils";
 import { PrintButton } from "@/components/invoice/PrintButton";
+import {
+  BRAND_ADDRESS,
+  BRAND_PHONE,
+} from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Invoice",
@@ -104,6 +108,24 @@ export default async function InvoicePage({ params, searchParams }: Props) {
             <span>Total</span>
             <span>{formatPKR(order.total)}</span>
           </div>
+        </div>
+
+        <div className="mt-10 border-t border-black/10 pt-4 text-xs text-muted">
+          <p className="font-bold text-ink">Karachi Toy Shop</p>
+          <p className="mt-1">{BRAND_ADDRESS}</p>
+          <p>
+            Phone:{" "}
+            <a
+              href={"tel:" + BRAND_PHONE.replace(/\s+/g, "")}
+              className="underline"
+            >
+              {BRAND_PHONE}
+            </a>
+          </p>
+          <p className="mt-2 text-[11px] text-black/40">
+            Thank you for shopping with us! For order issues, contact us within
+            7 days of delivery.
+          </p>
         </div>
       </div>
     );

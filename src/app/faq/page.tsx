@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MapPin, Phone } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { SocialLinks } from "@/components/ui/SocialLinks";
+import { whatsappChatUrl } from "@/lib/whatsapp";
+import {
+  BRAND_ADDRESS,
+  BRAND_LOCATION_NOTE,
+  BRAND_MAPS_URL,
+  BRAND_PHONE,
+  BRAND_PHONE_DISPLAY,
+} from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "FAQ · Delivery, Returns & Payments",
@@ -103,6 +113,53 @@ export default function FaqPage() {
         <Link href="/shop" className="btn-secondary min-h-12 justify-center">
           Back to shop
         </Link>
+      </div>
+
+      <div className="mt-14 rounded-3xl bg-ink p-6 text-white sm:p-8">
+        <p className="text-sm font-bold uppercase tracking-[0.22em] text-sun">
+          Get in touch
+        </p>
+        <h2 className="mt-2 font-display text-2xl font-semibold sm:text-3xl">
+          Still have a question?
+        </h2>
+        <p className="mt-2 text-sm text-white/70">
+          Call or WhatsApp us — we&apos;re happy to help with orders, stock and
+          delivery.
+        </p>
+        <div className="mt-5 space-y-3 text-sm">
+          <a
+            href={BRAND_MAPS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-start gap-2 text-white/80 transition hover:text-white"
+          >
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-sun" />
+            <span>
+              {BRAND_ADDRESS}
+              <span className="block text-xs text-white/50">
+                {BRAND_LOCATION_NOTE}
+              </span>
+            </span>
+          </a>
+          <a
+            href={"tel:" + BRAND_PHONE.replace(/\s+/g, "")}
+            className="flex items-center gap-2 text-white/80 transition hover:text-white"
+          >
+            <Phone className="h-4 w-4 shrink-0 text-sun" />
+            {BRAND_PHONE_DISPLAY}
+          </a>
+        </div>
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <a
+            href={whatsappChatUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-primary min-h-12"
+          >
+            Chat on WhatsApp
+          </a>
+          <SocialLinks className="ml-1" />
+        </div>
       </div>
     </div>
   );

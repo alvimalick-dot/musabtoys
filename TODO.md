@@ -18,3 +18,14 @@
 - [ ] 12. Harden `src/components/seo/JsonLd.tsx` — escape `</script>`-breaking characters
 - [ ] 13. Run type-check / lint to verify changes
 
+---
+
+## Social Links & Contact Info in Footer & Pages
+
+- [x] 1. Add brand maps/social/phone-display constants to `src/lib/seo.ts`
+- [x] 2. Create `src/components/ui/SocialLinks.tsx` (Instagram + TikTok + WhatsApp icons)
+- [x] 3. Update `src/components/layout/Footer.tsx` — Google Maps link, tel link, social icons
+- [x] 4. Add "Get in touch" contact card to `src/app/faq/page.tsx`
+- [x] 5. Add store contact block to `src/app/invoice/[orderNumber]/page.tsx`
+- [x] 6. Run `npx tsc --noEmit` + `npm run lint` (0 errors; 3 pre-existing warnings in unrelated files)
+
