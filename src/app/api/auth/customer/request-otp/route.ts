@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       purpose: body.purpose,
     });
 
-    // Only the server-internal phoneKey crosses the boundary here
+    // Send OTP email — uses official Resend SDK (no raw fetch, no SSRF risk)
     const emailSent = await dispatchOtpEmail(key);
 
     const allowDebug =

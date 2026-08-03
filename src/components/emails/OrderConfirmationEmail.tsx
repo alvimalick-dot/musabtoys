@@ -434,9 +434,3 @@ const link: React.CSSProperties = {
   color: "#f59e0b",
   textDecoration: "underline",
 };
-
-const paymentLabel: Record<string, string> = {
-  cod: "Cash on Delivery",
-  jazzcash: "JazzCash",
-  payfast: "PayFast",
-};
