@@ -36,31 +36,21 @@ function hasCloudinary() {
  * - Converts to JPEG for consistent quality
  * - Strips EXIF metadata
  */
-async function normalizeImage(buffer: Buffer): Promise<Buffer> {
-  const metadata = await sharp(buffer).metadata();
-  const width = metadata.width || TARGET_WIDTH;
-  const height = metadata.height || TARGET_HEIGHT;
+async function normalizeImage(input: Buffer): Promise<Buffer> {
+  // Validate it is a real image first — throws if not
+  const metadata = await sharp(input).metadata();
+  if (!metadata.format) throw new Error("Unrecognised image format");
 
-  // If the image is already smaller than target on both axes, just
-  // convert to JPEG + strip metadata without upscaling.
-  if (width <= TARGET_WIDTH && height <= TARGET_HEIGHT) {
-    return sharp(buffer)
-      .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
-      .withMetadata({ orientation: undefined }) // strip EXIF orientation
-      .toBuffer();
+  const w = metadata.width ?? TARGET_WIDTH;
+  const h = metadata.height ?? TARGET_HEIGHT;
+
+  const pipeline = sharp(input).jpeg({ quality: JPEG_QUALITY, mozjpeg: true }).withMetadata({ orientation: undefined });
+
+  if (w > TARGET_WIDTH || h > TARGET_HEIGHT) {
+    pipeline.resize({ width: TARGET_WIDTH, height: TARGET_HEIGHT, fit: "inside", withoutReduction: false });
   }
 
-  // Resize to fit within the box, maintaining aspect ratio.
-  return sharp(buffer)
-    .resize({
-      width: TARGET_WIDTH,
-      height: TARGET_HEIGHT,
-      fit: "inside", // "inside" preserves aspect ratio, no cropping
-      withoutReduction: false, // always shrink to fit
-    })
-    .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
-    .withMetadata({ orientation: undefined })
-    .toBuffer();
+  return pipeline.toBuffer();
 }
 
 export async function POST(req: NextRequest) {
@@ -130,11 +120,12 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Local fallback — dev only; files won't persist on Vercel
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    const uploadsDir = path.resolve(process.cwd(), "public", "uploads");
     await mkdir(uploadsDir, { recursive: true });
-
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
-    await writeFile(path.join(uploadsDir, filename), normalizedBuffer);
+    // Filename is 100% server-generated — no user input involved
+    const filename = `${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}.jpg`;
+    const dest = path.resolve(uploadsDir, filename);
+    await writeFile(dest, normalizedBuffer);
 
     return NextResponse.json({
       url: `/uploads/${filename}`,

@@ -10,6 +10,20 @@ try {
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
+// Validate URI only allows known MongoDB Atlas / localhost hostnames
+function validateMongoUri(uri: string) {
+  try {
+    const url = new URL(uri);
+    const allowed = /^(.*\.mongodb\.net|localhost|127\.0\.0\.1)$/;
+    if (!allowed.test(url.hostname)) {
+      throw new Error(`Untrusted MongoDB host: ${url.hostname}`);
+    }
+  } catch (e) {
+    if (e instanceof Error && e.message.startsWith("Untrusted")) throw e;
+    // non-SRV URIs (mongodb+srv) may not parse cleanly — allow them through
+  }
+}
+
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -36,6 +50,7 @@ export async function connectDB() {
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
+    validateMongoUri(MONGODB_URI);
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
       serverSelectionTimeoutMS: 15000,

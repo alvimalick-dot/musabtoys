@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
+import { timingSafeEqual } from "crypto";
 
 const COOKIE_NAME = "kts_admin_token";
 const isProd = process.env.NODE_ENV === "production";
@@ -72,15 +73,18 @@ export async function validateAdminCredentials(email: string, password: string) 
   if (
     isProd &&
     (adminEmail === "admin@karachitoys.pk" ||
-      adminPassword === "ChangeMe123!" ||
-      adminPassword.toLowerCase().includes("changeme"))
+      adminPassword.toLowerCase().includes("change"))
   ) {
     throw new Error(
-      "Default admin credentials are not allowed in production. Change ADMIN_EMAIL and ADMIN_PASSWORD."
+      "Default admin credentials detected. Update ADMIN_EMAIL and ADMIN_PASSWORD before deploying."
     );
   }
 
-  if (email !== adminEmail) return false;
+  // Pad both sides to equal length before timing-safe compare
+  const encEmail = Buffer.from(email.padEnd(256));
+  const encAdminEmail = Buffer.from(adminEmail.padEnd(256));
+  const emailMatch = timingSafeEqual(encEmail, encAdminEmail) && email.length === adminEmail.length;
+  if (!emailMatch) return false;
 
   // Production: bcrypt hash required ($2a$ / $2b$ / $2y$)
   if (adminPassword.startsWith("$2")) {
@@ -89,10 +93,12 @@ export async function validateAdminCredentials(email: string, password: string) 
 
   if (isProd) {
     throw new Error(
-      "ADMIN_PASSWORD must be a bcrypt hash in production (starts with $2). Generate with: npx bcryptjs-cli hash \"your-password\""
+      "ADMIN_PASSWORD must be a bcrypt hash in production. Generate with: npx bcryptjs-cli hash your-password"
     );
   }
 
-  // Dev only: plaintext comparison
-  return password === adminPassword;
+  // Dev only: timing-safe plaintext comparison (pad to equal length)
+  const encPw = Buffer.from(password.padEnd(256));
+  const encAdminPw = Buffer.from(adminPassword.padEnd(256));
+  return timingSafeEqual(encPw, encAdminPw) && password.length === adminPassword.length;
 }

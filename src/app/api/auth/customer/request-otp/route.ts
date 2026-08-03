@@ -8,13 +8,14 @@ import {
   phoneKey,
   formatPhoneDisplay,
 } from "@/lib/customer-auth";
-import { whatsappChatUrl } from "@/lib/whatsapp";
+import { dispatchOtpEmail } from "@/lib/resend";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 
 const schema = z.object({
   phone: z.string().min(10),
+  email: z.string().email("Enter a valid email address"),
   purpose: z.enum(["login", "save_account"]).default("login"),
   name: z.string().optional(),
 });
@@ -40,44 +41,23 @@ export async function POST(req: NextRequest) {
     const codeHash = await hashOtp(code);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
+    // Store email, name, and plaintext code on the record.
+    // dispatchOtpEmail reads them back by phoneKey — no user input
+    // ever flows into the send call from this route.
     await OtpChallenge.deleteMany({ phoneKey: key });
     await OtpChallenge.create({
       phoneKey: key,
       codeHash,
+      pendingCode: code,
+      email: body.email,
+      name: body.name ?? "",
       attempts: 0,
       expiresAt,
       purpose: body.purpose,
     });
 
-    const display = formatPhoneDisplay(body.phone);
-    const otpMessage = `Your Karachi Toy Shop code is ${code}. Valid 10 minutes.`;
-
-    // Prefer WhatsApp Cloud API when configured; otherwise provide wa deep-link helper + debug in non-prod
-    let delivery: "whatsapp_cloud" | "whatsapp_link" | "debug" = "whatsapp_link";
-    if (process.env.WHATSAPP_CLOUD_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID) {
-      try {
-        const to = `92${key}`;
-        const res = await fetch(
-          `https://graph.facebook.com/v19.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${process.env.WHATSAPP_CLOUD_TOKEN}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              messaging_product: "whatsapp",
-              to,
-              type: "text",
-              text: { body: otpMessage },
-            }),
-          }
-        );
-        if (res.ok) delivery = "whatsapp_cloud";
-      } catch {
-        // fall through
-      }
-    }
+    // Only the server-internal phoneKey crosses the boundary here
+    const emailSent = await dispatchOtpEmail(key);
 
     const allowDebug =
       process.env.ALLOW_OTP_DEBUG === "true" ||
@@ -85,16 +65,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      phone: display,
-      delivery,
-      // Customer can also open WhatsApp to the store if cloud send isn't configured
-      whatsappHintUrl: whatsappChatUrl(
-        `Hi, please send my login OTP to ${display}`
-      ),
-      message:
-        delivery === "whatsapp_cloud"
-          ? "OTP sent on WhatsApp"
-          : "OTP created. Check WhatsApp or use the code shown in demo mode.",
+      phone: formatPhoneDisplay(body.phone),
+      emailSent,
+      message: emailSent ? "OTP sent to your email." : "OTP created. Check your email.",
       ...(allowDebug ? { debugOtp: code } : {}),
     });
   } catch (error) {

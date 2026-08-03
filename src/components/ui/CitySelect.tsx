@@ -188,10 +188,12 @@ export function CitySelect({ value, onChange, error }: CitySelectProps) {
         autoComplete="off"
         role="combobox"
         aria-expanded={open}
+        aria-controls="city-list"
         aria-autocomplete="list"
       />
       {open && (
         <ul
+          id="city-list"
           className="absolute z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-black/5"
           role="listbox"
         >

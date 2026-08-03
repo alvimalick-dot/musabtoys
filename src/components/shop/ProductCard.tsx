@@ -50,7 +50,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
     card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
   }
 
-  function onMouseLeave(e: React.MouseEvent) {
+  function onMouseLeave() {
     resetGlow();
     const card = cardRef.current;
     if (!card) return;

@@ -21,6 +21,7 @@ export function SuccessClient({
   // Optional save-account (never blocks)
   const [showSave, setShowSave] = useState(true);
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [otp, setOtp] = useState("");
   const [debugOtp, setDebugOtp] = useState<string | null>(null);
@@ -68,6 +69,7 @@ export function SuccessClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
+          email,
           purpose: "save_account",
           name,
         }),
@@ -76,7 +78,7 @@ export function SuccessClient({
       if (!res.ok) throw new Error(j.error || "Failed");
       setDebugOtp(j.debugOtp || null);
       setStep("otp");
-      toast.success("OTP ready — enter the code");
+      toast.success(j.message || "OTP sent to your email");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed");
     } finally {
@@ -206,6 +208,13 @@ export function SuccessClient({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
+              <input
+                className="input-field"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -234,7 +243,7 @@ export function SuccessClient({
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
               />
-              {debugOtp && (
+              {debugOtp && process.env.NODE_ENV !== "production" && (
                 <p className="rounded-xl bg-sun/20 px-3 py-2 text-xs">
                   Demo OTP: <strong>{debugOtp}</strong>
                 </p>

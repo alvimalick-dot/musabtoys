@@ -34,6 +34,7 @@ export interface IOrder {
   courierName?: string;
   trackingNumber?: string;
   feedbackRequested?: boolean;
+  confirmationEmailSent?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -88,6 +89,7 @@ const OrderSchema = new Schema<IOrder>(
     courierName: String,
     trackingNumber: String,
     feedbackRequested: { type: Boolean, default: false },
+    confirmationEmailSent: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

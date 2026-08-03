@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
-import { Order } from "@/models/Order";
+import { Order, IOrderItem } from "@/models/Order";
 import { checkoutSchema } from "@/lib/validators";
 import { calcShipping } from "@/lib/commerce";
+import { buildOrderConfirmation, sendEmail } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -105,12 +106,55 @@ export async function POST(req: NextRequest) {
       const { Coupon } = await import("@/models/Coupon");
       await Coupon.updateOne(
         { code: body.couponCode.toUpperCase() },
-        { $inc: { usedCount: 1 } },
+{ $inc: { usedCount: 1 } },
         { session }
       );
     }
 
     await session.commitTransaction();
+
+    // ── Email confirmation (non-blocking, best-effort) ────────────────
+    // The order is already placed & committed. If the email fails we still
+    // return success so the customer isn't blocked — we confirm orders by
+    // phone call anyway.
+    let emailSent = false;
+    if (body.customer.email) {
+      try {
+        const { emailSubject, emailText, emailReact } = buildOrderConfirmation({
+          orderNumber: order.orderNumber,
+          total: order.total,
+          subtotal: order.subtotal,
+          shipping: order.shipping,
+          discount: order.discount || 0,
+          customerName: order.customer.name,
+          customerPhone: order.customer.phone,
+          customerEmail: order.customer.email,
+          customerAddress: order.customer.address,
+          customerCity: order.customer.city,
+          items: order.items.map((i: IOrderItem) => ({
+            name: i.name,
+            quantity: i.quantity,
+            price: i.price,
+          })),
+        });
+
+        emailSent = await sendEmail({
+          to: order.customer.email,
+          subject: emailSubject,
+          text: emailText,
+          react: emailReact,
+        });
+
+        // Record the send result so admin can see who didn't get an email.
+        await Order.updateOne(
+          { _id: order._id },
+          { $set: { confirmationEmailSent: emailSent } }
+        );
+      } catch (emailError) {
+        console.error("Confirmation email failed for", order.orderNumber, emailError);
+        emailSent = false;
+      }
+    }
 
     // Payment gateway handoff stubs — wire credentials when ready
     let paymentRedirect: string | null = null;

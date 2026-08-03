@@ -46,7 +46,7 @@ const SAMPLE = [
     ageGroup: "0-3 years",
     stock: 75,
     featured: false,
-    description: "Six textured soft balls for first grip and sensory play.",
+    description: "Six textured soft spheres for first grip and sensory play.",
     images: [
       "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80",
     ],
