@@ -10,12 +10,12 @@ export const BRAND_CITY = "Multan";
 export const BRAND_REGION = "Punjab";
 export const BRAND_COUNTRY = "PK";
 export const BRAND_COUNTRY_NAME = "Pakistan";
-export const BRAND_PHONE = "+92 317 0818754";
-export const BRAND_WHATSAPP = "923170818754";
+export const BRAND_PHONE = "+92 331 3956602";
+export const BRAND_WHATSAPP = "923313956602";
 export const BRAND_ADDRESS = "6G36+2M5, T Block, New Multan Colony, Multan, Pakistan";
 export const BRAND_LOCATION_NOTE = "Located in: Gulshan Market – New Multan Colony, Multan";
 export const BRAND_MAPS_URL = "https://maps.app.goo.gl/LBu7LqY4bbktoBWbA";
-export const BRAND_PHONE_DISPLAY = "0317 0818754";
+export const BRAND_PHONE_DISPLAY = "0331 3956602";
 export const BRAND_SOCIAL = {
   instagram:
     "https://www.instagram.com/karachitoys_32?igsh=NjRhenM4cDFxdm4z&utm_source=qr",
