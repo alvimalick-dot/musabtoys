@@ -126,11 +126,13 @@ export async function POST(req: NextRequest) {
           subtotal: order.subtotal,
           shipping: order.shipping,
           discount: order.discount || 0,
+          paymentMethod: order.paymentMethod,
           customerName: order.customer.name,
           customerPhone: order.customer.phone,
           customerEmail: order.customer.email,
           customerAddress: order.customer.address,
           customerCity: order.customer.city,
+          customerArea: order.customer.area,
           items: order.items.map((i: IOrderItem) => ({
             name: i.name,
             quantity: i.quantity,

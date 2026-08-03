@@ -37,11 +37,13 @@ export function buildOrderConfirmation(opts: {
   subtotal: number;
   shipping: number;
   discount?: number;
+  paymentMethod?: string;
   customerName: string;
   customerPhone: string;
   customerEmail?: string;
   customerAddress?: string;
   customerCity?: string;
+  customerArea?: string;
   items?: { name: string; quantity: number; price: number; image?: string }[];
 }) {
   const whatsappUrl = whatsappOrderUrl(opts.orderNumber, opts.total);
@@ -51,10 +53,18 @@ export function buildOrderConfirmation(opts: {
 
   const react = React.createElement(OrderConfirmationEmail, {
     customerName: opts.customerName,
+    customerEmail: opts.customerEmail,
+    customerPhone: opts.customerPhone,
+    customerAddress: opts.customerAddress,
+    customerCity: opts.customerCity,
+    customerArea: opts.customerArea,
     orderId: opts.orderNumber,
-    trackingCode: opts.orderNumber,
     items: opts.items?.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })) ?? [],
+    subtotal: opts.subtotal,
+    shipping: opts.shipping,
+    discount: opts.discount ?? 0,
     total: opts.total,
+    paymentMethod: opts.paymentMethod,
   });
 
   return {
