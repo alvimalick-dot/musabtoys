@@ -19,7 +19,7 @@ export const BRAND_PHONE_DISPLAY = "0317 0818754";
 export const BRAND_SOCIAL = {
   instagram:
     "https://www.instagram.com/karachitoys_32?igsh=NjRhenM4cDFxdm4z&utm_source=qr",
-  tiktok: "https://www.tiktok.com/@karachitoys",
+  tiktok: "https://www.tiktok.com/@karachitoys5",
 };
 export const BRAND_GEO = { latitude: 30.20, longitude: 71.51 };
 export const CURRENCY = "PKR";
