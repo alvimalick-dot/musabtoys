@@ -39,17 +39,17 @@ export function SocialLinks({ className = "" }: { className?: string }) {
     {
       label: "Instagram",
       href: BRAND_SOCIAL.instagram,
-      icon: <InstagramIcon className="h-[18px] w-[18px]" />,
+      icon: <InstagramIcon className="h-4.5 w-4.5" />,
     },
     {
       label: "TikTok",
       href: BRAND_SOCIAL.tiktok,
-      icon: <TikTokIcon className="h-[18px] w-[18px]" />,
+      icon: <TikTokIcon className="h-4.5 w-4.5" />,
     },
     {
       label: "WhatsApp",
       href: whatsappChatUrl(),
-      icon: <MessageCircle className="h-[18px] w-[18px]" />,
+      icon: <MessageCircle className="h-4.5 w-4.5" />,
     },
   ];
 
