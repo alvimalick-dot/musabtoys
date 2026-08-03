@@ -76,7 +76,7 @@ export function OrderConfirmationEmail({
 
           {/* Shop info bar */}
           <Section style={shopBar}>
-            <Text style={shopBarText}>📍 Multan, Pakistan &nbsp;|&nbsp; 📞 0331-3956602 &nbsp;|&nbsp; ✉️ karachitoyshop@gmail.com &nbsp;|&nbsp; 🌐 karachitoys.pk</Text>
+            <Text style={shopBarText}>📍 Multan, Pakistan &nbsp;|&nbsp; 📞 0331-3956602 &nbsp;|&nbsp; ✉️ karachitoyshop@gmail.com &nbsp;|&nbsp; 🌐 https://www.karachitoys.com/</Text>
           </Section>
 
           {/* Greeting */}
@@ -184,7 +184,7 @@ export function OrderConfirmationEmail({
             <Text style={trackLabel}>Track Your Order</Text>
             <Text style={trackCode}>{orderId}</Text>
             <Text style={trackHint}>
-              Visit <a href={trackUrl} style={link}>karachitoys.pk/track</a> and enter your Order ID above.
+              Visit <a href={trackUrl} style={link}>karachitoys.com/track</a> and enter your Order ID above.
             </Text>
           </Section>
 
@@ -193,7 +193,7 @@ export function OrderConfirmationEmail({
           {/* Footer */}
           <Section style={footerSection}>
             <Text style={footerText}>📞 0331-3956602 &nbsp;·&nbsp; ✉️ karachitoyshop@gmail.com</Text>
-            <Text style={footerText}>📍 Multan, Pakistan &nbsp;·&nbsp; 🌐 karachitoys.pk</Text>
+            <Text style={footerText}>📍 Multan, Pakistan &nbsp;·&nbsp; 🌐 karachitoys.com</Text>
             <Text style={footerText}>Questions? WhatsApp or reply to this email — we respond within a few hours.</Text>
             <Text style={footerMuted}>© {new Date().getFullYear()} Karachi Toy Shop. All rights reserved.</Text>
           </Section>
