@@ -67,17 +67,26 @@ export async function syncLocalImageToCloudinary(
     return { url: localUrl, publicId: "", synced: false, skipped: "file-not-found-on-disk" };
   }
 
-  try {
-    const buffer = readFileSync(filePath);
-    const publicId = publicIdForSku(sku, index);
-    const { url, publicId: returnedId } = await uploadImage(buffer, "image/jpeg", {
-      folder: CLOUDINARY_FOLDER,
-      publicId,
-    });
-    return { url, publicId: returnedId, synced: true };
-  } catch (err) {
-    console.warn(`syncLocalImageToCloudinary failed for ${localUrl}:`, err);
-    return { url: localUrl, publicId: "", synced: false, skipped: "upload-failed" };
+  // Retry upload a few times with exponential backoff
+  const buffer = readFileSync(filePath);
+  const publicId = publicIdForSku(sku, index);
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const { url, publicId: returnedId } = await uploadImage(buffer, "image/jpeg", {
+        folder: CLOUDINARY_FOLDER,
+        publicId,
+      });
+      return { url, publicId: returnedId, synced: true };
+    } catch (err) {
+      console.warn(`syncLocalImageToCloudinary attempt ${attempt} failed for ${localUrl}:`, err);
+      if (attempt < maxAttempts) {
+        // backoff
+        await new Promise((r) => setTimeout(r, 200 * attempt));
+        continue;
+      }
+      return { url: localUrl, publicId: "", synced: false, skipped: "upload-failed" };
+    }
   }
 }
 

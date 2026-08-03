@@ -223,7 +223,7 @@ export async function POST(req: NextRequest) {
         errors: results.errors,
       },
       message: `Processed ${sourceRows.length} rows: ${results.inserted} inserted, ${results.updated} updated, ${results.imagesLinked} with photos, ${results.failed} failed.`,
-    });
+    }, { headers: { "X-Deprecated-Route": "true", "X-Deprecated-Note": "Use /api/imports (resumable) instead" } });
   } catch (error) {
     console.error("POST /api/excel-upload", error);
     return NextResponse.json(

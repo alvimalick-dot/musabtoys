@@ -634,6 +634,27 @@ export function ProductAdmin() {
                 </button>
                 <button
                   type="button"
+                  className="btn-secondary text-xs"
+                  disabled={busy}
+                  onClick={async () => {
+                    setBusy(true);
+                    try {
+                      const res = await fetch(`/api/products/${p._id}/sync`, { method: "POST" });
+                      const data = await res.json();
+                      if (!res.ok) throw new Error(data.error || "Sync failed");
+                      toast.success(`${data.synced || 0} image(s) synced`);
+                      await load(pagination.page);
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : "Sync failed");
+                    } finally {
+                      setBusy(false);
+                    }
+                  }}
+                >
+                  Sync images
+                </button>
+                <button
+                  type="button"
                   className="rounded-full bg-coral/10 px-3 py-1.5 text-xs font-bold text-coral-deep"
                   onClick={() => onDelete(p._id)}
                 >

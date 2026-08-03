@@ -41,6 +41,7 @@ export function AdminPanel() {
     imagesSynced: number;
     status: string;
   } | null>(null);
+  const [recentJobs, setRecentJobs] = useState<any[]>([]);
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [seedMsg, setSeedMsg] = useState<string | null>(null);
@@ -80,6 +81,22 @@ export function AdminPanel() {
   useEffect(() => {
     if (auth === "in") checkDb();
   }, [auth, checkDb]);
+
+  useEffect(() => {
+    if (auth === "in") loadRecentJobs();
+  }, [auth]);
+
+  async function loadRecentJobs() {
+    try {
+      const res = await fetch(`/api/imports`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const jobs = data.jobs || data;
+      setRecentJobs(jobs || []);
+    } catch {
+      // ignore
+    }
+  }
 
   const loadOrders = useCallback(async () => {
     const qs = statusFilter ? `?status=${statusFilter}` : "";
@@ -135,24 +152,39 @@ export function AdminPanel() {
         successRows: 0,
         errorRows: 0,
         imagesSynced: 0,
-        status: "processing",
+        status: "pending",
       };
       setImportJob(job);
 
-      // Drive batches until done
-      let current = job;
-      while (current.status === "processing") {
-        const batchRes = await fetch(`/api/imports/${current.jobId}`, { method: "POST" });
-        const batchData = await batchRes.json();
-        if (!batchRes.ok) throw new Error(batchData.error || "Batch failed");
-        current = { ...current, ...batchData };
-        setImportJob({ ...current });
-        if (batchData.done) break;
-      }
+      // Start background processing (non-blocking)
+      const startRes = await fetch(`/api/imports/${data.jobId}/start`, { method: "POST" });
+      const startData = await startRes.json();
+      if (!startRes.ok) throw new Error(startData.error || "Start failed");
 
-      setUploadMsg(
-        `Done: ${current.successRows} saved, ${current.errorRows} failed, ${current.imagesSynced} images synced to Cloudinary.`
-      );
+      setUploadMsg(`Import started — processing on server (job ${data.jobId}).`);
+      // Begin polling for job status updates
+      const poll = setInterval(async () => {
+        const s = await fetch(`/api/imports/${data.jobId}`);
+        if (!s.ok) return;
+        const jd = await s.json();
+        const jobInfo = jd.job || jd;
+        setImportJob((prev) => ({
+          jobId: data.jobId,
+          totalRows: jobInfo.totalRows,
+          processedRows: jobInfo.processedRows || jobInfo.processedRows || 0,
+          successRows: jobInfo.successRows || 0,
+          errorRows: jobInfo.errorRows || 0,
+          imagesSynced: jobInfo.imagesSynced || 0,
+          status: jobInfo.status || jobInfo.state || "processing",
+        }));
+        if (jobInfo.status === "completed" || jobInfo.status === "failed") {
+          clearInterval(poll);
+          setUploadMsg(
+            `Done: ${jobInfo.successRows} saved, ${jobInfo.errorRows} failed, ${jobInfo.imagesSynced} images synced to Cloudinary.`
+          );
+          loadRecentJobs();
+        }
+      }, 2000);
       await checkDb();
     } catch (err) {
       setUploadMsg(err instanceof Error ? err.message : "Upload failed");
@@ -399,6 +431,41 @@ export function AdminPanel() {
               {uploadMsg}
             </p>
           )}
+
+          <div className="mt-6">
+            <h3 className="font-semibold">Recent import jobs</h3>
+            <div className="mt-2 space-y-2">
+              {recentJobs.length === 0 && (
+                <p className="text-sm text-muted">No recent jobs.</p>
+              )}
+              {recentJobs.map((j) => (
+                <div key={String(j._id)} className="flex items-center justify-between gap-2 rounded-md bg-white p-3 ring-1 ring-black/5">
+                  <div className="text-sm">
+                    <div className="font-medium">{j.filename || j._id}</div>
+                    <div className="text-xs text-muted">{j.status} · {j.totalRows} rows</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <a href={`/api/imports/${j._id}/failed`} className="btn-secondary text-xs">Download failed</a>
+                    <a href={`/api/imports/${j._id}`} className="btn-secondary text-xs">View</a>
+                    <button
+                      className="btn-secondary text-xs"
+                      onClick={async () => {
+                        const res = await fetch(`/api/imports/${j._id}/retry`, { method: "POST" });
+                        const data = await res.json();
+                        if (!res.ok) return alert(data.error || "Retry failed");
+                        // start background run after resetting
+                        await fetch(`/api/imports/${j._id}/start`, { method: "POST" });
+                        alert(`Retry started (${data.reset} rows reset)`);
+                        loadRecentJobs();
+                      }}
+                    >
+                      Retry
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <div className="mt-8 overflow-x-auto text-sm">
             <p className="mb-2 font-bold">Example headers</p>

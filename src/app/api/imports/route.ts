@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { ImportJob } from "@/models/ImportJob";
 import { getAdminSession } from "@/lib/auth";
 import { parseExcel, serializeMappedRow, DEFAULT_BATCH_SIZE } from "@/lib/import-processing";
+import { notifyImportWebhook } from "@/lib/import-notify";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -30,6 +31,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Only .xlsx, .xls, or .csv files are allowed" },
         { status: 400 }
+      );
+    }
+
+    // Enforce file size limit (default 10MB)
+    const MAX_BYTES = Number(process.env.MAX_IMPORT_FILE_BYTES || 10 * 1024 * 1024);
+    if (typeof (file as File).size === "number" && (file as File).size > MAX_BYTES) {
+      return NextResponse.json(
+        { error: `File too large. Max size is ${Math.round(MAX_BYTES / 1024 / 1024)}MB.` },
+        { status: 413 }
       );
     }
 
@@ -76,6 +86,9 @@ export async function POST(req: NextRequest) {
       rows,
       summary: { sheetName, warnings, detected },
     });
+
+    // Notify webhook that job was created
+    await notifyImportWebhook(job as any);
 
     return NextResponse.json(
       {
