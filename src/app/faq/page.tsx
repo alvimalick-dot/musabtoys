@@ -23,11 +23,13 @@ export const metadata: Metadata = {
     description:
       "COD, delivery times, returns and payment questions answered for Karachi Toys.",
     url: "/faq",
+    images: [{ url: "/images/logo.png", width: 1200, height: 630, alt: "Karachi Toys logo" }],
   },
   twitter: {
     card: "summary",
     title: "FAQ | Karachi Toys",
     description: "COD, delivery, returns and payment questions answered.",
+    images: ["/images/logo.png"],
   },
 };
 

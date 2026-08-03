@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -68,14 +69,20 @@ export function Header() {
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6">
         <Link href="/" className="group flex min-w-0 items-center gap-2">
-          <motion.span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-coral text-base font-bold text-white shadow-lg shadow-coral/30 sm:h-10 sm:w-10 sm:text-lg"
+          <motion.div
+            className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 shadow-lg shadow-black/10 sm:h-10 sm:w-10"
             whileHover={{ rotate: -8, scale: 1.05 }}
             whileTap={{ scale: 0.92, rotate: 4 }}
             transition={{ type: "spring", stiffness: 400, damping: 14 }}
           >
-            KT
-          </motion.span>
+            <Image
+              src="/images/logo.png"
+              alt="Karachi Toys logo"
+              fill
+              sizes="40px"
+              className="object-contain"
+            />
+          </motion.div>
           <div className="min-w-0 leading-tight">
             <p className="truncate font-display text-sm font-semibold tracking-tight text-ink sm:text-lg">
               Karachi Toys

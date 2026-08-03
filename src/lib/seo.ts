@@ -78,10 +78,10 @@ export function storeJsonLd() {
     name: BRAND,
     alternateName: "Karachi Toy Shop",
     url: siteUrl,
-    logo: absoluteUrl("/logo.svg"),
+    logo: absoluteUrl("/images/logo.png"),
     image: [
-      absoluteUrl("/opengraph-image"),
-      absoluteUrl("/logo.svg"),
+      absoluteUrl("/images/logo.png"),
+      absoluteUrl("/images/logo.png"),
     ],
     description:
       "Karachi Toys is Pakistan's #1 online toy store offering 4,500+ toys with Cash on Delivery nationwide. Based in Multan, Punjab — serving all of Pakistan.",
@@ -179,7 +179,7 @@ export function websiteJsonLd() {
 export function productJsonLd(p: ProductLd) {
   const siteUrl = getSiteUrl();
   const url = absoluteUrl(`/product/${p.slug}`);
-  const image = p.images?.length ? p.images.map((i) => absoluteUrl(i)) : [absoluteUrl("/opengraph-image")];
+  const image = p.images?.length ? p.images.map((i) => absoluteUrl(i)) : [absoluteUrl("/images/logo.png")];
 
   const additionalProperty = p.specs
     ? Object.entries(p.specs)

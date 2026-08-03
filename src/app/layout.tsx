@@ -90,10 +90,10 @@ export const metadata: Metadata = {
       "4,500+ toys for every age. Cash on Delivery across Pakistan. LEGO, RC cars, baby toys & more — starting PKR 100. Based in Multan.",
     images: [
       {
-        url: "/opengraph-image",
+        url: "/images/logo.png",
         width: 1200,
         height: 630,
-        alt: "Karachi Toys — Pakistan's favourite online toy store",
+        alt: "Karachi Toys logo",
       },
     ],
   },
@@ -102,7 +102,7 @@ export const metadata: Metadata = {
     title: "Karachi Toys | #1 Online Toy Store in Pakistan",
     description:
       "4,500+ toys. Cash on Delivery across Pakistan. Starting PKR 100.",
-    images: ["/twitter-image"],
+    images: ["/images/logo.png"],
   },
   robots: {
     index: true,

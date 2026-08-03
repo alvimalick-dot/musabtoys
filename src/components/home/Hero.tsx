@@ -7,8 +7,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, Search, Rocket, Puzzle, Gamepad2, Blocks } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 import { BubbleTitle } from "@/components/ui/BubbleTitle";
-import { TeddyMascot } from "@/components/ui/TeddyMascot";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -110,14 +110,20 @@ export function Hero() {
               </BubbleTitle>
             </motion.p>
           </div>
-          {/* Teddy Mascot — hidden on small screens */}
+          {/* Logo — hidden on small screens */}
           <motion.div
-            className="hidden sm:block shrink-0"
+            className="hidden sm:block shrink-0 relative h-36 w-36 overflow-hidden rounded-full shadow-xl ring-4 ring-white"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, duration: 0.5, type: "spring" }}
           >
-            <TeddyMascot size={100} mood="happy" />
+            <Image
+              src="/images/logo.png"
+              alt="Karachi Toys logo"
+              fill
+              sizes="144px"
+              className="object-cover"
+            />
           </motion.div>
         </div>
 
