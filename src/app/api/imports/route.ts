@@ -1,21 +1,3 @@
-import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
-import { ImportJob } from "@/models/ImportJob";
-
-export async function GET() {
-  await connectDB();
-  const jobs = await ImportJob.find().sort({ createdAt: -1 }).limit(50).lean();
-  return NextResponse.json(jobs);
-}
-
-export async function POST(req: Request) {
-  const body = await req.json();
-  const { filePath } = body;
-  if (!filePath) return new NextResponse("filePath required", { status: 400 });
-  await connectDB();
-  const job = await ImportJob.create({ filePath, status: "pending", totalRows: 0, processed: 0 });
-  return NextResponse.json(job);
-}
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { ImportJob } from "@/models/ImportJob";
@@ -28,7 +10,7 @@ export const maxDuration = 300;
 /**
  * POST /api/imports
  * Create a resumable import job from an Excel file. Returns the job id immediately.
- * The client then polls POST /api/imports/[id]/process to advance through batches.
+ * The client then polls POST /api/imports/[id] to advance through batches.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -115,7 +97,7 @@ export async function POST(req: NextRequest) {
 }
 
 /** GET /api/imports — list recent import jobs (admin). */
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await getAdminSession();
     if (!session) {

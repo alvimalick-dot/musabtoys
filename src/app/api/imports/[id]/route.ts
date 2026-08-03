@@ -1,31 +1,3 @@
-import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
-import { ImportJob } from "@/models/ImportJob";
-import { processImportBatch } from "@/lib/import-processing";
-
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  await connectDB();
-  const job = await ImportJob.findById(params.id).lean();
-  if (!job) return new NextResponse("Not found", { status: 404 });
-  return NextResponse.json(job);
-}
-
-export async function POST(req: Request, { params }: { params: { id: string } }) {
-  // Trigger processing of a single batch. Idempotent; caller can loop until done.
-  await connectDB();
-  const job = await ImportJob.findById(params.id);
-  if (!job) return new NextResponse("Not found", { status: 404 });
-  try {
-    const done = await processImportBatch(params.id, 20);
-    return NextResponse.json({ done });
-  } catch (err) {
-    console.error(err);
-    job.status = "failed";
-    job.errors.push({ row: -1, message: (err as Error).message });
-    await job.save();
-    return new NextResponse((err as Error).message, { status: 500 });
-  }
-}
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { ImportJob } from "@/models/ImportJob";

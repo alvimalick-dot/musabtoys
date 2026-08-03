@@ -1,33 +1,7 @@
 import { Schema, models, model } from "mongoose";
 
-export interface IImportJob {
-  filePath: string;
-  status: "pending" | "processing" | "failed" | "done";
-  totalRows: number;
-  processed: number;
-  errors: { row: number; message: string }[];
-}
-
-const ImportJobSchema = new Schema<IImportJob>(
-  {
-    filePath: { type: String, required: true },
-    status: { type: String, default: "pending" },
-    totalRows: { type: Number, default: 0 },
-    processed: { type: Number, default: 0 },
-    errors: { type: [{ row: Number, message: String }], default: [] },
-  },
-  { timestamps: true }
-);
-
-export const ImportJob = models.ImportJob || model<IImportJob>("ImportJob", ImportJobSchema);
-import { Schema, models, model } from "mongoose";
-
 export type ImportRowStatus = "pending" | "processing" | "success" | "error";
-export type ImportJobStatus =
-  | "pending"
-  | "processing"
-  | "completed"
-  | "failed";
+export type ImportJobStatus = "pending" | "processing" | "completed" | "failed";
 
 export interface ImportRow {
   row: number;
@@ -35,7 +9,6 @@ export interface ImportRow {
   name: string;
   status: ImportRowStatus;
   error?: string;
-  /** Full mapped row data (price, category, images, specs, …) for batch processing. */
   data?: Record<string, unknown>;
 }
 
@@ -47,18 +20,11 @@ export interface IImportJob {
   successRows: number;
   errorRows: number;
   imagesSynced: number;
-  /**
-   * Resume point — the index of the next batch to process. Each batch of
-   * `batchSize` rows is processed in a single API invocation; the client
-   * polls `POST /api/imports/[id]/process` to advance this pointer.
-   */
   nextBatchIndex: number;
   batchSize: number;
   rows: ImportRow[];
   summary?: Record<string, unknown>;
   error?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 const ImportRowSchema = new Schema<ImportRow>(
@@ -99,6 +65,5 @@ const ImportJobSchema = new Schema<IImportJob>(
   { timestamps: true }
 );
 
-export const ImportJob =
-  models.ImportJob || model<IImportJob>("ImportJob", ImportJobSchema);
+export const ImportJob = models.ImportJob || model<IImportJob>("ImportJob", ImportJobSchema);
 

@@ -1,51 +1,3 @@
-import { readFileSync } from "fs";
-import XLSX from "xlsx";
-import { connectDB } from "@/lib/mongodb";
-import { ImportJob } from "@/models/ImportJob";
-import mongoose from "mongoose";
-import { mapRow } from "./import-map";
-import { syncProductImages } from "@/lib/cloudinary-sync";
-
-/**
- * Process a single batch from the Excel file referenced by job.filePath.
- * Returns true when job is complete.
- */
-export async function processImportBatch(jobId: string, batchSize = 20) {
-  await connectDB();
-  const job = await ImportJob.findById(jobId);
-  if (!job) throw new Error("Import job not found");
-  if (job.status === "done") return true;
-
-  // Load workbook
-  const wb = XLSX.readFile(job.filePath);
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: "", raw: true });
-
-  const start = job.processed || 0;
-  const end = Math.min(start + batchSize, rawRows.length);
-
-  for (let i = start; i < end; i++) {
-    const raw = rawRows[i];
-    const row = mapRow(raw);
-    try {
-      // Sync images and update product by SKU
-      const { images } = row;
-      if (images && images.length && row.sku) {
-        const res = await syncProductImages(images, row.sku);
-        await mongoose.connection.collection("products").updateOne({ sku: row.sku }, { $set: { images: res.images } });
-      }
-      job.processed = (job.processed || 0) + 1;
-    } catch (err) {
-      job.errors.push({ row: i + 2, message: (err as Error).message });
-      job.processed = (job.processed || 0) + 1;
-    }
-  }
-
-  job.totalRows = rawRows.length;
-  job.status = job.processed >= rawRows.length ? "done" : "processing";
-  await job.save();
-  return job.status === "done";
-}
 import * as XLSX from "xlsx";
 import { Product } from "@/models/Product";
 import type { ImportJob, ImportRow } from "@/models/ImportJob";
@@ -224,7 +176,10 @@ export async function processBatch(
   const rowUpdates: { index: number; success: boolean; error?: string }[] = [];
 
   for (const row of slice) {
-    if (row.status === "success") continue; // resume safety
+    if (row.status === "success") {
+      rowUpdates.push({ index: startIndex + slice.indexOf(row), success: true });
+      continue; // resume safety
+    }
     const mapped = mappedFromImportRow(row);
     const res = await buildProductOp(mapped, row.row, usedSlugs);
     if (res.op) {
