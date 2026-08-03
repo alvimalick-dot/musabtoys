@@ -6,7 +6,8 @@ import { processBatch } from "@/lib/import-processing";
 import { notifyImportWebhook } from "@/lib/import-notify";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 600;
+// Vercel Hobby allows a maximum of 300 seconds per serverless function.
+export const maxDuration = 300;
 
 async function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
