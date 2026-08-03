@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     await connectDB();
     const code = generateOtpCode();
     const codeHash = await hashOtp(code);
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    const expiresAt = new Date(Date.now() + 1 * 60 * 1000);
 
     // Store email, name, and plaintext code on the record.
     // dispatchOtpEmail reads them back by phoneKey — no user input
@@ -57,18 +57,13 @@ export async function POST(req: NextRequest) {
     });
 
     // Send OTP email — uses official Resend SDK (no raw fetch, no SSRF risk)
-    const emailSent = await dispatchOtpEmail(key);
-
-    const allowDebug =
-      process.env.ALLOW_OTP_DEBUG === "true" ||
-      process.env.NODE_ENV !== "production";
+    const emailSent = await dispatchOtpEmail(key, code);
 
     return NextResponse.json({
       success: true,
       phone: formatPhoneDisplay(body.phone),
       emailSent,
       message: emailSent ? "OTP sent to your email." : "OTP created. Check your email.",
-      ...(allowDebug ? { debugOtp: code } : {}),
     });
   } catch (error) {
     return NextResponse.json(

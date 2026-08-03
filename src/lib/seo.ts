@@ -10,17 +10,9 @@ export const BRAND_CITY = "Multan";
 export const BRAND_REGION = "Punjab";
 export const BRAND_COUNTRY = "PK";
 export const BRAND_COUNTRY_NAME = "Pakistan";
-export const BRAND_PHONE = "+92 331 3956602";
-export const BRAND_WHATSAPP = "923313956602";
-export const BRAND_ADDRESS = "6G36+2M5, T Block, New Multan Colony, Multan, Pakistan";
-export const BRAND_LOCATION_NOTE = "Located in: Gulshan Market – New Multan Colony, Multan";
-export const BRAND_MAPS_URL = "https://maps.app.goo.gl/LBu7LqY4bbktoBWbA";
-export const BRAND_PHONE_DISPLAY = "0331 3956602";
-export const BRAND_SOCIAL = {
-  instagram:
-    "https://www.instagram.com/karachitoys_32?igsh=NjRhenM4cDFxdm4z&utm_source=qr",
-  tiktok: "https://www.tiktok.com/@karachitoys5",
-};
+export const BRAND_PHONE = "+92 317 0818754";
+export const BRAND_WHATSAPP = "923170818754";
+export const BRAND_ADDRESS = "6G36+2M5, T Block, New Multan Colony, Multan";
 export const BRAND_GEO = { latitude: 30.20, longitude: 71.51 };
 export const CURRENCY = "PKR";
 
@@ -78,10 +70,10 @@ export function storeJsonLd() {
     name: BRAND,
     alternateName: "Karachi Toy Shop",
     url: siteUrl,
-    logo: absoluteUrl("/images/logo.png"),
+    logo: absoluteUrl("/logo.svg"),
     image: [
-      absoluteUrl("/images/logo.png"),
-      absoluteUrl("/images/logo.png"),
+      absoluteUrl("/opengraph-image"),
+      absoluteUrl("/logo.svg"),
     ],
     description:
       "Karachi Toys is Pakistan's #1 online toy store offering 4,500+ toys with Cash on Delivery nationwide. Based in Multan, Punjab — serving all of Pakistan.",
@@ -138,7 +130,7 @@ export function storeJsonLd() {
         closes: "21:00",
       },
     ],
-    sameAs: [siteUrl, BRAND_MAPS_URL, BRAND_SOCIAL.instagram, BRAND_SOCIAL.tiktok],
+    sameAs: [siteUrl],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Toy categories",
@@ -179,7 +171,7 @@ export function websiteJsonLd() {
 export function productJsonLd(p: ProductLd) {
   const siteUrl = getSiteUrl();
   const url = absoluteUrl(`/product/${p.slug}`);
-  const image = p.images?.length ? p.images.map((i) => absoluteUrl(i)) : [absoluteUrl("/images/logo.png")];
+  const image = p.images?.length ? p.images.map((i) => absoluteUrl(i)) : [absoluteUrl("/opengraph-image")];
 
   const additionalProperty = p.specs
     ? Object.entries(p.specs)

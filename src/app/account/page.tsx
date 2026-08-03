@@ -34,9 +34,9 @@ export default function AccountPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [debugOtp, setDebugOtp] = useState<string | null>(null);
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [busy, setBusy] = useState(false);
+  const [resendTimer, setResendTimer] = useState<number>(0);
 
   async function load() {
     setLoading(true);
@@ -66,8 +66,9 @@ export default function AccountPage() {
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || "Failed");
-      setDebugOtp(j.debugOtp || null);
       setStep("otp");
+      // start 60s resend timer
+      setResendTimer(60);
       toast.success(j.message || "OTP sent to your email");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed");
@@ -75,6 +76,20 @@ export default function AccountPage() {
       setBusy(false);
     }
   }
+
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const id = setInterval(() => {
+      setResendTimer((s) => {
+        if (s <= 1) {
+          clearInterval(id);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [resendTimer]);
 
   async function verifyOtp() {
     setBusy(true);
@@ -158,11 +173,7 @@ export default function AccountPage() {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />
-            {debugOtp && process.env.NODE_ENV !== "production" && (
-              <p className="rounded-xl bg-sun/20 px-3 py-2 text-xs">
-                Demo OTP: <strong>{debugOtp}</strong>
-              </p>
-            )}
+            {/* Demo OTP is not shown in UI */}
             <button
               type="button"
               className="btn-primary w-full"
@@ -171,13 +182,23 @@ export default function AccountPage() {
             >
               Verify & login
             </button>
-            <button
-              type="button"
-              className="btn-secondary w-full"
-              onClick={() => setStep("phone")}
-            >
-              Change number
-            </button>
+            <div className="mt-2 flex gap-2">
+              <button
+                type="button"
+                className="btn-secondary flex-1"
+                disabled={busy || resendTimer > 0}
+                onClick={requestOtp}
+              >
+                {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend OTP"}
+              </button>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setStep("phone")}
+              >
+                Change number
+              </button>
+            </div>
           </div>
         )}
 

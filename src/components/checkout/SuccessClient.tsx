@@ -24,10 +24,10 @@ export function SuccessClient({
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [otp, setOtp] = useState("");
-  const [debugOtp, setDebugOtp] = useState<string | null>(null);
   const [step, setStep] = useState<"ask" | "otp" | "done">("ask");
   const [busy, setBusy] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [resendTimer, setResendTimer] = useState<number>(0);
 
   useEffect(() => {
     function handleResize() {
@@ -76,8 +76,8 @@ export function SuccessClient({
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || "Failed");
-      setDebugOtp(j.debugOtp || null);
       setStep("otp");
+      setResendTimer(60);
       toast.success(j.message || "OTP sent to your email");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed");
@@ -110,6 +110,20 @@ export function SuccessClient({
       setBusy(false);
     }
   }
+
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const id = setInterval(() => {
+      setResendTimer((s) => {
+        if (s <= 1) {
+          clearInterval(id);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [resendTimer]);
 
   return (
     <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-16 text-center">
@@ -243,11 +257,7 @@ export function SuccessClient({
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
               />
-              {debugOtp && process.env.NODE_ENV !== "production" && (
-                <p className="rounded-xl bg-sun/20 px-3 py-2 text-xs">
-                  Demo OTP: <strong>{debugOtp}</strong>
-                </p>
-              )}
+              {/* Demo OTP is not shown in UI */}
               <button
                 type="button"
                 className="btn-primary"
@@ -256,6 +266,16 @@ export function SuccessClient({
               >
                 Verify & save
               </button>
+              <div className="mt-2 flex gap-2">
+                <button
+                  type="button"
+                  className="btn-secondary flex-1"
+                  disabled={busy || resendTimer > 0}
+                  onClick={startSave}
+                >
+                  {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend OTP"}
+                </button>
+              </div>
             </div>
           )}
         </div>
