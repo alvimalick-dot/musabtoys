@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 :root {
+  /* Keep builds independent of Google Fonts. These stacks use locally installed
+     system fonts, so Vercel never needs to fetch a font during compilation. */
+  --font-jakarta: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-fredoka: "Trebuchet MS", "Arial Rounded MT Bold", "Segoe UI", sans-serif;
   --bg: #fef6ed;
   --bg-deep: #fde8d4;
   --ink: #1a1530;

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Usage: MONGODB_URI="mongodb://..." node scripts/fix-customer-indexes.js
 // This script checks for duplicate emails, drops the old unique phoneKey index (if present),
 // and creates a unique index on `email` for the `customers` collection.

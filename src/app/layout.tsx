@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Fredoka, Plus_Jakarta_Sans } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
@@ -10,18 +9,6 @@ import { PageTransition } from "@/components/ui/PageTransition";
 import { MouseTrail } from "@/components/ui/MouseTrail";
 import { storeJsonLd, websiteJsonLd, getSiteUrl } from "@/lib/seo";
 import "./globals.css";
-
-const fredoka = Fredoka({
-  variable: "--font-fredoka",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
 const siteUrl = getSiteUrl();
 
@@ -144,7 +131,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-PK" data-scroll-behavior="smooth">
-      <body className={`${fredoka.variable} ${jakarta.variable} antialiased`}>
+      <body className="antialiased">
         <JsonLd data={storeJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
         <MouseTrail />
@@ -162,4 +149,3 @@ export default function RootLayout({
     </html>
   );
 }
-

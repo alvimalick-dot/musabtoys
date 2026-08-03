@@ -22,6 +22,13 @@ interface OrderRow {
   feedbackRequested?: boolean;
 }
 
+interface ImportJobRow {
+  _id: string;
+  filename?: string;
+  status: string;
+  totalRows: number;
+}
+
 export function AdminPanel() {
   const [auth, setAuth] = useState<"loading" | "in" | "out">("loading");
   const [email, setEmail] = useState("");
@@ -41,7 +48,7 @@ export function AdminPanel() {
     imagesSynced: number;
     status: string;
   } | null>(null);
-  const [recentJobs, setRecentJobs] = useState<any[]>([]);
+  const [recentJobs, setRecentJobs] = useState<ImportJobRow[]>([]);
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [seedMsg, setSeedMsg] = useState<string | null>(null);
@@ -92,7 +99,7 @@ export function AdminPanel() {
       if (!res.ok) return;
       const data = await res.json();
       const jobs = data.jobs || data;
-      setRecentJobs(jobs || []);
+      setRecentJobs(Array.isArray(jobs) ? jobs : []);
     } catch {
       // ignore
     }
@@ -168,10 +175,10 @@ export function AdminPanel() {
         if (!s.ok) return;
         const jd = await s.json();
         const jobInfo = jd.job || jd;
-        setImportJob((prev) => ({
+        setImportJob(() => ({
           jobId: data.jobId,
           totalRows: jobInfo.totalRows,
-          processedRows: jobInfo.processedRows || jobInfo.processedRows || 0,
+          processedRows: jobInfo.processedRows || 0,
           successRows: jobInfo.successRows || 0,
           errorRows: jobInfo.errorRows || 0,
           imagesSynced: jobInfo.imagesSynced || 0,

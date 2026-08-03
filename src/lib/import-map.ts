@@ -11,14 +11,15 @@ function norm(key: string) {
   return key.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-export function mapRow(raw: any) {
+export function mapRow(raw: Record<string, unknown> | undefined) {
   const headers = Object.keys(raw || {});
   const map = new Map<string, string>();
   for (const h of headers) {
     const field = ALIASES[norm(h) as keyof typeof ALIASES];
     if (field && !map.has(field)) map.set(field, h);
   }
-  const get = (f: string) => (map.has(f) ? raw[map.get(f) as string] : undefined);
+  const get = (f: string) =>
+    map.has(f) ? raw?.[map.get(f) as string] : undefined;
   const name = get("name") != null ? String(get("name")).trim() : "";
   const sku = get("sku") != null ? String(get("sku")).trim() : "";
   const images = get("images")

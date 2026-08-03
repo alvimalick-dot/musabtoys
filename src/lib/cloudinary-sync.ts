@@ -88,6 +88,8 @@ export async function syncLocalImageToCloudinary(
       return { url: localUrl, publicId: "", synced: false, skipped: "upload-failed" };
     }
   }
+
+  return { url: localUrl, publicId: "", synced: false, skipped: "upload-failed" };
 }
 
 /**

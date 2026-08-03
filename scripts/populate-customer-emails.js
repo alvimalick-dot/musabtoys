@@ -1,8 +1,9 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 // Populate missing customer emails from recent guest orders.
 // Usage: MONGODB_URI="..." node scripts/populate-customer-emails.js
 
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient } = require('mongodb');
 const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/karachi-toy-shop';
 
 (async () => {

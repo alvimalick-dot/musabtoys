@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Notify webhook that job was created
-    await notifyImportWebhook(job as any);
+    await notifyImportWebhook(job as unknown as Record<string, unknown>);
 
     return NextResponse.json(
       {
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
 }
 
 /** GET /api/imports — list recent import jobs (admin). */
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await getAdminSession();
     if (!session) {
