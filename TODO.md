@@ -1,10 +1,27 @@
-# Resolve Amazon Q Security Scan Findings
+# Cloudinary Image Sync — Implementation Plan
 
-## Steps
+## Module 1 — Shared Cloudinary helper
+- [x] Extend `src/lib/cloudinary.ts` (options: folder, publicId, transformation)
+- [x] Create `src/lib/cloudinary-sync.ts` (hasCloudinaryConfigured, publicIdForSku, localUrlToFilePath, syncLocalImageToCloudinary)
 
-- [ ] 1. Harden `src/app/api/auth/customer/request-otp/route.ts` — clarify SSRF finding (fetch URL is a hardcoded, trusted constant)
-- [ ] 2. Harden `src/app/api/upload/route.ts` — add path-containment guard for local fallback write
-- [ ] 3. Harden `src/lib/auth.ts` — document default-credential check + timing-safe padding rationale
-- [ ] 4. Harden `src/lib/mongodb.ts` — clarify DNS/SSRF allowlist rationale
-- [ ] 5. Fix `src/app/api/seed/route.ts` — reword "unprofessional language" sample copy
-- [ ] 6. Run `npx tsc --noEmit` + `npm run lint` to verify
+## Module 2 — Offline CLI import script
+- [x] Create `scripts/import-images.mjs` (idempotent, resumable, throttled, retries, failure CSV)
+- [x] Add `import:images` npm script in `package.json`
+
+## Module 3 — Server-side resumable import job
+- [ ] Create `src/models/ImportJob.ts`
+- [ ] Create `src/lib/import-processing.ts` (parse + batch + processBatch)
+- [ ] Create `src/app/api/imports/route.ts` (POST create job, GET list)
+- [ ] Create `src/app/api/imports/[id]/route.ts` (GET status, POST process next batch)
+- [ ] Update `src/components/admin/AdminPanel.tsx` Excel tab → resumable job flow with progress
+
+## Module 4 — Hybrid: legacy route + global sync button
+- [ ] Update `src/app/api/excel-upload/route.ts` → Cloudinary-aware
+- [ ] Create `src/app/api/products/sync-images/route.ts`
+- [ ] Update `src/components/admin/ProductAdmin.tsx` → add "Sync images to Cloudinary" button
+- [ ] Update `.gitignore` (state/failure files)
+
+## Verification
+- [ ] `npm run lint`
+- [ ] `npm run build`
+- [ ] Manual test of Excel upload + single-product upload with Cloudinary

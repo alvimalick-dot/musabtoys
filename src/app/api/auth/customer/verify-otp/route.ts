@@ -19,7 +19,7 @@ const schema = z.object({
   phone: z.string().min(10),
   code: z.string().length(6),
   name: z.string().min(2).optional(),
-  email: z.string().email().optional().or(z.literal("")),
+  email: z.string().email(),
   address: z.string().optional(),
   city: z.string().optional(),
   area: z.string().optional(),
@@ -34,10 +34,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = schema.parse(await req.json());
-    const key = phoneKey(body.phone);
+    const key = body.phone ? phoneKey(body.phone) : undefined;
     await connectDB();
 
-    const challenge = await OtpChallenge.findOne({ phoneKey: key }).sort({
+    const challenge = await OtpChallenge.findOne({ email: body.email }).sort({
       createdAt: -1,
     });
     if (!challenge || challenge.expiresAt < new Date()) {
@@ -54,9 +54,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid OTP" }, { status: 401 });
     }
 
-    await OtpChallenge.deleteMany({ phoneKey: key });
+    await OtpChallenge.deleteMany({ email: body.email });
 
-    let customer = await Customer.findOne({ phoneKey: key });
+    let customer = await Customer.findOne({ email: body.email });
     if (!customer) {
       // Create account — optionally seed from checkout details
       const latestOrder = await Order.findOne({
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
       }
 
       customer = await Customer.create({
-        phone: formatPhoneDisplay(body.phone),
+        phone: body.phone ? formatPhoneDisplay(body.phone) : undefined,
         phoneKey: key,
         name,
         email,
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
     } else {
       customer.verifiedAt = new Date();
       if (body.name) customer.name = body.name;
-      if (body.email) customer.email = body.email;
+      // Do not overwrite customer's email on login; email is primary key
       if (body.address && body.city) {
         const exists = customer.addresses.some(
           (a: { address: string; city: string }) =>
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
 
     const token = await createCustomerToken({
       customerId: String(customer._id),
-      phoneKey: key,
+      phoneKey: key || "",
     });
     await setCustomerCookie(token);
 

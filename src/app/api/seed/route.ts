@@ -28,7 +28,7 @@ const SAMPLE = [
     price: 8999,
     compareAtPrice: 10999,
     category: "Vehicles",
-    brand: "SpeedKarachi",
+    brand: "SpeedRacer",
     ageGroup: "8+ years",
     stock: 18,
     featured: true,

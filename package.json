@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "import:images": "node scripts/import-images.mjs"
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.10.0",

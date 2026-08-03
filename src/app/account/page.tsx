@@ -37,6 +37,16 @@ export default function AccountPage() {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [busy, setBusy] = useState(false);
   const [resendTimer, setResendTimer] = useState<number>(0);
+  const [sentTo, setSentTo] = useState<string | null>(null);
+
+  function maskEmail(e?: string | null) {
+    if (!e) return "";
+    const parts = e.split("@");
+    if (parts.length !== 2) return e;
+    const [local, domain] = parts;
+    const first = local.charAt(0) || "";
+    return `${first}***@${domain}`;
+  }
 
   async function load() {
     setLoading(true);
@@ -69,6 +79,7 @@ export default function AccountPage() {
       setStep("otp");
       // start 60s resend timer
       setResendTimer(60);
+      setSentTo(email);
       toast.success(j.message || "OTP sent to your email");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed");
@@ -97,7 +108,7 @@ export default function AccountPage() {
       const res = await fetch("/api/auth/customer/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, code: otp, purpose: "login" }),
+        body: JSON.stringify({ phone, email, code: otp, purpose: "login" }),
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || "Invalid OTP");
@@ -173,6 +184,9 @@ export default function AccountPage() {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />
+            {sentTo && (
+              <p className="text-sm text-muted">We sent the code to {maskEmail(sentTo)}</p>
+            )}
             {/* Demo OTP is not shown in UI */}
             <button
               type="button"

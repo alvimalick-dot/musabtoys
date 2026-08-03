@@ -44,3 +44,7 @@ next-env.d.ts
 # local product image uploads (keep folder)
 /public/uploads/*
 !/public/uploads/.gitkeep
+
+# cloudinary sync state / failure reports (never commit these)
+.cloudinary-sync-state.json
+import-failures.csv

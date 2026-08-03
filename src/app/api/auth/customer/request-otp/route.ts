@@ -37,27 +37,28 @@ export async function POST(req: NextRequest) {
     }
 
     await connectDB();
+    // Require email for login so accounts remain email-primary
+    if (body.purpose === "login" && !body.email) {
+      return NextResponse.json({ error: "Email is required for login" }, { status: 400 });
+    }
     const code = generateOtpCode();
     const codeHash = await hashOtp(code);
     const expiresAt = new Date(Date.now() + 1 * 60 * 1000);
 
-    // Store email, name, and plaintext code on the record.
-    // dispatchOtpEmail reads them back by phoneKey — no user input
-    // ever flows into the send call from this route.
-    await OtpChallenge.deleteMany({ phoneKey: key });
+    // Store email, name and hashed code on the record. Do NOT store plaintext codes.
+    await OtpChallenge.deleteMany({ email: body.email });
     await OtpChallenge.create({
-      phoneKey: key,
-      codeHash,
-      pendingCode: code,
       email: body.email,
+      phoneKey: body.phone ? phoneKey(body.phone) : undefined,
+      codeHash,
       name: body.name ?? "",
       attempts: 0,
       expiresAt,
       purpose: body.purpose,
     });
 
-    // Send OTP email — uses official Resend SDK (no raw fetch, no SSRF risk)
-    const emailSent = await dispatchOtpEmail(key, code);
+    // Send OTP email — use email as primary identifier
+    const emailSent = await dispatchOtpEmail(body.email, code);
 
     return NextResponse.json({
       success: true,

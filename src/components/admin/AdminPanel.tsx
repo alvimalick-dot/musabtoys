@@ -32,6 +32,15 @@ export function AdminPanel() {
   >("dashboard");
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
   const [uploadBusy, setUploadBusy] = useState(false);
+  const [importJob, setImportJob] = useState<{
+    jobId: string;
+    totalRows: number;
+    processedRows: number;
+    successRows: number;
+    errorRows: number;
+    imagesSynced: number;
+    status: string;
+  } | null>(null);
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [seedMsg, setSeedMsg] = useState<string | null>(null);
@@ -110,23 +119,40 @@ export function AdminPanel() {
     if (!file) return;
     setUploadBusy(true);
     setUploadMsg(null);
+    setImportJob(null);
     const fd = new FormData();
     fd.append("file", file);
     try {
-      const res = await fetch("/api/excel-upload", { method: "POST", body: fd });
+      // Create resumable import job
+      const res = await fetch("/api/imports", { method: "POST", body: fd });
       const data = await res.json();
-      if (!res.ok) {
-        const extra = data.headers
-          ? ` | Found headers: ${data.headers.join(", ")}`
-          : "";
-        throw new Error((data.error || "Upload failed") + extra);
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+
+      const job = {
+        jobId: data.jobId,
+        totalRows: data.totalRows,
+        processedRows: 0,
+        successRows: 0,
+        errorRows: 0,
+        imagesSynced: 0,
+        status: "processing",
+      };
+      setImportJob(job);
+
+      // Drive batches until done
+      let current = job;
+      while (current.status === "processing") {
+        const batchRes = await fetch(`/api/imports/${current.jobId}`, { method: "POST" });
+        const batchData = await batchRes.json();
+        if (!batchRes.ok) throw new Error(batchData.error || "Batch failed");
+        current = { ...current, ...batchData };
+        setImportJob({ ...current });
+        if (batchData.done) break;
       }
-      const warn =
-        data.warnings?.length ? ` | Notes: ${data.warnings.join("; ")}` : "";
-      const detected = data.detectedColumns
-        ? ` | Mapped: ${JSON.stringify(data.detectedColumns)}`
-        : "";
-      setUploadMsg((data.message || "Upload complete") + detected + warn);
+
+      setUploadMsg(
+        `Done: ${current.successRows} saved, ${current.errorRows} failed, ${current.imagesSynced} images synced to Cloudinary.`
+      );
       await checkDb();
     } catch (err) {
       setUploadMsg(err instanceof Error ? err.message : "Upload failed");
@@ -341,6 +367,32 @@ export function AdminPanel() {
               onChange={onUpload}
             />
           </label>
+
+          {importJob && (
+            <div className="mt-4 rounded-xl bg-white p-4 ring-1 ring-black/5">
+              <div className="mb-2 flex items-center justify-between text-sm">
+                <span className="font-semibold">
+                  {importJob.status === "completed" ? "✅ Complete" : "⏳ Processing…"}
+                </span>
+                <span className="text-muted">
+                  {importJob.processedRows} / {importJob.totalRows} rows
+                </span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-black/5">
+                <div
+                  className="h-full rounded-full bg-coral transition-all"
+                  style={{
+                    width: `${importJob.totalRows ? Math.round((importJob.processedRows / importJob.totalRows) * 100) : 0}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-xs text-muted">
+                ✓ {importJob.successRows} saved &nbsp;·&nbsp;
+                {importJob.errorRows > 0 && <span className="text-coral-deep">{importJob.errorRows} failed &nbsp;·&nbsp;</span>}
+                ☁️ {importJob.imagesSynced} images synced
+              </p>
+            </div>
+          )}
 
           {uploadMsg && (
             <p className="mt-4 rounded-xl bg-sky/10 px-4 py-3 text-sm text-sky-deep">

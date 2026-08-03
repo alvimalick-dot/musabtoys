@@ -125,6 +125,10 @@ export async function POST(req: NextRequest) {
     // Filename is 100% server-generated — no user input involved
     const filename = `${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}.jpg`;
     const dest = path.resolve(uploadsDir, filename);
+    // Guard: ensure resolved path is strictly inside uploadsDir (no traversal)
+    if (!dest.startsWith(uploadsDir + path.sep) && dest !== uploadsDir) {
+      return NextResponse.json({ error: "Invalid upload path" }, { status: 400 });
+    }
     await writeFile(dest, normalizedBuffer);
 
     return NextResponse.json({

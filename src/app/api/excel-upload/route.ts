@@ -10,6 +10,7 @@ import {
   clearProductImageCache,
   resolveProductImages,
 } from "@/lib/product-images";
+import { syncProductImages, hasCloudinaryConfigured } from "@/lib/cloudinary-sync";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -126,6 +127,16 @@ export async function POST(req: NextRequest) {
       const images = resolveProductImages(mapped.images, mapped.sku);
       if (images.length) results.imagesLinked++;
 
+      // Sync local images to Cloudinary if configured
+      let finalImages = images;
+      let cloudinarySynced = 0;
+      if (images.length && hasCloudinaryConfigured()) {
+        const { images: synced, syncedCount } = await syncProductImages(images, mapped.sku);
+        finalImages = synced;
+        cloudinarySynced = syncedCount;
+        results.imagesLinked += cloudinarySynced;
+      }
+
       const payload: Record<string, unknown> = {
         name: mapped.name,
         description: mapped.description,
@@ -157,8 +168,8 @@ export async function POST(req: NextRequest) {
       };
 
       // Only set images when we resolved some — don't wipe existing photos
-      if (images.length) {
-        payload.images = images;
+      if (finalImages.length) {
+        payload.images = finalImages;
       }
 
       const found = existingBySku.get(mapped.sku);
@@ -177,7 +188,7 @@ export async function POST(req: NextRequest) {
           updateOne: {
             filter: { sku: mapped.sku },
             update: {
-              $setOnInsert: { slug, images: images.length ? images : [] },
+              $setOnInsert: { slug, images: finalImages.length ? finalImages : [] },
               $set: payload,
             },
             upsert: true,
@@ -199,7 +210,9 @@ export async function POST(req: NextRequest) {
       detectedColumns: detected,
       warnings: [
         ...warnings,
-        "Photos: put files in public/images/ and list the filename in the Image column (or name the file after ProductID).",
+        hasCloudinaryConfigured()
+          ? "Images uploaded to Cloudinary CDN."
+          : "Photos: put files in public/images/ and list the filename in the Image column (or name the file after ProductID).",
       ],
       summary: {
         totalRows: sourceRows.length,

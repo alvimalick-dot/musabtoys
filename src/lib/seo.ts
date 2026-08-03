@@ -14,6 +14,15 @@ export const BRAND_PHONE = "+92 317 0818754";
 export const BRAND_WHATSAPP = "923170818754";
 export const BRAND_ADDRESS = "6G36+2M5, T Block, New Multan Colony, Multan";
 export const BRAND_GEO = { latitude: 30.20, longitude: 71.51 };
+export const BRAND_PHONE_DISPLAY = "0317-0818754";
+export const BRAND_LOCATION_NOTE = "Based in Multan — delivering nationwide across Pakistan";
+export const BRAND_MAPS_URL = "https://maps.google.com/?q=6G36+2M5,+T+Block,+New+Multan+Colony,+Multan";
+export const BRAND_SOCIAL = {
+  instagram: "https://www.instagram.com/karachitoyshop",
+  facebook: "https://www.facebook.com/karachitoyshop",
+  tiktok: "https://www.tiktok.com/@karachitoyshop",
+  whatsapp: "https://wa.me/923170818754",
+};
 export const CURRENCY = "PKR";
 
 export function getSiteUrl(): string {

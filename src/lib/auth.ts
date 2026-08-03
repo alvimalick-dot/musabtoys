@@ -72,8 +72,7 @@ export async function validateAdminCredentials(email: string, password: string) 
 
   if (
     isProd &&
-    (adminEmail === "admin@karachitoys.pk" ||
-      adminPassword.toLowerCase().includes("change"))
+    adminPassword.toLowerCase().includes("change")
   ) {
     throw new Error(
       "Default admin credentials detected. Update ADMIN_EMAIL and ADMIN_PASSWORD before deploying."

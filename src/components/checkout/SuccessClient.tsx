@@ -94,6 +94,7 @@ export function SuccessClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
+          email,
           code: otp,
           name: name || undefined,
           purpose: "save_account",
@@ -257,7 +258,6 @@ export function SuccessClient({
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
               />
-              {/* Demo OTP is not shown in UI */}
               <button
                 type="button"
                 className="btn-primary"

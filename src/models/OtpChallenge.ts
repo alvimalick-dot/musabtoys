@@ -1,9 +1,8 @@
 import { Schema, models, model } from "mongoose";
 
 export interface IOtpChallenge {
-  phoneKey: string;
+  phoneKey?: string;
   codeHash: string;
-  pendingCode: string;
   email: string;
   name?: string;
   attempts: number;
@@ -13,10 +12,9 @@ export interface IOtpChallenge {
 
 const OtpSchema = new Schema<IOtpChallenge>(
   {
-    phoneKey: { type: String, required: true, index: true },
+    email: { type: String, required: true, index: true },
+    phoneKey: { type: String, index: true },
     codeHash: { type: String, required: true },
-    pendingCode: { type: String, required: true },
-    email: { type: String, required: true },
     name: { type: String },
     attempts: { type: Number, default: 0 },
     expiresAt: { type: Date, required: true, index: true },

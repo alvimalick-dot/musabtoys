@@ -253,6 +253,20 @@ export function ProductAdmin() {
     }
   }
 
+  async function syncImages() {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/products/sync-images", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Sync failed");
+      toast.success(data.message);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Sync failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="mt-8 space-y-8">
       <div className="rounded-3xl bg-white p-6 ring-1 ring-black/5">
@@ -266,14 +280,24 @@ export function ProductAdmin() {
               category, price — or mark out of stock.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={recategorize}
-            className="btn-secondary text-sm"
-            disabled={busy}
-          >
-            Auto-tag categories from names
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={recategorize}
+              className="btn-secondary text-sm"
+              disabled={busy}
+            >
+              Auto-tag categories from names
+            </button>
+            <button
+              type="button"
+              onClick={syncImages}
+              className="btn-secondary text-sm"
+              disabled={busy}
+            >
+              ☁️ Sync images to Cloudinary
+            </button>
+          </div>
         </div>
 
         <form onSubmit={onSave} className="mt-6 grid gap-3 sm:grid-cols-2">

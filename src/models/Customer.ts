@@ -10,9 +10,9 @@ export interface IAddress {
 
 export interface ICustomer {
   phone: string;
-  phoneKey: string;
+  phoneKey?: string;
   name: string;
-  email?: string;
+  email: string;
   addresses: IAddress[];
   verifiedAt?: Date;
 }
@@ -30,10 +30,10 @@ const AddressSchema = new Schema<IAddress>(
 
 const CustomerSchema = new Schema<ICustomer>(
   {
-    phone: { type: String, required: true },
-    phoneKey: { type: String, required: true, unique: true, index: true },
+    phone: { type: String },
+    phoneKey: { type: String, index: true },
     name: { type: String, required: true },
-    email: String,
+    email: { type: String, required: true, unique: true, index: true },
     addresses: { type: [AddressSchema], default: [] },
     verifiedAt: Date,
   },
