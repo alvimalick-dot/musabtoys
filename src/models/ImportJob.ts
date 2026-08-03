@@ -1,5 +1,27 @@
 import { Schema, models, model } from "mongoose";
 
+export interface IImportJob {
+  filePath: string;
+  status: "pending" | "processing" | "failed" | "done";
+  totalRows: number;
+  processed: number;
+  errors: { row: number; message: string }[];
+}
+
+const ImportJobSchema = new Schema<IImportJob>(
+  {
+    filePath: { type: String, required: true },
+    status: { type: String, default: "pending" },
+    totalRows: { type: Number, default: 0 },
+    processed: { type: Number, default: 0 },
+    errors: { type: [{ row: Number, message: String }], default: [] },
+  },
+  { timestamps: true }
+);
+
+export const ImportJob = models.ImportJob || model<IImportJob>("ImportJob", ImportJobSchema);
+import { Schema, models, model } from "mongoose";
+
 export type ImportRowStatus = "pending" | "processing" | "success" | "error";
 export type ImportJobStatus =
   | "pending"

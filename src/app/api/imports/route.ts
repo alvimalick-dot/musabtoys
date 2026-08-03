@@ -1,3 +1,21 @@
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
+import { ImportJob } from "@/models/ImportJob";
+
+export async function GET() {
+  await connectDB();
+  const jobs = await ImportJob.find().sort({ createdAt: -1 }).limit(50).lean();
+  return NextResponse.json(jobs);
+}
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  const { filePath } = body;
+  if (!filePath) return new NextResponse("filePath required", { status: 400 });
+  await connectDB();
+  const job = await ImportJob.create({ filePath, status: "pending", totalRows: 0, processed: 0 });
+  return NextResponse.json(job);
+}
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { ImportJob } from "@/models/ImportJob";
