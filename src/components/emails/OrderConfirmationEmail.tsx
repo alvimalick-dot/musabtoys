@@ -12,6 +12,7 @@ import {
   Section,
   Text,
 } from "react-email";
+import { BRAND_PHONE_DISPLAY } from "@/lib/seo";
 
 export interface OrderItem {
   name: string;
@@ -76,7 +77,7 @@ export function OrderConfirmationEmail({
 
           {/* Shop info bar */}
           <Section style={shopBar}>
-            <Text style={shopBarText}>📍 Multan, Pakistan &nbsp;|&nbsp; 📞 0331-3956602 &nbsp;|&nbsp; ✉️ karachitoyshop@gmail.com &nbsp;|&nbsp; 🌐 https://www.karachitoys.com/</Text>
+            <Text style={shopBarText}>📍 Multan, Pakistan &nbsp;|&nbsp; 📞 {BRAND_PHONE_DISPLAY} &nbsp;|&nbsp; ✉️ karachitoyshop@gmail.com &nbsp;|&nbsp; 🌐 https://www.karachitoys.com/</Text>
           </Section>
 
           {/* Greeting */}
@@ -192,7 +193,7 @@ export function OrderConfirmationEmail({
 
           {/* Footer */}
           <Section style={footerSection}>
-            <Text style={footerText}>📞 0331-3956602 &nbsp;·&nbsp; ✉️ karachitoyshop@gmail.com</Text>
+            <Text style={footerText}>📞 {BRAND_PHONE_DISPLAY} &nbsp;·&nbsp; ✉️ karachitoyshop@gmail.com</Text>
             <Text style={footerText}>📍 Multan, Pakistan &nbsp;·&nbsp; 🌐 karachitoys.com</Text>
             <Text style={footerText}>Questions? WhatsApp or reply to this email — we respond within a few hours.</Text>
             <Text style={footerMuted}>© {new Date().getFullYear()} Karachi Toy Shop. All rights reserved.</Text>

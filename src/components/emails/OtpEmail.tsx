@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   Body, Container, Head, Heading, Hr, Html, Preview, Section, Text,
 } from "react-email";
+import { BRAND_ADDRESS, BRAND_PHONE_DISPLAY } from "@/lib/seo";
 
 export interface OtpEmailProps {
   name?: string;
@@ -47,10 +48,10 @@ export function OtpEmail({ name, code, purpose }: OtpEmailProps) {
 
           <Section style={footer}>
             <Text style={footerText}>
-              Karachi Toy Shop &nbsp;·&nbsp; Multan, Pakistan
+              Karachi Toy Shop &nbsp;·&nbsp; {BRAND_ADDRESS}
             </Text>
             <Text style={footerText}>
-              0331 3956602 &nbsp;·&nbsp; karachitoyshop@gmail.com
+              {BRAND_PHONE_DISPLAY} &nbsp;·&nbsp; karachitoyshop@gmail.com
             </Text>
             <Text style={footerMuted}>
               © {new Date().getFullYear()} Karachi Toy Shop. All rights reserved.

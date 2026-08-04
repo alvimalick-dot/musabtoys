@@ -1,8 +1,7 @@
+import { BRAND_WHATSAPP } from "@/lib/seo";
+
 export function getWhatsAppNumber() {
-  return (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923313956602").replace(
-    /\D/g,
-    ""
-  );
+  return BRAND_WHATSAPP.replace(/\D/g, "");
 }
 
 export function whatsappChatUrl(prefill?: string) {

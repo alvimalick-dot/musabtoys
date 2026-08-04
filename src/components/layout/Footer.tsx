@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BRAND_ADDRESS, BRAND_PHONE } from "@/lib/seo";
+import { BRAND_ADDRESS, BRAND_MAPS_URL, BRAND_PHONE } from "@/lib/seo";
+import { SocialLinks } from "@/components/ui/SocialLinks";
 
 export function Footer() {
   return (
@@ -12,13 +13,26 @@ export function Footer() {
             Thousands of toys for every age — from PKR 100 finds to premium
             playsets. Cash on Delivery across Pakistan.
           </p>
-          <p className="mt-4 text-sm text-white/80">{BRAND_ADDRESS}</p>
+          <a
+            href={BRAND_MAPS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-4 inline-block text-sm text-white/80 hover:underline"
+          >
+            {BRAND_ADDRESS}
+          </a>
           <a
             href={"tel:" + BRAND_PHONE.replace(/\s+/g, "")}
-            className="mt-2 inline-block text-sm text-white/80 hover:underline"
+            className="mt-2 block text-sm text-white/80 hover:underline"
           >
             {BRAND_PHONE}
           </a>
+          <div className="mt-5">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-sun">
+              Connect
+            </p>
+            <SocialLinks className="mt-3" />
+          </div>
         </div>
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-sun">
