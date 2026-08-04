@@ -6,6 +6,13 @@ const siteUrl =
   process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
   "http://localhost:3000";
 
+// ISR: re-generate the sitemap at most once per hour so crawls don't hammer
+// MongoDB on every request. Raise/lower via env if needed.
+export const revalidate = Number(process.env.SITEMAP_REVALIDATE_SECONDS || 3600);
+
+// Cap the number of product URLs emitted. Configurable via env.
+const MAX_PRODUCTS = Number(process.env.SITEMAP_MAX_PRODUCTS || 10000);
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: siteUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
@@ -13,14 +20,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/faq`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/track`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/wishlist`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/account`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
     { url: `${siteUrl}/checkout`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
   ];
 
   try {
     await connectDB();
-    const products = await Product.find({}, "slug updatedAt")
+    const products = await Product.find({}, "slug updatedAt images")
       .sort({ updatedAt: -1 })
-      .limit(5000)
+      .limit(MAX_PRODUCTS)
       .lean();
 
     const productPages: MetadataRoute.Sitemap = products.map((p) => ({
@@ -28,10 +36,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
+      images: (() => {
+        const productImages: string[] = Array.isArray(p.images) ? p.images : [];
+        return productImages.slice(0, 5);
+      })(),
     }));
 
     return [...staticPages, ...productPages];
-  } catch {
+  } catch (error) {
+    // Log so failures are visible in server logs instead of failing silently.
+    console.error("Sitemap generation failed, returning static pages only:", error);
     return staticPages;
   }
 }
