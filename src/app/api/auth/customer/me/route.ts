@@ -21,12 +21,10 @@ export async function GET() {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
-  // Link past guest orders by phone (retroactive history)
+  // Email OTP authenticates this account, so history is linked by the same
+  // verified email rather than a caller-supplied phone number.
   const orders = await Order.find({
-    $or: [
-      { "customer.phone": { $regex: session.phoneKey + "$" } },
-      { "customer.phone": customer.phone },
-    ],
+    "customer.email": customer.email,
   })
     .sort({ createdAt: -1 })
     .limit(50)

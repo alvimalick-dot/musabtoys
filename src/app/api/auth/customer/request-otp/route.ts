@@ -15,22 +15,23 @@ export const dynamic = "force-dynamic";
 
 const schema = z.object({
   phone: z.string().min(10),
-  email: z.string().email("Enter a valid email address"),
+  email: z.string().email("Enter a valid email address").transform((value) => value.trim().toLowerCase()),
   purpose: z.enum(["login", "save_account"]).default("login"),
   name: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
-  const limited = rateLimit(`otp-req:${clientIp(req)}`, 5, 15 * 60 * 1000);
-  if (!limited.ok) {
-    return NextResponse.json(
-      { error: `Too many OTP requests. Wait ${limited.retryAfterSec}s.` },
-      { status: 429 }
-    );
-  }
-
   try {
     const body = schema.parse(await req.json());
+    const ipLimited = rateLimit(`otp-req:ip:${clientIp(req)}`, 5, 15 * 60 * 1000);
+    const emailLimited = rateLimit(`otp-req:email:${body.email}`, 5, 15 * 60 * 1000);
+    if (!ipLimited.ok || !emailLimited.ok) {
+      const retryAfterSec = Math.max(ipLimited.retryAfterSec, emailLimited.retryAfterSec);
+      return NextResponse.json(
+        { error: `Too many OTP requests. Wait ${retryAfterSec}s.` },
+        { status: 429 }
+      );
+    }
     const key = phoneKey(body.phone);
     if (key.length < 10) {
       return NextResponse.json({ error: "Enter a valid mobile number" }, { status: 400 });
@@ -45,20 +46,27 @@ export async function POST(req: NextRequest) {
     const codeHash = await hashOtp(code);
     const expiresAt = new Date(Date.now() + 1 * 60 * 1000);
 
-    // Store email, name and hashed code on the record. Do NOT store plaintext codes.
-    await OtpChallenge.deleteMany({ email: body.email });
-    await OtpChallenge.create({
-      email: body.email,
-      phoneKey: body.phone ? phoneKey(body.phone) : undefined,
-      codeHash,
-      name: body.name ?? "",
-      attempts: 0,
-      expiresAt,
-      purpose: body.purpose,
-    });
+    // Replace the previous challenge atomically. Only the bcrypt hash is stored.
+    await OtpChallenge.findOneAndUpdate(
+      { email: body.email },
+      {
+        $set: {
+          phoneKey: phoneKey(body.phone),
+          codeHash,
+          name: body.name ?? "",
+          attempts: 0,
+          expiresAt,
+          purpose: body.purpose,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
     // Send OTP email — use email as primary identifier
-    const emailSent = await dispatchOtpEmail(body.email, code);
+    const emailSent = await dispatchOtpEmail(body.email, code, {
+      name: body.name,
+      purpose: body.purpose,
+    });
 
     return NextResponse.json({
       success: true,

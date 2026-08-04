@@ -12,7 +12,7 @@ export interface IOtpChallenge {
 
 const OtpSchema = new Schema<IOtpChallenge>(
   {
-    email: { type: String, required: true, index: true },
+    email: { type: String, required: true, unique: true },
     phoneKey: { type: String, index: true },
     codeHash: { type: String, required: true },
     name: { type: String },

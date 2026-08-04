@@ -38,27 +38,23 @@ export async function resendSend(payload: ResendPayload): Promise<boolean> {
  * Reads the stored email address from the OTP record by phoneKey,
  * then sends the OTP email — the route never passes user input here.
  */
-export async function dispatchOtpEmail(email: string, code?: string): Promise<boolean> {
+export async function dispatchOtpEmail(
+  email: string,
+  code: string,
+  options: { name?: string; purpose: "login" | "save_account" }
+): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return false;
   try {
-    // Dynamic import avoids circular deps and keeps DB logic server-only
-    const { OtpChallenge } = await import("@/models/OtpChallenge");
-    const record = await OtpChallenge.findOne({ email }).sort({ createdAt: -1 }).lean();
-    if (!record?.email) return false;
-
-    const greeting = record.name ? `Hi ${record.name}` : "Hi";
-    const action = record.purpose === "save_account" ? "save your account" : "log in";
-
-    // Require code to be passed in; do not rely on stored plaintext codes
-    if (!code) return false;
+    const greeting = options.name ? `Hi ${options.name}` : "Hi";
+    const action = options.purpose === "save_account" ? "save your account" : "log in";
     const codeToSend = code;
 
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
       from: process.env.RESEND_FROM || "Karachi Toy Shop <onboarding@resend.dev>",
-      to: [record.email],
-      subject: `${codeToSend} is your Karachi Toy Shop code`,
+      to: [email],
+      subject: `${code} is your Karachi Toy Shop code`,
       text: `${greeting},\n\nYour one-time code to ${action} is: ${codeToSend}\n\nExpires in 1 minute.\n\n— Karachi Toy Shop`,
     });
 

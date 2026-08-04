@@ -19,7 +19,7 @@ const schema = z.object({
   phone: z.string().min(10),
   code: z.string().length(6),
   name: z.string().min(2).optional(),
-  email: z.string().email(),
+  email: z.string().email().transform((value) => value.trim().toLowerCase()),
   address: z.string().optional(),
   city: z.string().optional(),
   area: z.string().optional(),
@@ -37,9 +37,7 @@ export async function POST(req: NextRequest) {
     const key = body.phone ? phoneKey(body.phone) : undefined;
     await connectDB();
 
-    const challenge = await OtpChallenge.findOne({ email: body.email }).sort({
-      createdAt: -1,
-    });
+    const challenge = await OtpChallenge.findOne({ email: body.email });
     if (!challenge || challenge.expiresAt < new Date()) {
       return NextResponse.json({ error: "OTP expired. Request a new one." }, { status: 400 });
     }
@@ -54,7 +52,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid OTP" }, { status: 401 });
     }
 
-    await OtpChallenge.deleteMany({ email: body.email });
+    await OtpChallenge.deleteOne({ _id: challenge._id });
 
     let customer = await Customer.findOne({ email: body.email });
     if (!customer) {
@@ -122,7 +120,8 @@ export async function POST(req: NextRequest) {
 
     const token = await createCustomerToken({
       customerId: String(customer._id),
-      phoneKey: key || "",
+      // A caller-supplied phone number must not authorise order-history access.
+      phoneKey: customer.phoneKey || "",
     });
     await setCustomerCookie(token);
 

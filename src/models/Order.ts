@@ -94,4 +94,7 @@ const OrderSchema = new Schema<IOrder>(
   { timestamps: true }
 );
 
+// Account history is authorised by the customer's verified email.
+OrderSchema.index({ "customer.email": 1, createdAt: -1 });
+
 export const Order = models.Order || model<IOrder>("Order", OrderSchema);
