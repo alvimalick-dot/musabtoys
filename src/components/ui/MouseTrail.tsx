@@ -16,6 +16,9 @@ export function MouseTrail() {
   const lastRef = useRef(0);
 
   useEffect(() => {
+    // Mouse effects have no value on touch devices, where they can cost frames.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
     const container = document.createElement("div");
     container.style.cssText =
       "position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden";
@@ -67,7 +70,9 @@ export function MouseTrail() {
         }
         return true;
       });
-      rafRef.current = requestAnimationFrame(animate);
+      rafRef.current = trailRef.current.length
+        ? requestAnimationFrame(animate)
+        : 0;
     }
 
     function onMove(e: MouseEvent) {
@@ -75,11 +80,10 @@ export function MouseTrail() {
       if (now - lastRef.current < 40) return; // throttle
       lastRef.current = now;
       spawn(e.clientX, e.clientY);
+      if (!rafRef.current) rafRef.current = requestAnimationFrame(animate);
     }
 
     window.addEventListener("mousemove", onMove, { passive: true });
-    rafRef.current = requestAnimationFrame(animate);
-
     return () => {
       window.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(rafRef.current);

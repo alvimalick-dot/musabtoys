@@ -317,7 +317,7 @@ export function ShopClient() {
             animate="show"
             variants={{
               hidden: {},
-              show: { transition: { staggerChildren: 0.12 } },
+              show: { transition: { staggerChildren: 0.03 } },
             }}
           >
             {data?.products.map((p, i) => (
@@ -325,10 +325,10 @@ export function ShopClient() {
                 key={p._id}
                 custom={i}
                 variants={{
-                  hidden: { opacity: 0, y: 40, scale: 0.9 },
+                  hidden: { opacity: 0, y: 16, scale: 0.98 },
                   show: { opacity: 1, y: 0, scale: 1 },
                 }}
-                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               >
                 <ProductCard product={p} />
               </motion.div>

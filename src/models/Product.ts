@@ -63,6 +63,15 @@ ProductSchema.index({
   searchText: "text",
 });
 
+// Match the storefront's most common filter + sort paths.
+ProductSchema.index({ featured: 1, createdAt: -1 });
+ProductSchema.index({ newArrival: 1, createdAt: -1 });
+ProductSchema.index({ category: 1, createdAt: -1 });
+ProductSchema.index({ brand: 1, createdAt: -1 });
+ProductSchema.index({ ageGroup: 1, createdAt: -1 });
+ProductSchema.index({ stockStatus: 1, createdAt: -1 });
+ProductSchema.index({ price: 1 });
+
 ProductSchema.pre("validate", function () {
   this.stockStatus = deriveStockStatus(this.stock);
   this.searchText = [this.name, this.brand, this.category, this.ageGroup, this.sku]

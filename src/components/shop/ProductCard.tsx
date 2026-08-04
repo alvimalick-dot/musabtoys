@@ -19,6 +19,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
   const wished = useWishlistStore((s) => s.has(product._id));
   const image = product.images?.[0] ? normalizeImagePath(product.images[0]) : "";
   const cardRef = useRef<HTMLDivElement>(null);
+  const tiltFrameRef = useRef<number>(0);
   const [glowColor, setGlowColor] = useState<string | null>(null);
 
   // Always derive stock state from the actual number so badges never go stale
@@ -44,14 +45,20 @@ export function ProductCard({ product }: { product: ProductDTO }) {
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -6;
-    const rotateY = ((x - centerX) / centerX) * 6;
-    card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    if (tiltFrameRef.current) cancelAnimationFrame(tiltFrameRef.current);
+    tiltFrameRef.current = requestAnimationFrame(() => {
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -6;
+      const rotateY = ((x - centerX) / centerX) * 6;
+      card.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      tiltFrameRef.current = 0;
+    });
   }
 
   function onMouseLeave() {
+    if (tiltFrameRef.current) cancelAnimationFrame(tiltFrameRef.current);
+    tiltFrameRef.current = 0;
     resetGlow();
     const card = cardRef.current;
     if (!card) return;
@@ -193,4 +200,3 @@ export function ProductCard({ product }: { product: ProductDTO }) {
     </div>
   );
 }
-

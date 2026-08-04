@@ -53,7 +53,10 @@ export async function connectDB() {
     validateMongoUri(MONGODB_URI);
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 15000,
+      // Do not leave a visitor waiting for 15 seconds when Atlas is unavailable.
+      // A healthy Atlas connection completes well within this window.
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
     });
   }
 

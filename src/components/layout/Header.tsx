@@ -210,7 +210,7 @@ export function Header() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
             className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-black/5 bg-[#fef6ed] px-4 py-3 lg:hidden"
           >
             {links.map((link, i) => (
@@ -218,7 +218,7 @@ export function Header() {
                 key={link.href}
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.03, duration: 0.25 }}
+                transition={{ delay: i * 0.02, duration: 0.16 }}
               >
                 <Link
                   href={link.href}

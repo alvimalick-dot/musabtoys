@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
       Product.distinct("ageGroup"),
     ]);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       products: pageItems,
       pagination: {
         page: filters.page,
@@ -113,6 +113,10 @@ export async function GET(req: NextRequest) {
       },
       facets: { categories, brands, ageGroups },
     });
+    // This response contains public catalog data only. CDN caching avoids
+    // repeated identical database reads while still refreshing quickly.
+    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+    return response;
   } catch (error) {
     console.error("GET /api/products", error);
     return NextResponse.json(
