@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Customer } from "@/models/Customer";
-import { Order } from "@/models/Order";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
-import { phoneKey } from "@/lib/customer-auth";
+import { getCustomerSession, phoneKey } from "@/lib/customer-auth";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -13,8 +12,8 @@ const schema = z.object({
 });
 
 /**
- * Guest checkout helper: if phone matches a known customer (or past order),
- * return name/address for autofill. Never requires login.
+ * Autofill saved details only for the customer currently signed in. Looking
+ * up an arbitrary phone number would expose private addresses and email.
  */
 export async function POST(req: NextRequest) {
   const limited = rateLimit(`lookup:${clientIp(req)}`, 30, 15 * 60 * 1000);
@@ -25,9 +24,13 @@ export async function POST(req: NextRequest) {
   try {
     const body = schema.parse(await req.json());
     const key = phoneKey(body.phone);
+    const session = await getCustomerSession();
+    if (!session || session.phoneKey !== key) {
+      return NextResponse.json({ found: false });
+    }
     await connectDB();
 
-    const customer = await Customer.findOne({ phoneKey: key }).lean();
+    const customer = await Customer.findById(session.customerId).lean();
     if (customer) {
       const def =
         customer.addresses.find((a: { isDefault?: boolean }) => a.isDefault) ||
@@ -41,27 +44,6 @@ export async function POST(req: NextRequest) {
           address: def?.address || "",
           city: def?.city || "Multan",
           area: def?.area || "",
-        },
-      });
-    }
-
-    // Fallback: last guest order with this phone
-    const order = await Order.findOne({
-      "customer.phone": { $regex: key + "$" },
-    })
-      .sort({ createdAt: -1 })
-      .lean();
-
-    if (order) {
-      return NextResponse.json({
-        found: true,
-        source: "past_order",
-        profile: {
-          name: order.customer.name,
-          email: order.customer.email || "",
-          address: order.customer.address,
-          city: order.customer.city,
-          area: order.customer.area || "",
         },
       });
     }

@@ -49,7 +49,10 @@ export function resolveImageRef(ref: string): string | null {
   const raw = ref.trim().replace(/\\/g, "/");
   if (!raw) return null;
 
-  if (/^https?:\/\//i.test(raw)) return raw;
+  // The storefront only renders secure remote images. Ignoring HTTP avoids
+  // mixed-content failures on the live HTTPS site.
+  if (/^https:\/\//i.test(raw)) return raw;
+  if (/^http:\/\//i.test(raw)) return null;
 
   // Already a site path
   if (raw.startsWith("/images/")) return raw;

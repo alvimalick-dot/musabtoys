@@ -23,9 +23,29 @@ export async function POST(req: NextRequest) {
 
     // Skip if email already sent
     if (order.confirmationEmailSent) {
+      // The success page still needs the WhatsApp confirmation link even
+      // though it must not send a duplicate email.
+      const confirmation = buildOrderConfirmation({
+        orderNumber: order.orderNumber,
+        total: order.total,
+        subtotal: order.subtotal,
+        shipping: order.shipping || 0,
+        discount: order.discount,
+        customerName: order.customer.name,
+        customerPhone: order.customer.phone,
+        customerEmail: order.customer.email,
+        customerAddress: order.customer.address,
+        customerCity: order.customer.city,
+        items: (order.items as IOrderItem[]).map((item: IOrderItem) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          image: item.image,
+        })),
+      });
       return NextResponse.json({
-        whatsappUrl: "",
-        trackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/track?order=${order.orderNumber}`,
+        whatsappUrl: confirmation.whatsappUrl,
+        trackUrl: confirmation.trackUrl,
         emailSent: false,
         message: "Email already sent for this order",
       });

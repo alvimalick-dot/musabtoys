@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
+      // Excel imports may contain HTTPS product images from a supplier CDN.
+      // Keep local paths and insecure HTTP URLs out of this allowance.
+      {
+        protocol: "https",
+        hostname: "**",
+      },
       {
         protocol: "https",
         hostname: "res.cloudinary.com",

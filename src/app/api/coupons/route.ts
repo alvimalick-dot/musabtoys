@@ -13,6 +13,9 @@ const createSchema = z.object({
   minOrder: z.coerce.number().min(0).default(0),
   maxUses: z.coerce.number().min(0).default(0),
   active: z.boolean().default(true),
+}).refine((coupon) => coupon.type !== "percent" || coupon.value <= 100, {
+  message: "Percentage coupons cannot exceed 100%",
+  path: ["value"],
 });
 
 export async function GET() {
@@ -72,7 +75,7 @@ export async function PUT(req: NextRequest) {
     }
     const discount =
       coupon.type === "percent"
-        ? Math.round((subtotal * coupon.value) / 100)
+        ? Math.min(Math.round((subtotal * coupon.value) / 100), subtotal)
         : Math.min(coupon.value, subtotal);
     return NextResponse.json({
       code: coupon.code,

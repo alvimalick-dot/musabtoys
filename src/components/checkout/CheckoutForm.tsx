@@ -154,7 +154,6 @@ export function CheckoutForm() {
         throw new Error(bad?.error || "Cart items are no longer available");
       }
 
-      let discount = appliedCoupon?.discount ?? 0;
       let couponCode = appliedCoupon?.code;
 
       // If a code was typed but not applied yet, apply it now (server-side validation)
@@ -167,13 +166,9 @@ export function CheckoutForm() {
         });
         const cData = await cRes.json();
         if (!cRes.ok) throw new Error(cData.error || "Invalid coupon");
-        discount = cData.discount;
         couponCode = cData.code;
         toast.success(`Coupon applied — ${formatPKR(discount)} off`);
       }
-
-      // Guard: discount can never exceed validated subtotal
-      discount = Math.min(discount, validated.subtotal);
 
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -194,7 +189,6 @@ export function CheckoutForm() {
           paymentMethod,
           notes: values.notes || "",
           couponCode,
-          discount,
         }),
       });
 

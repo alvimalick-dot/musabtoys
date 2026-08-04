@@ -6,6 +6,7 @@ import { Order, IOrderItem } from "@/models/Order";
 import { checkoutSchema } from "@/lib/validators";
 import { calcShipping } from "@/lib/commerce";
 import { buildOrderConfirmation, sendEmail } from "@/lib/notify";
+import { Coupon } from "@/models/Coupon";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -64,6 +65,11 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // findOneAndUpdate bypasses the Product model's validation hook, which
+      // derives stockStatus. Save the updated document in this transaction so
+      // shop filters and product-page availability text stay correct.
+      await updated.save({ session });
+
       orderItems.push({
         productId: product._id,
         name: product.name,
@@ -76,7 +82,50 @@ export async function POST(req: NextRequest) {
       subtotal += product.price * item.quantity;
     }
 
-    const discount = Math.min(body.discount || 0, subtotal);
+    // Discounts are calculated on the server. A browser may be modified, so
+    // never use a discount amount submitted by the client.
+    let discount = 0;
+    let couponCode: string | undefined;
+    if (body.couponCode?.trim()) {
+      const code = body.couponCode.trim().toUpperCase();
+      const now = new Date();
+      const coupon = await Coupon.findOne({
+        code,
+        active: true,
+        $or: [
+          { expiresAt: { $exists: false } },
+          { expiresAt: null },
+          { expiresAt: { $gte: now } },
+        ],
+      }).session(session);
+
+      if (!coupon) throw new Error("Invalid or expired coupon");
+      if (subtotal < coupon.minOrder) {
+        throw new Error(`Minimum order PKR ${coupon.minOrder} for this coupon`);
+      }
+
+      // Reserve a redemption atomically so a limited coupon cannot be used
+      // twice by simultaneous checkouts.
+      const reserved = await Coupon.findOneAndUpdate(
+        {
+          _id: coupon._id,
+          active: true,
+          $or: [
+            { maxUses: 0 },
+            { $expr: { $lt: ["$usedCount", "$maxUses"] } },
+          ],
+        },
+        { $inc: { usedCount: 1 } },
+        { new: true, session }
+      );
+      if (!reserved) throw new Error("Coupon fully used");
+
+      discount =
+        coupon.type === "percent"
+          ? Math.min(Math.round((subtotal * coupon.value) / 100), subtotal)
+          : Math.min(coupon.value, subtotal);
+      couponCode = coupon.code;
+    }
     const shipping = calcShipping(subtotal, discount > 0);
     const total = Math.max(0, subtotal - discount) + shipping;
 
@@ -95,21 +144,12 @@ export async function POST(req: NextRequest) {
           shipping,
           total,
           notes: body.notes,
-          couponCode: body.couponCode,
+          couponCode,
           discount,
         },
       ],
       { session }
     );
-
-    if (body.couponCode && discount > 0) {
-      const { Coupon } = await import("@/models/Coupon");
-      await Coupon.updateOne(
-        { code: body.couponCode.toUpperCase() },
-{ $inc: { usedCount: 1 } },
-        { session }
-      );
-    }
 
     await session.commitTransaction();
 
