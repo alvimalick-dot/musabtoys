@@ -7,8 +7,8 @@ const siteUrl =
   "http://localhost:3000";
 
 // ISR: re-generate the sitemap at most once per hour so crawls don't hammer
-// MongoDB on every request. Raise/lower via env if needed.
-export const revalidate = Number(process.env.SITEMAP_REVALIDATE_SECONDS || 3600);
+// MongoDB on every request.
+export const revalidate = 3600;
 
 // Cap the number of product URLs emitted. Configurable via env.
 const MAX_PRODUCTS = Number(process.env.SITEMAP_MAX_PRODUCTS || 10000);
