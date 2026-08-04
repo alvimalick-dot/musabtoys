@@ -8,6 +8,7 @@ import { useCartStore } from "@/store/cartStore";
 import type { WishlistItem } from "@/store/wishlistStore";
 import { formatPKR } from "@/lib/utils";
 import { toast } from "sonner";
+import { normalizeImagePath } from "@/lib/image-path";
 
 export default function WishlistPage() {
   const items = useWishlistStore((s) => s.items);
@@ -65,7 +66,7 @@ export default function WishlistPage() {
             >
               <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-[#fde8d4]">
                 {item.image ? (
-                  <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
+                  <Image src={normalizeImagePath(item.image)} alt={item.name} fill className="object-cover" sizes="64px" />
                 ) : (
                   <div className="flex h-full items-center justify-center text-xs text-muted">KT</div>
                 )}

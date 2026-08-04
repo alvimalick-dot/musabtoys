@@ -11,12 +11,13 @@ import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { BubbleTitle } from "@/components/ui/BubbleTitle";
 import confetti from "canvas-confetti";
+import { normalizeImagePath } from "@/lib/image-path";
 
 export function ProductCard({ product }: { product: ProductDTO }) {
   const addItem = useCartStore((s) => s.addItem);
   const wishlistToggle = useWishlistStore((s) => s.toggle);
   const wished = useWishlistStore((s) => s.has(product._id));
-  const image = product.images?.[0];
+  const image = product.images?.[0] ? normalizeImagePath(product.images[0]) : "";
   const cardRef = useRef<HTMLDivElement>(null);
   const [glowColor, setGlowColor] = useState<string | null>(null);
 

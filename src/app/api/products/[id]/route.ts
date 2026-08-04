@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
+import { normalizeImagePath } from "@/lib/image-path";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +68,11 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
         // Round monetary values to 2 decimal places
         if (key === "price" || key === "compareAtPrice") {
           value = Math.round(Number(value) * 100) / 100;
+        }
+        if (key === "images" && Array.isArray(value)) {
+          value = value
+            .map((img: string) => normalizeImagePath(String(img)))
+            .filter(Boolean);
         }
         // Use Mongoose Document#set to assign dynamic keys safely
         product.set(key, value);

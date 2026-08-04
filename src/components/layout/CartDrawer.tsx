@@ -9,6 +9,7 @@ import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/commerce";
 import { LottieAnimation } from "@/components/ui/LottieAnimation";
+import { normalizeImagePath } from "@/lib/image-path";
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, updateQty, removeItem, subtotal } =
@@ -130,7 +131,7 @@ export function CartDrawer() {
                         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white">
                           {item.image ? (
                             <Image
-                              src={item.image}
+                              src={normalizeImagePath(item.image)}
                               alt={item.name}
                               fill
                               className="object-cover"

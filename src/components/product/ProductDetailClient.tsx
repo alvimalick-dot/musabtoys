@@ -14,6 +14,7 @@ import {
   whatsappShareProductUrl,
 } from "@/lib/whatsapp";
 import { toast } from "sonner";
+import { normalizeImagePath } from "@/lib/image-path";
 
 export function ProductDetailClient({ product }: { product: ProductDTO }) {
   const addItem = useCartStore((s) => s.addItem);
@@ -21,7 +22,9 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
   const wished = useWishlistStore((s) => s.has(product._id));
   const [qty, setQty] = useState(1);
   const [alertPhone, setAlertPhone] = useState("");
-  const images = product.images?.length ? product.images : [];
+  const images = product.images?.length
+    ? product.images.map(normalizeImagePath).filter(Boolean)
+    : [];
   // Always derive stock state from the actual number so UI never shows an
   // Add-to-cart button for a sold-out product even if stockStatus is stale
   const isOutOfStock =

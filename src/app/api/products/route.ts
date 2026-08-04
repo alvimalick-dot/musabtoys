@@ -5,6 +5,7 @@ import { Product } from "@/models/Product";
 import { productFilterSchema } from "@/lib/validators";
 import { makeSlug } from "@/lib/utils";
 import { getAdminSession } from "@/lib/auth";
+import { normalizeImagePath } from "@/lib/image-path";
 
 export const dynamic = "force-dynamic";
 
@@ -158,7 +159,9 @@ export async function POST(req: NextRequest) {
       brand: body.brand || "Generic",
       ageGroup: body.ageGroup || "All Ages",
       stock: Number(body.stock ?? 10),
-      images: Array.isArray(body.images) ? body.images : [],
+      images: Array.isArray(body.images)
+        ? body.images.map((img: string) => normalizeImagePath(String(img))).filter(Boolean)
+        : [],
       specs: body.specs || {},
       featured,
       // Enforce mutual exclusivity: a product is either Featured or New Arrival

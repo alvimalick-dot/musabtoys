@@ -5,6 +5,7 @@ import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { formatPKR } from "@/lib/utils";
 import type { ProductDTO } from "@/types";
+import { normalizeImagePath } from "@/lib/image-path";
 
 export function RelatedProducts({ products }: { products: ProductDTO[] }) {
   const [emblaRef] = useEmblaCarousel({ align: "start", dragFree: true });
@@ -20,12 +21,12 @@ export function RelatedProducts({ products }: { products: ProductDTO[] }) {
             <Link
               key={p._id}
               href={`/product/${p.slug}`}
-              className="min-w-[160px] max-w-[200px] shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:min-w-[200px] sm:max-w-[220px]"
+              className="min-w-40 max-w-50 shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:min-w-50 sm:max-w-55"
             >
               <div className="relative aspect-square bg-[#fde8d4]">
                 {p.images?.[0] ? (
                   <Image
-                    src={p.images[0]}
+                    src={normalizeImagePath(p.images[0])}
                     alt={p.name}
                     fill
                     className="object-cover"

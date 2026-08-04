@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { formatPKR } from "@/lib/utils";
+import { normalizeImagePath } from "@/lib/image-path";
 
 type ProductRow = {
   _id: string;
@@ -110,7 +111,7 @@ export function ProductAdmin() {
       brand: p.brand,
       ageGroup: p.ageGroup,
       description: p.description || "",
-      images: (p.images || []).join(", "),
+      images: (p.images || []).map(normalizeImagePath).join(", "),
       featured: Boolean(p.featured),
       newArrival: Boolean(p.newArrival),
     });
@@ -135,6 +136,7 @@ export function ProductAdmin() {
         const existing = f.images
           .split(/[,|]/)
           .map((s) => s.trim())
+          .map(normalizeImagePath)
           .filter(Boolean);
         return { ...f, images: [...existing, ...urls].join(", ") };
       });
@@ -153,6 +155,7 @@ export function ProductAdmin() {
     return form.images
       .split(/[,|]/)
       .map((s) => s.trim())
+      .map(normalizeImagePath)
       .filter(Boolean);
   }
 
@@ -184,6 +187,7 @@ export function ProductAdmin() {
       images: form.images
         .split(/[,|]/)
         .map((s) => s.trim())
+        .map(normalizeImagePath)
         .filter(Boolean),
     };
     try {
@@ -500,10 +504,10 @@ export function ProductAdmin() {
         </form>
       </div>
 
-      <div className="rounded-[1.5rem] bg-white p-5 ring-1 ring-black/5">
+      <div className="rounded-3xl bg-white p-5 ring-1 ring-black/5">
         <div className="flex flex-wrap gap-2">
           <input
-            className="input-field min-w-[200px] flex-1"
+            className="input-field min-w-50 flex-1"
             placeholder="Search name / SKU…"
             value={q}
             onChange={(e) => setQ(e.target.value)}

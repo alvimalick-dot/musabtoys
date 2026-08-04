@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { X, ZoomIn } from "lucide-react";
+import { normalizeImagePath } from "@/lib/image-path";
 
 export function ProductGallery({
   images,
@@ -13,13 +14,13 @@ export function ProductGallery({
 }) {
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
-  const list = images.length ? images : [];
+  const list = images.length ? images.map(normalizeImagePath).filter(Boolean) : [];
 
   return (
     <div>
-      <button
+        <button
         type="button"
-        className="relative aspect-square w-full overflow-hidden rounded-[2rem] bg-white ring-1 ring-black/5"
+        className="relative aspect-square w-full overflow-hidden rounded-4xl bg-white ring-1 ring-black/5"
         onClick={() => list[active] && setOpen(true)}
       >
         {list[active] ? (
@@ -67,14 +68,14 @@ export function ProductGallery({
       )}
 
       {open && list[active] && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/80 p-4 pt-[max(1rem,env(safe-area-inset-top))]">
+        <div className="fixed inset-0 z-80 flex items-center justify-center bg-ink/80 p-4 pt-[max(1rem,env(safe-area-inset-top))]">
           <button
             type="button"
             className="absolute inset-0"
             aria-label="Close lightbox"
             onClick={() => setOpen(false)}
           />
-          <div className="relative z-10 max-h-[100dvh] w-full max-w-4xl">
+          <div className="relative z-10 max-h-dvh w-full max-w-4xl">
             <button
               type="button"
               onClick={() => setOpen(false)}
