@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { X, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import { normalizeImagePath } from "@/lib/image-path";
 
 export function ProductGallery({
@@ -15,13 +15,50 @@ export function ProductGallery({
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
   const list = images.length ? images.map(normalizeImagePath).filter(Boolean) : [];
+  const swipeStartX = useRef<number | null>(null);
+  const didSwipe = useRef(false);
+
+  function showPrevious() {
+    setActive((current) => (current - 1 + list.length) % list.length);
+  }
+
+  function showNext() {
+    setActive((current) => (current + 1) % list.length);
+  }
+
+  function handlePointerDown(event: React.PointerEvent<HTMLButtonElement>) {
+    swipeStartX.current = event.clientX;
+    didSwipe.current = false;
+  }
+
+  function handlePointerUp(event: React.PointerEvent<HTMLButtonElement>) {
+    if (swipeStartX.current === null || list.length < 2) return;
+    const distance = event.clientX - swipeStartX.current;
+    swipeStartX.current = null;
+    if (Math.abs(distance) < 40) return;
+    didSwipe.current = true;
+    if (distance > 0) showPrevious();
+    else showNext();
+  }
 
   return (
     <div>
+      <div className="relative">
         <button
         type="button"
         className="relative aspect-square w-full overflow-hidden rounded-4xl bg-white ring-1 ring-black/5"
-        onClick={() => list[active] && setOpen(true)}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={() => {
+          swipeStartX.current = null;
+        }}
+        onClick={() => {
+          if (didSwipe.current) {
+            didSwipe.current = false;
+            return;
+          }
+          if (list[active]) setOpen(true);
+        }}
       >
         {list[active] ? (
           <Image
@@ -43,6 +80,28 @@ export function ProductGallery({
           </span>
         )}
       </button>
+
+      {list.length > 1 && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous product photo"
+            onClick={showPrevious}
+            className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            aria-label="Next product photo"
+            onClick={showNext}
+            className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </>
+      )}
+      </div>
 
       {list.length > 1 && (
         <div className="-mx-1 mt-4 flex gap-3 overflow-x-auto overscroll-x-contain px-1 pb-1">
