@@ -31,7 +31,13 @@ export async function GET(req: NextRequest) {
     await connectDB();
     const params = Object.fromEntries(req.nextUrl.searchParams);
     const filters = productFilterSchema.parse(params);
+    const cardView = req.nextUrl.searchParams.get("view") === "card";
     const query = buildFilterQuery(filters);
+
+    // Keep Shop listing queries lean. Product detail and admin requests still
+    // receive the full document by omitting `view=card`.
+    const cardProjection =
+      "name slug price compareAtPrice category brand ageGroup stock stockStatus images featured newArrival sku searchText";
 
     const sortMap: Record<string, Record<string, 1 | -1>> = {
       newest: { createdAt: -1 },
@@ -63,6 +69,7 @@ export async function GET(req: NextRequest) {
       let candidates = await Product.find(searchQuery)
         .sort(sort)
         .limit(400)
+        .select(cardView ? cardProjection : {})
         .lean();
 
       // Typo-tolerant pass on the narrowed set
@@ -76,7 +83,11 @@ export async function GET(req: NextRequest) {
         if (fused.length) candidates = fused;
       } else {
         // Fallback: broader fuzzy over a capped newest set
-        const pool = await Product.find(query).sort(sort).limit(800).lean();
+        const pool = await Product.find(query)
+          .sort(sort)
+          .limit(800)
+          .select(cardView ? cardProjection : {})
+          .lean();
         const fuse = new Fuse(pool, {
           keys: ["name", "brand", "category", "sku", "searchText"],
           threshold: 0.45,
@@ -94,6 +105,7 @@ export async function GET(req: NextRequest) {
         .sort(sort)
         .skip((filters.page - 1) * filters.limit)
         .limit(filters.limit)
+        .select(cardView ? cardProjection : {})
         .lean();
     }
 
@@ -104,7 +116,26 @@ export async function GET(req: NextRequest) {
     ]);
 
     const response = NextResponse.json({
-      products: pageItems,
+      products: cardView
+        ? pageItems.map((product) => ({
+            _id: String(product._id),
+            name: product.name,
+            slug: product.slug,
+            price: product.price,
+            compareAtPrice: product.compareAtPrice,
+            category: product.category,
+            brand: product.brand,
+            ageGroup: product.ageGroup,
+            stock: product.stock,
+            stockStatus: product.stockStatus,
+            // Cards render only the first image. The full gallery remains on
+            // the product-detail response.
+            images: product.images?.slice(0, 1) || [],
+            featured: product.featured,
+            newArrival: product.newArrival,
+            sku: product.sku,
+          }))
+        : pageItems,
       pagination: {
         page: filters.page,
         limit: filters.limit,

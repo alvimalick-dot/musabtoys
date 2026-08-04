@@ -2,14 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus, Trash2, Truck, X } from "lucide-react";
 import { useEffect } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/commerce";
-import { LottieAnimation } from "@/components/ui/LottieAnimation";
 import { normalizeImagePath } from "@/lib/image-path";
+
+// lottie-web is sizeable and is only needed when an empty cart is opened.
+const LottieAnimation = dynamic(
+  () => import("@/components/ui/LottieAnimation").then((mod) => mod.LottieAnimation),
+  { ssr: false }
+);
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, updateQty, removeItem, subtotal } =
@@ -241,4 +247,3 @@ export function CartDrawer() {
     </AnimatePresence>
   );
 }
-

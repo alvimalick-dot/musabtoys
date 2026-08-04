@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { BubbleTitle } from "@/components/ui/BubbleTitle";
-import confetti from "canvas-confetti";
 import { normalizeImagePath } from "@/lib/image-path";
 
 export function ProductCard({ product }: { product: ProductDTO }) {
@@ -65,7 +64,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
     card.style.transform = "perspective(600px) rotateX(0deg) rotateY(0deg)";
   }
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     addItem({
       productId: product._id,
       slug: product.slug,
@@ -75,7 +74,8 @@ export function ProductCard({ product }: { product: ProductDTO }) {
       stock: product.stock,
     });
     toast.success("Added to cart");
-    // Confetti burst
+    // Load this visual-only library only after the user actually adds an item.
+    const { default: confetti } = await import("canvas-confetti");
     confetti({
       particleCount: 30,
       spread: 60,

@@ -39,7 +39,11 @@ export function ShopClient() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/products?${searchParams.toString()}`);
+      const params = new URLSearchParams(searchParams.toString());
+      // Product cards only need summary fields; the full record is still
+      // fetched on the product page and by the admin interface.
+      params.set("view", "card");
+      const res = await fetch(`/api/products?${params.toString()}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Failed to load products");
       setData(json);
