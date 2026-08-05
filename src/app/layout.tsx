@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   creator: "Karachi Toys",
   publisher: "Karachi Toys",
   formatDetection: { telephone: false },
-  alternates: { canonical: "/" },
+  alternates: { canonical: "https://karachitoys.com" },
   openGraph: {
     type: "website",
     locale: "en_PK",

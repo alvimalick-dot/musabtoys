@@ -59,7 +59,7 @@ export function OrderConfirmationEmail({
   total,
   paymentMethod = "cod",
 }: OrderConfirmationEmailProps) {
-  const trackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.karachitoys.com/"}/track?order=${orderId}`;
+  const trackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://karachitoys.com/"}/track?order=${orderId}`;
   const displayDate = orderDate ?? new Date().toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" });
 
   return (
@@ -77,7 +77,7 @@ export function OrderConfirmationEmail({
 
           {/* Shop info bar */}
           <Section style={shopBar}>
-            <Text style={shopBarText}>📍 Multan, Pakistan &nbsp;|&nbsp; 📞 {BRAND_PHONE_DISPLAY} &nbsp;|&nbsp; ✉️ karachitoyshop@gmail.com &nbsp;|&nbsp; 🌐 https://www.karachitoys.com/</Text>
+            <Text style={shopBarText}>📍 Multan, Pakistan &nbsp;|&nbsp; 📞 {BRAND_PHONE_DISPLAY} &nbsp;|&nbsp; ✉️ karachitoyshop@gmail.com &nbsp;|&nbsp; 🌐 https://karachitoys.com/</Text>
           </Section>
 
           {/* Greeting */}
