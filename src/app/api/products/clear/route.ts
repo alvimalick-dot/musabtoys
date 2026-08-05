@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
@@ -8,7 +9,12 @@ export const dynamic = "force-dynamic";
 /**
  * DELETE /api/products/clear
  *
- * Removes ALL products from the database. Guarded by:
+ * Removes ALL products (and everything product-related, including the
+ * featured / newArrival flags living on product documents) from the database.
+ * Cached pages that surface products (homepage featured & new-arrival
+ * sections, shop, and sitemap) are revalidated so they reset immediately.
+ *
+ * Guarded by:
  *  - an admin session (cookies)
  *  - an explicit `{ confirm: true }` body flag to prevent accidental wipes
  */
@@ -30,6 +36,13 @@ export async function DELETE(req: NextRequest) {
     }
 
     const result = await Product.deleteMany({});
+
+    // Purge cached pages that surface product data (homepage featured/new
+    // arrival sections, shop, and sitemap) so they reset immediately after
+    // the wipe instead of waiting for the revalidate window to expire.
+    revalidatePath("/", "page");
+    revalidatePath("/shop");
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
       success: true,
