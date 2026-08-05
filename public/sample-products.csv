@@ -1,4 +1,4 @@
-name,sku,price,compareAtPrice,category,brand,ageGroup,stock,description,images,featured,dimensions,battery,pieceCount
-Mega Block City Builder 500pc,SKU-BLOCK-500,4599,5499,Building Sets,BrickJoy,6-12 years,40,Build streets shops and towers with 500 colorful interlocking bricks.,https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80,true,40x30x8 cm,,500
-Turbo RC Drift Car,SKU-RC-DRIFT,8999,10999,Vehicles,SpeedKarachi,8+ years,18,2.4GHz remote control drift car with rechargeable battery.,https://images.unsplash.com/photo-1594787318285-aeefe3a1c1c2?auto=format&fit=crop&w=800&q=80,true,,7.4V Li-ion,
-Soft Sensory Ball Set,SKU-SENSORY-6,1499,,Baby & Toddler,TinyHands,0-3 years,75,Six textured soft balls for first grip and sensory play.,https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80,false,,,6
+ProductName,Company,Group,R Price,images,discription
+Mega Block City Builder 500pc,BrickJoy,Building Sets,4599,https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80,Build streets shops and towers with 500 colorful interlocking bricks.
+Turbo RC Drift Car,SpeedKarachi,Vehicles,8999,https://images.unsplash.com/photo-1594787318285-aeefe3a1c1c2?auto=format&fit=crop&w=800&q=80,2.4GHz remote control drift car with rechargeable battery.
+Soft Sensory Ball Set,TinyHands,Baby & Toddler,1499,https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80,Six textured soft balls for first grip and sensory play.

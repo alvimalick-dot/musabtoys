@@ -54,6 +54,7 @@ const ALIASES: Record<string, keyof MappedProductRow | "rawImages"> = {
   // price
   price: "price",
   retailprice: "price",
+  rprice: "price",
   saleprice: "price",
   sellingprice: "price",
   unitprice: "price",
@@ -93,6 +94,8 @@ const ALIASES: Record<string, keyof MappedProductRow | "rawImages"> = {
   onhand: "stock",
   // description
   description: "description",
+  // Accept the spelling used by the supplier sheet as well.
+  discription: "description",
   desc: "description",
   details: "description",
   detail: "description",
@@ -238,8 +241,7 @@ export function detectColumns(rows: Record<string, unknown>[]) {
 
 export function mapExcelRow(
   raw: Record<string, unknown>,
-  headerMap: Map<string, string>,
-  rowIndex: number
+  headerMap: Map<string, string>
 ): MappedProductRow | { error: string } {
   const get = (field: string) => {
     const header = headerMap.get(field);
@@ -257,7 +259,9 @@ export function mapExcelRow(
   const sku =
     skuRaw !== undefined && skuRaw !== null && String(skuRaw).trim() !== ""
       ? String(skuRaw).trim()
-      : `ROW-${rowIndex}`;
+      // ProductName is the import key for sheets without a ProductID/SKU.
+      // Keeping this stable avoids duplicate products when row positions change.
+      : name;
 
   const imagesRaw = get("rawImages");
   const images = imagesRaw

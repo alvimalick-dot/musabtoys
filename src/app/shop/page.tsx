@@ -7,7 +7,6 @@ import {
   collectionJsonLd,
   getSiteUrl,
 } from "@/lib/seo";
-import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 
 const siteUrl = getSiteUrl();
@@ -102,27 +101,37 @@ export async function generateMetadata({
 // The shop page's server component runs on every request (it awaits
 // searchParams, so it can't be fully static). The collection query below is
 // only used to seed JSON-LD structured data, not the visible grid (which is
-// fetched client-side). Cache it briefly to avoid an extra DB round-trip while
-// the page loads.
-const COLLECTION_CACHE_TTL_MS = 60 * 1000;
-let collectionCache: { at: number; data: unknown[] } | null = null;
+// fetched client-side). It must NOT block the page render on a DB round-trip.
+// We serve the last-known cached value synchronously and refresh it in the
+// background, so the shop UI (and the client-side product fetch) renders
+// immediately.
+type CollectionItem = { name: string; slug: string; price: number; images?: string[] };
+const COLLECTION_CACHE_TTL_MS = 5 * 60 * 1000;
+let collectionCache: { at: number; data: CollectionItem[] } | null = null;
+let latestCollection: CollectionItem[] = [];
 
-async function getCollectionProducts() {
+function getCollectionProducts(): CollectionItem[] {
   const now = Date.now();
   if (collectionCache && now - collectionCache.at < COLLECTION_CACHE_TTL_MS) {
-    return collectionCache.data;
+    latestCollection = collectionCache.data;
+    return latestCollection;
   }
-  try {
-    await connectDB();
-    const data = await Product.find({}, "name slug price images")
+  if (!collectionCache) {
+    // Refresh in the background; never block the page on this query.
+    void Product.find({}, "name slug price images")
       .sort({ createdAt: -1 })
       .limit(24)
-      .lean();
-    collectionCache = { at: now, data };
-    return data;
-  } catch {
-    return [];
+      .lean()
+      .then((data) => {
+        collectionCache = {
+          at: Date.now(),
+          data: data as unknown as CollectionItem[],
+        };
+        latestCollection = collectionCache.data;
+      })
+      .catch(() => {});
   }
+  return latestCollection;
 }
 
 export default async function ShopPage({ searchParams }: Props) {
@@ -132,7 +141,7 @@ export default async function ShopPage({ searchParams }: Props) {
   const ageGroup = sanitizeLabel(params.ageGroup);
   const q = sanitizeLabel(params.q);
 
-  const collectionProducts = await getCollectionProducts();
+const collectionProducts = getCollectionProducts();
 
   const queryParams = new URLSearchParams();
   if (category) queryParams.set("category", category);

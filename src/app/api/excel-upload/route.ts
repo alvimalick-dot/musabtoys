@@ -92,22 +92,23 @@ export async function POST(req: NextRequest) {
     const usedSlugs = new Set<string>();
     const ops: Parameters<typeof Product.bulkWrite>[0] = [];
 
-    // Prefetch existing SKUs for faster upserts
-    const skus = sourceRows
-      .map((r, i) => {
-        const mapped = mapExcelRow(r, headerMap, i + 2);
-        return "error" in mapped ? null : mapped.sku;
+    // The supplier sheet has no ProductID/SKU, so ProductName is the agreed
+    // stable key used to find products to update.
+    const names = sourceRows
+      .map((r) => {
+        const mapped = mapExcelRow(r, headerMap);
+        return "error" in mapped ? null : mapped.name;
       })
-      .filter((s): s is string => Boolean(s));
+      .filter((name): name is string => Boolean(name));
 
-    const existing = await Product.find({ sku: { $in: skus } })
-      .select("sku slug")
+    const existing = await Product.find({ name: { $in: names } })
+      .select("name slug")
       .lean();
-    const existingBySku = new Map(existing.map((p) => [p.sku, p]));
+    const existingByName = new Map(existing.map((p) => [p.name, p]));
 
     for (let i = 0; i < sourceRows.length; i++) {
       const rowNum = i + 2;
-      const mapped = mapExcelRow(sourceRows[i], headerMap, rowNum);
+      const mapped = mapExcelRow(sourceRows[i], headerMap);
       if ("error" in mapped) {
         results.failed++;
         if (results.errors.length < 25) {
@@ -161,8 +162,7 @@ export async function POST(req: NextRequest) {
           ...(mapped.weight ? { weight: mapped.weight } : {}),
         },
         featured: mapped.featured,
-        sku: mapped.sku,
-        searchText: [mapped.name, mapped.brand, mapped.category, mapped.sku]
+        searchText: [mapped.name, mapped.brand, mapped.category]
           .filter(Boolean)
           .join(" "),
       };
@@ -172,11 +172,11 @@ export async function POST(req: NextRequest) {
         payload.images = finalImages;
       }
 
-      const found = existingBySku.get(mapped.sku);
+      const found = existingByName.get(mapped.name);
       if (found) {
         ops.push({
           updateOne: {
-            filter: { sku: mapped.sku },
+            filter: { name: mapped.name },
             update: {
               $set: payload,
             },
@@ -186,9 +186,13 @@ export async function POST(req: NextRequest) {
       } else {
         ops.push({
           updateOne: {
-            filter: { sku: mapped.sku },
+            filter: { name: mapped.name },
             update: {
-              $setOnInsert: { slug, images: finalImages.length ? finalImages : [] },
+              $setOnInsert: {
+                slug,
+                sku: mapped.sku,
+                images: finalImages.length ? finalImages : [],
+              },
               $set: payload,
             },
             upsert: true,

@@ -4,10 +4,21 @@ import Link from "next/link";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { formatPKR } from "@/lib/utils";
-import type { ProductDTO } from "@/types";
 import { normalizeImagePath } from "@/lib/image-path";
 
-export function RelatedProducts({ products }: { products: ProductDTO[] }) {
+// Related cards only render name, price, slug, and the first image — so the
+// server sends a slim object instead of the full ProductDTO (no description,
+// specs, or full image array).
+export interface RelatedProduct {
+  _id: string;
+  name: string;
+  slug: string;
+  price: number;
+  compareAtPrice?: number;
+  images: string[];
+}
+
+export function RelatedProducts({ products }: { products: RelatedProduct[] }) {
   const [emblaRef] = useEmblaCarousel({ align: "start", dragFree: true });
 
   if (!products.length) return null;

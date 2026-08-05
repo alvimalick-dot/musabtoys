@@ -106,53 +106,54 @@ export default async function ProductPage({ params }: Props) {
       sku: product.sku,
     } satisfies ProductDTO;
 
-    const related = await Product.find({
-      category: product.category,
-      _id: { $ne: product._id },
-      stock: { $gt: 0 },
-    })
-      .sort({ featured: -1, createdAt: -1 })
-      .limit(8)
-      .lean();
-
-    const relatedDto: ProductDTO[] = related.map((p) => ({
-      _id: String(p._id),
-      name: p.name,
-      slug: p.slug,
-      description: p.description,
-      price: p.price,
-      compareAtPrice: p.compareAtPrice,
-      category: p.category,
-      brand: p.brand,
-      ageGroup: p.ageGroup,
-      stock: p.stock,
-      stockStatus: p.stockStatus,
-      images: p.images || [],
-      specs: p.specs || {},
-      featured: p.featured,
-      newArrival: p.newArrival,
-      sku: p.sku,
-    }));
-
-    // Load approved reviews for aggregateRating + review structured data
+// Run the related-products and reviews queries in parallel — they are
+    // independent of each other, so running them sequentially wastes time.
+    // Related cards only need name/slug/price/first image, so project a small
+    // field set instead of shipping full documents (descriptions, specs,
+    // full image arrays) to the client.
+    type RelatedDoc = {
+      _id: unknown;
+      name: string;
+      slug: string;
+      price: number;
+      compareAtPrice?: number;
+      images?: string[];
+    };
     type ReviewDoc = { authorName: string; rating: number; comment: string; createdAt?: Date };
-    let reviews: ReviewDoc[] = [];
-    let aggregateRating: { ratingValue: number; reviewCount: number } | undefined;
-    try {
-      reviews = await Review.find({ productSlug: product.slug, approved: true })
+
+    const [related, reviews] = await Promise.all([
+      Product.find({
+        category: product.category,
+        _id: { $ne: product._id },
+        stock: { $gt: 0 },
+      })
+        .select("name slug price compareAtPrice images")
+        .sort({ featured: -1, createdAt: -1 })
+        .limit(8)
+        .lean(),
+      Review.find({ productSlug: product.slug, approved: true })
         .sort({ createdAt: -1 })
         .limit(20)
-        .lean();
-      if (reviews.length > 0) {
-        const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
-        aggregateRating = {
-          ratingValue: Math.round(avg * 10) / 10,
-          reviewCount: reviews.length,
-        };
-      }
-    } catch {
-      reviews = [];
-      aggregateRating = undefined;
+        .lean(),
+    ]).catch(() => [[], []] as [RelatedDoc[], ReviewDoc[]]);
+
+    const relatedDto: { _id: string; name: string; slug: string; price: number; compareAtPrice?: number; images: string[] }[] =
+      (related as RelatedDoc[]).map((p) => ({
+        _id: String(p._id),
+        name: p.name,
+        slug: p.slug,
+        price: p.price,
+        compareAtPrice: p.compareAtPrice,
+        images: p.images || [],
+      }));
+
+    let aggregateRating: { ratingValue: number; reviewCount: number } | undefined;
+    if (reviews.length > 0) {
+      const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+      aggregateRating = {
+        ratingValue: Math.round(avg * 10) / 10,
+        reviewCount: reviews.length,
+      };
     }
 
     const productLd = productJsonLd({

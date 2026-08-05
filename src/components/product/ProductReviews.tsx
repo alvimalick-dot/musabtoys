@@ -41,9 +41,12 @@ export function ProductReviews({
     }
   }, [slug]);
 
+// If the server already provided reviews as initial data, skip the redundant
+  // client-side fetch — the included /api/reviews data is already up to date.
+  const hasInitial = initial.length > 0;
   useEffect(() => {
-    load();
-  }, [load]);
+    if (!hasInitial) load();
+  }, [hasInitial, load]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

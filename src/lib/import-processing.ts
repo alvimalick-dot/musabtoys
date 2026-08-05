@@ -37,7 +37,7 @@ export function parseExcel(buffer: Buffer): {
   const sourceRows = rowsRaw.length ? rowsRaw : rows;
   const { headerMap, warnings, detected } = detectColumns(sourceRows);
 
-  const mapped = sourceRows.map((r, i) => mapExcelRow(r, headerMap, i + 2));
+  const mapped = sourceRows.map((r) => mapExcelRow(r, headerMap));
   return {
     mapped,
     sheetName,
@@ -95,8 +95,7 @@ export async function buildProductOp(
       ...(mapped.weight ? { weight: mapped.weight } : {}),
     },
     featured: mapped.featured,
-    sku: mapped.sku,
-    searchText: [mapped.name, mapped.brand, mapped.category, mapped.sku]
+    searchText: [mapped.name, mapped.brand, mapped.category]
       .filter(Boolean)
       .join(" "),
   };
@@ -106,9 +105,15 @@ export async function buildProductOp(
   return {
     op: {
       updateOne: {
-        filter: { sku: mapped.sku },
+        // Supplier sheets do not contain a stable ProductID. ProductName is
+        // therefore the agreed key for updating an existing product.
+        filter: { name: mapped.name },
         update: {
-          $setOnInsert: { slug, images: images.length ? images : [] },
+          $setOnInsert: {
+            slug,
+            sku: mapped.sku,
+            images: images.length ? images : [],
+          },
           $set: payload,
         },
         upsert: true,
