@@ -38,7 +38,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
       images: (() => {
         const productImages: string[] = Array.isArray(p.images) ? p.images : [];
-        return productImages.slice(0, 5);
+        // Image <loc> tags must be absolute URLs. Normalize backslashes and
+        // leading slashes, then prefix with the site URL.
+        return productImages
+          .slice(0, 5)
+          .map((img) => {
+            const normalized = img.replace(/\\/g, "/").trim();
+            if (!normalized) return null;
+            if (/^https?:\/\//i.test(normalized)) return normalized;
+            return `${siteUrl}/${normalized.replace(/^\/+/, "")}`;
+          })
+          .filter((u): u is string => Boolean(u));
       })(),
     }));
 
@@ -49,3 +59,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return staticPages;
   }
 }
+
