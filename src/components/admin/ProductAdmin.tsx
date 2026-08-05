@@ -42,6 +42,9 @@ export function ProductAdmin() {
   const [stockFilter, setStockFilter] = useState("");
   const [busy, setBusy] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
+  const [clearTyped, setClearTyped] = useState("");
+  const [clearBusy, setClearBusy] = useState(false);
   const [form, setForm] = useState({
     name: "",
     sku: "",
@@ -242,6 +245,28 @@ export function ProductAdmin() {
     }
   }
 
+  async function clearAllProducts() {
+    setClearBusy(true);
+    try {
+      const res = await fetch("/api/products/clear", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: true }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to clear products");
+      toast.success(`Removed ${data.deletedCount} products`);
+      setClearConfirmOpen(false);
+      setClearTyped("");
+      setProducts([]);
+      setPagination({ page: 1, pages: 1, total: 0 });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to clear products");
+    } finally {
+      setClearBusy(false);
+    }
+  }
+
   async function recategorize() {
     setBusy(true);
     try {
@@ -300,6 +325,17 @@ export function ProductAdmin() {
               disabled={busy}
             >
               ☁️ Sync images to Cloudinary
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setClearTyped("");
+                setClearConfirmOpen(true);
+              }}
+              className="rounded-full bg-coral/10 px-4 py-2 text-sm font-bold text-coral-deep"
+              disabled={busy}
+            >
+              🗑 Delete all products
             </button>
           </div>
         </div>
@@ -690,6 +726,48 @@ export function ProductAdmin() {
           </div>
         )}
       </div>
+
+      {clearConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+            <h3 className="font-display text-2xl font-semibold text-coral-deep">
+              Delete ALL products?
+            </h3>
+            <p className="mt-2 text-sm text-muted">
+              This permanently removes every product from your database. This
+              cannot be undone. Type{" "}
+              <strong className="text-ink">DELETE</strong> to confirm.
+            </p>
+            <input
+              className="input-field mt-4"
+              placeholder="Type DELETE to confirm"
+              value={clearTyped}
+              onChange={(e) => setClearTyped(e.target.value)}
+            />
+            <div className="mt-4 flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                className="btn-secondary text-sm"
+                onClick={() => {
+                  setClearConfirmOpen(false);
+                  setClearTyped("");
+                }}
+                disabled={clearBusy}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="rounded-full bg-coral px-4 py-2 text-sm font-bold text-white disabled:opacity-40"
+                onClick={clearAllProducts}
+                disabled={clearBusy || clearTyped !== "DELETE"}
+              >
+                {clearBusy ? "Deleting…" : "Delete all products"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
