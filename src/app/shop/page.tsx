@@ -99,13 +99,27 @@ export async function generateMetadata({
   };
 }
 
+// The shop page's server component runs on every request (it awaits
+// searchParams, so it can't be fully static). The collection query below is
+// only used to seed JSON-LD structured data, not the visible grid (which is
+// fetched client-side). Cache it briefly to avoid an extra DB round-trip while
+// the page loads.
+const COLLECTION_CACHE_TTL_MS = 60 * 1000;
+let collectionCache: { at: number; data: unknown[] } | null = null;
+
 async function getCollectionProducts() {
+  const now = Date.now();
+  if (collectionCache && now - collectionCache.at < COLLECTION_CACHE_TTL_MS) {
+    return collectionCache.data;
+  }
   try {
     await connectDB();
-    return await Product.find({}, "name slug price images")
+    const data = await Product.find({}, "name slug price images")
       .sort({ createdAt: -1 })
       .limit(24)
       .lean();
+    collectionCache = { at: now, data };
+    return data;
   } catch {
     return [];
   }

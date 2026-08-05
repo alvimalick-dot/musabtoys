@@ -12,10 +12,20 @@ type Review = {
   createdAt?: string;
 };
 
-export function ProductReviews({ slug }: { slug: string }) {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [average, setAverage] = useState(0);
-  const [count, setCount] = useState(0);
+export function ProductReviews({
+  slug,
+  initial = [],
+}: {
+  slug: string;
+  initial?: Review[];
+}) {
+  const [reviews, setReviews] = useState<Review[]>(initial);
+  const [average, setAverage] = useState(
+    initial.length > 0
+      ? Math.round((initial.reduce((s, r) => s + r.rating, 0) / initial.length) * 10) / 10
+      : 0
+  );
+  const [count, setCount] = useState(initial.length);
   const [authorName, setAuthorName] = useState("");
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");

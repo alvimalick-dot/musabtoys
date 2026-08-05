@@ -181,7 +181,7 @@ export default async function ProductPage({ params }: Props) {
 
     const breadcrumb = breadcrumbJsonLd([
       { name: "Home", url: "/" },
-      { name: "Shop", url: "/shop" },
+{ name: "Shop", url: "/shop" },
       {
         name: product.category,
         url: `/shop?category=${encodeURIComponent(product.category)}`,
@@ -195,7 +195,19 @@ export default async function ProductPage({ params }: Props) {
         <JsonLd data={breadcrumb} />
         <ProductDetailClient product={dto} />
         <RelatedProducts products={relatedDto} />
-        <ProductReviews slug={product.slug} />
+        <ProductReviews
+          slug={product.slug}
+          initial={reviews.map((r) => ({
+            _id:
+              typeof (r as unknown as { _id?: unknown })._id === "string"
+                ? (r as unknown as { _id: string })._id
+                : `${product.slug}-${r.authorName}-${r.rating}`,
+            authorName: r.authorName,
+            rating: r.rating,
+            comment: r.comment,
+            createdAt: r.createdAt ? new Date(r.createdAt).toISOString() : undefined,
+          }))}
+        />
       </>
     );
   } catch {

@@ -9,6 +9,28 @@ import { normalizeImagePath } from "@/lib/image-path";
 
 export const dynamic = "force-dynamic";
 
+// Facet values (category/brand/ageGroup) change rarely. Cache them in memory
+// with a short TTL so we don't rescan the entire catalog on every request.
+// The catalog is 4,500+ products, so this avoids three full-collection scans
+// per page load / filter change.
+const FACET_TTL_MS = 5 * 60 * 1000;
+let facetCache: { at: number; categories: string[]; brands: string[]; ageGroups: string[] } | null =
+  null;
+
+async function getFacets() {
+  const now = Date.now();
+  if (facetCache && now - facetCache.at < FACET_TTL_MS) {
+    return facetCache;
+  }
+  const [categories, brands, ageGroups] = await Promise.all([
+    Product.distinct("category"),
+    Product.distinct("brand"),
+    Product.distinct("ageGroup"),
+  ]);
+  facetCache = { at: now, categories, brands, ageGroups };
+  return facetCache;
+}
+
 function buildFilterQuery(filters: ReturnType<typeof productFilterSchema.parse>) {
   const query: Record<string, unknown> = {};
   if (filters.category) query.category = filters.category;
@@ -109,11 +131,7 @@ export async function GET(req: NextRequest) {
         .lean();
     }
 
-    const [categories, brands, ageGroups] = await Promise.all([
-      Product.distinct("category"),
-      Product.distinct("brand"),
-      Product.distinct("ageGroup"),
-    ]);
+const { categories, brands, ageGroups } = await getFacets();
 
     const response = NextResponse.json({
       products: cardView

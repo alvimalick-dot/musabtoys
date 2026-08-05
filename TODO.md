@@ -1,16 +1,10 @@
-# TODO — Fix sitemap "Unable to fetch" + enhance sitemap
+# Performance Optimization TODO
 
-## Module 1 — Fix build error blocking deployment
-- [x] Rewrite `src/app/api/imports/[id]/start/route.ts` with clean Next.js 15 `params` signature (consistent line endings)
-- [x] Verify other `[id]` routes use consistent `await params` pattern (rewrote `run/route.ts` too)
+## Goal
+Reduce page-load latency across the home → shop → product-detail flow without changing site functionality.
 
-## Module 2 — Harden & enhance `sitemap.ts`
-- [x] Add `export const revalidate` (ISR caching) to avoid DB query per crawl
-- [x] Add `console.error` logging in the catch block
-- [x] Make product limit env-configurable (`SITEMAP_MAX_PRODUCTS`, default 10000)
-- [x] Add `/account` static page to sitemap
-- [x] Add `<image:image>` product image URLs for schema.org product indexing
-
-## Module 3 — Verification
-- [ ] `npm run build` passes
-- [ ] `npm run lint` passes
+## Steps
+1. [x] Cache the facet (category/brand/ageGroup) `distinct()` queries in `/api/products` with a short TTL so they aren't re-scanned on every request.
+2. [x] Pass server-loaded reviews into `ProductReviews` as initial data to avoid a duplicate `/api/reviews` fetch on the product page.
+3. [x] Cache the shop page's `getCollectionProducts()` DB query to avoid re-querying on every visit.
+4. [x] Verify the production build still compiles and lint passes.
