@@ -11,7 +11,7 @@
           "value": "www.karachitoys.com"
         }
       ],
-      "destination": "https://karachitoys.com/:path*",
+      "destination": "https://karachitoys.com/$1",
       "permanent": true
     }
   ]
