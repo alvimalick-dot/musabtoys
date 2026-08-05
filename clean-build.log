@@ -1,0 +1,78 @@
+﻿
+> karachitoys@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.5.22
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 11.5s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/18) ...
+   Generating static pages (4/18) 
+   Generating static pages (8/18) 
+   Generating static pages (13/18) 
+ Γ£ô Generating static pages (18/18)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS  Revalidate  Expire
+Γöî Γùï /                                    53.5 kB         224 kB          1m      1y
+Γö£ Γùï /_not-found                            219 B         103 kB
+Γö£ Γùï /account                             2.36 kB         126 kB
+Γö£ Γùï /admin                               9.57 kB         130 kB
+Γö£ ╞Æ /api/admin/analytics                   219 B         103 kB
+Γö£ ╞Æ /api/auth/customer/me                  219 B         103 kB
+Γö£ ╞Æ /api/auth/customer/request-otp         219 B         103 kB
+Γö£ ╞Æ /api/auth/customer/verify-otp          219 B         103 kB
+Γö£ ╞Æ /api/auth/login                        219 B         103 kB
+Γö£ ╞Æ /api/cart                              219 B         103 kB
+Γö£ ╞Æ /api/checkout                          219 B         103 kB
+Γö£ ╞Æ /api/checkout/lookup                   219 B         103 kB
+Γö£ ╞Æ /api/coupons                           219 B         103 kB
+Γö£ ╞Æ /api/excel-upload                      219 B         103 kB
+Γö£ ╞Æ /api/health                            219 B         103 kB
+Γö£ ╞Æ /api/imports                           219 B         103 kB
+Γö£ ╞Æ /api/imports/[id]                      219 B         103 kB
+Γö£ ╞Æ /api/imports/[id]/failed               219 B         103 kB
+Γö£ ╞Æ /api/imports/[id]/retry                219 B         103 kB
+Γö£ ╞Æ /api/imports/[id]/run                  219 B         103 kB
+Γö£ ╞Æ /api/imports/[id]/start                219 B         103 kB
+Γö£ ╞Æ /api/notify/order                      219 B         103 kB
+Γö£ ╞Æ /api/orders                            219 B         103 kB
+Γö£ ╞Æ /api/orders/track                      219 B         103 kB
+Γö£ ╞Æ /api/payments/webhook                  219 B         103 kB
+Γö£ ╞Æ /api/products                          219 B         103 kB
+Γö£ ╞Æ /api/products/[id]                     219 B         103 kB
+Γö£ ╞Æ /api/products/[id]/sync                219 B         103 kB
+Γö£ ╞Æ /api/products/recategorize             219 B         103 kB
+Γö£ ╞Æ /api/products/sync-images              219 B         103 kB
+Γö£ ╞Æ /api/reviews                           219 B         103 kB
+Γö£ ╞Æ /api/seed                              219 B         103 kB
+Γö£ ╞Æ /api/stock-alert                       219 B         103 kB
+Γö£ ╞Æ /api/upload                            219 B         103 kB
+Γö£ Γùï /checkout                            32.1 kB         153 kB
+Γö£ ╞Æ /checkout/payment                      169 B         106 kB
+Γö£ ╞Æ /checkout/success                    5.28 kB         161 kB
+Γö£ Γùï /faq                                   819 B         107 kB
+Γö£ ╞Æ /invoice/[orderNumber]                 293 B         103 kB
+Γö£ Γùï /opengraph-image                       219 B         103 kB
+Γö£ ╞Æ /product/[slug]                      13.3 kB         145 kB
+Γö£ Γùï /robots.txt                            219 B         103 kB
+Γö£ ╞Æ /shop                                86.7 kB         257 kB
+Γö£ Γùï /sitemap.xml                           219 B         103 kB          1h      1y
+Γö£ ╞Æ /track                               4.08 kB         128 kB
+Γö£ Γùï /twitter-image                         219 B         103 kB
+Γöö Γùï /wishlist                            2.05 kB         132 kB
++ First Load JS shared by all             103 kB
+  Γö£ chunks/1255-31f47ebe9b12c7e5.js      46.3 kB
+  Γö£ chunks/4bd1b696-f785427dddbba9fb.js  54.2 kB
+  Γöö other shared chunks (total)          2.09 kB
+
+
+╞Æ Middleware                             39.4 kB
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+
