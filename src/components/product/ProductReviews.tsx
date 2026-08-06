@@ -97,7 +97,7 @@ export function ProductReviews({
       <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_0.9fr]">
         <ul className="space-y-4">
           {reviews.map((r) => (
-            <li key={r._id} className="rounded-2xl bg-white p-4 ring-1 ring-black/5">
+          <li key={r._id} className="rounded-2xl bg-white p-4 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
               <div className="flex items-center justify-between gap-2">
                 <p className="font-bold">{r.authorName}</p>
                 <div className="flex gap-0.5 text-sun">
@@ -114,7 +114,7 @@ export function ProductReviews({
           ))}
         </ul>
 
-        <form onSubmit={onSubmit} className="h-fit rounded-2xl bg-white p-5 ring-1 ring-black/5">
+        <form onSubmit={onSubmit} className="h-fit rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
 <p className="font-display text-xl font-semibold">Write a review</p>
           <label htmlFor="review-name" className="sr-only">
             Your name

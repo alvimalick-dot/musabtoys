@@ -298,7 +298,7 @@ export function ProductAdmin() {
 
   return (
     <div className="mt-8 space-y-8">
-      <div className="rounded-3xl bg-white p-6 ring-1 ring-black/5">
+     <div className="rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="font-display text-2xl font-semibold">
@@ -468,7 +468,7 @@ export function ProductAdmin() {
             />
           </div>
 
-          <div className="sm:col-span-2 rounded-2xl border-2 border-dashed border-black/10 bg-[#fef6ed] p-4">
+          <div className="sm:col-span-2 rounded-2xl border-2 border-dashedborder-black/10 bg-[#fef6ed] p-4 dark:bg-slate-800">
             <p className="text-xs font-bold uppercase tracking-wider text-muted">
               Product photos
             </p>
@@ -481,7 +481,7 @@ export function ProductAdmin() {
                 {imageList().map((url) => (
                   <div
                     key={url}
-                    className="relative h-24 w-24 overflow-hidden rounded-xl bg-white ring-1 ring-black/5"
+                   className="relative h-24 w-24 overflow-hidden rounded-xl bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -540,7 +540,7 @@ export function ProductAdmin() {
         </form>
       </div>
 
-      <div className="rounded-3xl bg-white p-5 ring-1 ring-black/5">
+      <div className="rounded-3xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
         <div className="flex flex-wrap gap-2">
           <input
             className="input-field min-w-50 flex-1"
@@ -571,7 +571,7 @@ export function ProductAdmin() {
           {products.map((p) => (
             <div
               key={p._id}
-              className="flex flex-col gap-3 rounded-xl bg-[#fef6ed] p-3 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-3 rounded-xl bg-[#fef6ed] p-3 sm:flex-row sm:items-center sm:justify-between dark:bg-slate-800"
             >
               <div className="min-w-0">
                 <p className="truncate font-semibold">{p.name}</p>
@@ -621,7 +621,7 @@ export function ProductAdmin() {
                 />
                 <button
                   type="button"
-                  className="rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5"
+                  className="rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
                   disabled={busy}
                   onClick={() =>
                     quickPatch(p._id, {
@@ -636,7 +636,7 @@ export function ProductAdmin() {
                   className={
                     p.newArrival
                       ? "rounded-full bg-sun px-3 py-1.5 text-xs font-bold text-ink"
-                      : "rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5"
+                      : "rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
                   }
                   disabled={busy}
                   onClick={() =>
@@ -653,7 +653,7 @@ export function ProductAdmin() {
                   className={
                     p.featured
                       ? "rounded-full bg-coral px-3 py-1.5 text-xs font-bold text-white"
-                      : "rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5"
+                      : "rounded-full bg-white px-3 py-1.5 text-xs font-bold ring-1 ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
                   }
                   disabled={busy}
                   onClick={() =>
@@ -729,7 +729,7 @@ export function ProductAdmin() {
 
       {clearConfirmOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+           <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-800">
             <h3 className="font-display text-2xl font-semibold text-coral-deep">
               Delete ALL products?
             </h3>

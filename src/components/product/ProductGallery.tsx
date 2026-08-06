@@ -46,7 +46,7 @@ export function ProductGallery({
       <div className="relative">
         <button
         type="button"
-        className="relative aspect-square w-full overflow-hidden rounded-4xl bg-white ring-1 ring-black/5"
+      className="relative aspect-square w-full overflow-hidden rounded-4xl bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={() => {
@@ -87,7 +87,7 @@ export function ProductGallery({
             type="button"
             aria-label="Previous product photo"
             onClick={showPrevious}
-            className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white"
+            className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white dark:bg-slate-800/90 dark:text-white dark:hover:bg-slate-800"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -95,7 +95,7 @@ export function ProductGallery({
             type="button"
             aria-label="Next product photo"
             onClick={showNext}
-            className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white"
+            className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white dark:bg-slate-800/90 dark:text-white dark:hover:bg-slate-800"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -138,7 +138,7 @@ export function ProductGallery({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="absolute right-2 top-2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-lg"
+             className="absolute right-2 top-2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-lg dark:bg-slate-800"
               aria-label="Close"
             >
               <X className="h-4 w-4" />

@@ -32,9 +32,9 @@ export function RelatedProducts({ products }: { products: RelatedProduct[] }) {
             <Link
               key={p._id}
               href={`/product/${p.slug}`}
-              className="min-w-40 max-w-50 shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:min-w-50 sm:max-w-55"
+             className="min-w-40 max-w-50 shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:min-w-50 sm:max-w-55 dark:bg-slate-800 dark:ring-slate-700"
             >
-              <div className="relative aspect-square bg-[#fde8d4]">
+             <div className="relative aspect-square bg-[#fde8d4] dark:bg-slate-700">
                 {p.images?.[0] ? (
                   <Image
                     src={normalizeImagePath(p.images[0])}

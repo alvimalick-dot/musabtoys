@@ -60,7 +60,7 @@ export function CouponAdmin() {
   }
 
   return (
-    <div className="mt-8 rounded-[1.5rem] bg-white p-6 ring-1 ring-black/5">
+   <div className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
       <h2 className="font-display text-2xl font-semibold">Discount coupons</h2>
       <form onSubmit={onCreate} className="mt-6 grid gap-3 sm:grid-cols-2">
         <input className="input-field" placeholder="Code e.g. EID500" required value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
@@ -76,7 +76,7 @@ export function CouponAdmin() {
       {msg && <p className="mt-4 text-sm text-sky-deep">{msg}</p>}
       <ul className="mt-6 space-y-2 text-sm">
         {coupons.map((c) => (
-          <li key={c._id} className="rounded-xl bg-[#fef6ed] px-4 py-3">
+         <li key={c._id} className="rounded-xl bg-[#fef6ed] px-4 py-3 dark:bg-slate-800">
             <strong>{c.code}</strong> — {c.type === "percent" ? `${c.value}%` : `PKR ${c.value}`} off
             {c.minOrder ? ` · min ${c.minOrder}` : ""} · used {c.usedCount}
             {c.maxUses ? `/${c.maxUses}` : ""} · {c.active ? "active" : "off"}

@@ -338,7 +338,7 @@ export function AdminPanel() {
             type="button"
             onClick={() => setTab(id)}
             className={`rounded-full px-4 py-2 text-sm font-bold ${
-              tab === id ? "bg-ink text-white" : "bg-white ring-1 ring-black/5"
+             tab === id ? "bg-ink text-white dark:bg-white dark:text-slate-900" : "bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
             }`}
           >
             {label}
@@ -353,7 +353,7 @@ export function AdminPanel() {
       {tab === "coupons" && <CouponAdmin />}
 
       {tab === "upload" && (
-        <div className="mt-8 rounded-[1.5rem] bg-white p-8 ring-1 ring-black/5">
+        <div className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-coral/10 text-coral">
               <Upload className="h-5 w-5" />
@@ -371,12 +371,12 @@ export function AdminPanel() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl bg-[#fde8d4] px-5 py-4 text-sm">
+<div className="mt-6 rounded-2xl bg-[#fde8d4] px-5 py-4 text-sm dark:bg-slate-800">
             <p className="font-bold text-ink">Photos via Excel (easy way)</p>
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted">
               <li>
                 Put pictures in the project folder{" "}
-                <code className="rounded bg-white px-1.5 py-0.5 text-xs">
+               <code className="rounded bg-white px-1.5 py-0.5 text-xs dark:bg-slate-700 dark:text-white">
                   public/images/
                 </code>{" "}
                 then push to GitHub.
@@ -393,7 +393,7 @@ export function AdminPanel() {
             </ol>
           </div>
 
-          <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/10 bg-[#fef6ed] px-6 py-14 transition hover:border-coral">
+          <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashedborder-black/10 bg-[#fef6ed] px-6 py-14 transition hover:border-coral dark:bg-slate-800">
             <Upload className="h-8 w-8 text-coral" />
             <span className="mt-3 font-bold">
               {uploadBusy ? "Uploading…" : "Choose Excel file"}
@@ -446,7 +446,7 @@ export function AdminPanel() {
                 <p className="text-sm text-muted">No recent jobs.</p>
               )}
               {recentJobs.map((j) => (
-                <div key={String(j._id)} className="flex items-center justify-between gap-2 rounded-md bg-white p-3 ring-1 ring-black/5">
+                <div key={String(j._id)} className="flex items-center justify-between gap-2 rounded-md bg-white p-3 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
                   <div className="text-sm">
                     <div className="font-medium">{j.filename || j._id}</div>
                     <div className="text-xs text-muted">{j.status} · {j.totalRows} rows</div>
@@ -476,7 +476,7 @@ export function AdminPanel() {
 
           <div className="mt-8 overflow-x-auto text-sm">
             <p className="mb-2 font-bold">Example headers</p>
-            <code className="block rounded-xl bg-ink px-4 py-3 text-xs text-white">
+           <code className="block rounded-xl bg-ink px-4 py-3 text-xs text-white dark:bg-slate-900">
               ProductID | ProductName | RetailPrice | Brand | Image
               <br />
               HW-001 | Hot Wheels Car | 850 | Hot Wheels | HW-001.jpg
@@ -521,7 +521,7 @@ export function AdminPanel() {
             {orders.map((order) => (
               <div
                 key={order._id}
-                className="rounded-2xl bg-white p-5 ring-1 ring-black/5"
+                className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -563,8 +563,9 @@ export function AdminPanel() {
                       onClick={() => updateStatus(order._id, status)}
                       className={`rounded-full px-3 py-1.5 text-xs font-bold capitalize ${
                         order.status === status
-                          ? "bg-ink text-white"
-                          : "bg-[#fef6ed] text-ink"
+                        ? "bg-ink text-white dark:bg-white dark:text-slate-900"
+
+                          : "bg-[#fef6ed] text-ink dark:bg-slate-800 dark:text-white"
                       }`}
                     >
                       {status}
@@ -629,7 +630,7 @@ export function AdminPanel() {
       )}
 
       {tab === "seed" && (
-        <div className="mt-8 rounded-[1.5rem] bg-white p-8 ring-1 ring-black/5">
+        <div className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
           <h2 className="font-display text-2xl font-semibold">
             Load sample products
           </h2>
