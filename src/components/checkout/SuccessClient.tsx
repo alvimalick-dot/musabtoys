@@ -200,7 +200,7 @@ export function SuccessClient({
       </div>
 
       {showSave && step !== "done" && (
-        <div className="mt-10 w-full rounded-2xl bg-white p-5 text-left ring-1 ring-black/5">
+       <div className="mt-10 w-full rounded-2xl bg-white p-5 text-left ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
           <p className="font-display text-xl font-semibold">
             Save details for next time?
           </p>

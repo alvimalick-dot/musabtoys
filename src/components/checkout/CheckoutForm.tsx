@@ -307,8 +307,8 @@ export function CheckoutForm() {
               onClick={() => setPaymentMethod("cod")}
               className={`rounded-2xl px-4 py-4 text-left text-sm font-bold ring-2 transition ${
                 paymentMethod === "cod"
-                  ? "bg-ink text-white ring-ink"
-                  : "bg-white text-ink ring-black/5"
+                  ? "bg-ink text-white ring-ink dark:bg-white dark:text-slate-900 dark:ring-white"
+                 : "bg-white text-ink ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
               }`}
             >
               Cash on Delivery
@@ -326,8 +326,8 @@ export function CheckoutForm() {
                   onClick={() => setPaymentMethod(value)}
                   className={`rounded-2xl px-4 py-4 text-left text-sm font-bold ring-2 transition ${
                     paymentMethod === value
-                      ? "bg-ink text-white ring-ink"
-                      : "bg-white text-ink ring-black/5"
+                    ? "bg-ink text-white ring-ink dark:bg-white dark:text-slate-900 dark:ring-white"
+                      : "bg-white text-ink ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
                   }`}
                 >
                   {label}
@@ -354,7 +354,7 @@ export function CheckoutForm() {
         </button>
       </form>
 
-      <aside className="h-fit rounded-[1.5rem] bg-white p-6 ring-1 ring-black/5">
+      <aside className="h-fit rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
         <h2 className="font-display text-2xl font-semibold">Order summary</h2>
         {items.length === 0 ? (
           <p className="mt-4 text-sm text-muted">Your cart is empty.</p>
