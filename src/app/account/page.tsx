@@ -256,7 +256,7 @@ export default function AccountPage() {
       </div>
 
       {data.customer.addresses?.length > 0 && (
-        <div className="mt-8 rounded-2xl bg-white p-5 ring-1 ring-black/5">
+        <div className="mt-8 rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
           <h2 className="font-display text-xl font-semibold">Saved addresses</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {data.customer.addresses.map((a, i) => (
@@ -277,7 +277,7 @@ export default function AccountPage() {
         </p>
         <ul className="mt-4 space-y-3">
           {data.orders.length === 0 && (
-            <li className="rounded-2xl bg-white p-6 text-muted ring-1 ring-black/5">
+          <li className="rounded-2xl bg-white p-6 text-muted ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
               No orders yet.{" "}
               <Link href="/shop" className="text-coral font-bold">
                 Shop toys
@@ -287,7 +287,7 @@ export default function AccountPage() {
           {data.orders.map((o) => (
             <li
               key={o.orderNumber}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 ring-1 ring-black/5"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-4 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
             >
               <div>
                 <p className="font-bold">{o.orderNumber}</p>
