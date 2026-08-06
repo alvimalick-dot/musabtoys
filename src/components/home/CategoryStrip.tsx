@@ -71,7 +71,7 @@ export function CategoryStrip() {
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.5 }}
       >
-        <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
+<p className="text-sm font-bold uppercase tracking-[0.22em] text-coral-deep">
           Shop by age
         </p>
         <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
@@ -118,7 +118,7 @@ export function CategoryStrip() {
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.5 }}
       >
-        <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
+<p className="text-sm font-bold uppercase tracking-[0.22em] text-coral-deep">
           Browse by play
         </p>
         <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
@@ -137,7 +137,7 @@ export function CategoryStrip() {
           >
             <MotionLink
               href={cat.href}
-              className="group flex items-center gap-4 rounded-[1.5rem] bg-white p-5 ring-1 ring-black/5 transition hover:shadow-lg"
+className="group flex items-center gap-4 rounded-3xl bg-white p-5 ring-1 ring-black/5 transition hover:shadow-lg"
               whileHover={{ y: -4 }}
               whileTap={{ scale: 0.985 }}
               transition={{ type: "spring", stiffness: 340, damping: 24 }}

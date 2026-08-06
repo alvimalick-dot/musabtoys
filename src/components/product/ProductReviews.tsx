@@ -115,8 +115,12 @@ export function ProductReviews({
         </ul>
 
         <form onSubmit={onSubmit} className="h-fit rounded-2xl bg-white p-5 ring-1 ring-black/5">
-          <p className="font-display text-xl font-semibold">Write a review</p>
+<p className="font-display text-xl font-semibold">Write a review</p>
+          <label htmlFor="review-name" className="sr-only">
+            Your name
+          </label>
           <input
+            id="review-name"
             className="input-field mt-4"
             placeholder="Your name"
             required
@@ -136,7 +140,11 @@ export function ProductReviews({
               </button>
             ))}
           </div>
+<label htmlFor="review-comment" className="sr-only">
+            Your review
+          </label>
           <textarea
+            id="review-comment"
             className="input-field mt-3"
             rows={3}
             placeholder="How was this toy for your kids?"

@@ -207,7 +207,11 @@ export function ShopClient() {
 <form onSubmit={onSearch} className="mb-6 flex flex-col gap-3 sm:flex-row">
         <div className="relative min-w-0 flex-1">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+<label htmlFor="shop-search" className="sr-only">
+            Search products
+          </label>
           <input
+            id="shop-search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search toys, brands, SKUs…"
@@ -280,7 +284,7 @@ export function ShopClient() {
 
         {/* Mobile filter drawer */}
         {filtersOpen && (
-          <div className="fixed inset-0 z-[60] lg:hidden">
+          <div className="fixed inset-0 z-60 lg:hidden">
             <button
               type="button"
               className="absolute inset-0 bg-ink/40"
@@ -340,7 +344,7 @@ export function ShopClient() {
           </motion.div>
 
           {data && data.products.length === 0 && !error && (
-            <div className="rounded-[1.5rem] bg-white p-12 text-center ring-1 ring-black/5">
+            <div className="rounded-1.5rem bg-white p-12 text-center ring-1 ring-black/5">
               <p className="font-display text-2xl">No toys match</p>
               <p className="mt-2 text-muted">
                 Try clearing filters or a different search.

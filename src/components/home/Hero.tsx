@@ -137,12 +137,16 @@ export function Hero() {
             transition={{ delay: 0.2, duration: 0.55 }}
           >
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+<label htmlFor="hero-search" className="sr-only">
+              Search toys
+            </label>
             <input
+              id="hero-search"
               value={searchQ}
               onChange={(e) => setSearchQ(e.target.value)}
-              
               className="input-field h-14 w-full rounded-full pr-4 text-base shadow-md"
               style={{ paddingLeft: "2.75rem" }}
+              placeholder="Search toys, brands…"
             />
             <button
               type="submit"

@@ -66,7 +66,7 @@ export function FeatureBand() {
                 <p className="font-display text-3xl font-bold text-sun sm:text-4xl">
                   <AnimatedCounter target={s.target} suffix={s.suffix} duration={2.5} />
                 </p>
-                <p className="mt-1 text-xs text-white/70 sm:text-sm">{s.label}</p>
+<p className="mt-1 text-xs text-white/90 sm:text-sm">{s.label}</p>
               </div>
             ))}
           </div>
@@ -101,7 +101,7 @@ export function FeatureBand() {
               </motion.span>
               <div>
                 <p className="font-display text-2xl font-semibold">{f.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">
+<p className="mt-2 text-sm leading-relaxed text-white/90">
                   {f.text}
                 </p>
               </div>

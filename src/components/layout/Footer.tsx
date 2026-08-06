@@ -9,7 +9,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 pt-8 pb-28 sm:px-6 sm:pt-10 md:grid-cols-3 md:pb-14">
         <div>
           <p className="font-display text-2xl font-semibold">Karachi Toys</p>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
+<p className="mt-3 max-w-sm text-sm leading-relaxed text-white/90">
             Thousands of toys for every age — from PKR 100 finds to premium
             playsets. Cash on Delivery across Pakistan.
           </p>
@@ -17,13 +17,13 @@ export function Footer() {
             href={BRAND_MAPS_URL}
             target="_blank"
             rel="noreferrer"
-            className="mt-4 inline-block text-sm text-white/80 hover:underline"
+            className="mt-4 inline-block text-sm text-white/90 hover:underline"
           >
             {BRAND_ADDRESS}
           </a>
           <a
             href={"tel:" + BRAND_PHONE.replace(/\s+/g, "")}
-            className="mt-2 block text-sm text-white/80 hover:underline"
+            className="mt-2 block text-sm text-white/90 hover:underline"
           >
             {BRAND_PHONE}
           </a>
@@ -38,7 +38,7 @@ export function Footer() {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-sun">
             Explore
           </p>
-          <div className="mt-4 flex flex-col gap-2 text-sm text-white/80">
+<div className="mt-4 flex flex-col gap-2 text-sm text-white/90">
             <Link href="/shop" className="hover:text-white">
               Shop catalog
             </Link>
@@ -60,10 +60,10 @@ export function Footer() {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-sun">
             Payments
           </p>
-          <p className="mt-4 text-sm text-white/80">
+<p className="mt-4 text-sm text-white/90">
             Cash on Delivery (primary). Online wallets coming soon.
           </p>
-          <p className="mt-6 text-xs text-white/40">
+          <p className="mt-6 text-xs text-white/70">
             © {new Date().getFullYear()} Karachi Toy Shop. All rights reserved.
           </p>
         </div>

@@ -154,13 +154,21 @@ export default function AccountPage() {
 
         {step === "phone" ? (
           <div className="mt-8 space-y-4">
+<label htmlFor="account-phone" className="sr-only">
+              Phone number
+            </label>
             <input
+              id="account-phone"
               className="input-field"
               placeholder="03XXXXXXXXX"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
+            <label htmlFor="account-email" className="sr-only">
+              Email address
+            </label>
             <input
+              id="account-email"
               className="input-field"
               type="email"
               placeholder="your@email.com"
@@ -178,7 +186,11 @@ export default function AccountPage() {
           </div>
         ) : (
           <div className="mt-8 space-y-4">
+<label htmlFor="account-otp" className="sr-only">
+              6-digit code
+            </label>
             <input
+              id="account-otp"
               className="input-field"
               placeholder="6-digit code"
               value={otp}
