@@ -10,7 +10,7 @@ export function CtaBanner() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
       <motion.div
-        className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-r from-coral via-[var(--coral)] to-sky px-5 py-10 text-white sm:rounded-[2.5rem] sm:px-12 sm:py-14"
+      className="relative overflow-hidden rounded-3xl bg-linear-to-r from-coral via-coral to-sky px-5 py-10 text-white sm:rounded-[2.5rem] sm:px-12 sm:py-14"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -35,7 +35,7 @@ export function CtaBanner() {
         </p>
         <MotionLink
           href="/shop"
-          className="group relative mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/25"
+       className="group relative mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/25 dark:bg-white dark:text-slate-900"
           whileHover={{ y: -2, scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           transition={{ type: "spring", stiffness: 380, damping: 22 }}

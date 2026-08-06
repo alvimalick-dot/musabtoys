@@ -194,7 +194,7 @@ export function CitySelect({ value, onChange, error }: CitySelectProps) {
       {open && (
         <ul
           id="city-list"
-          className="absolute z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-black/5"
+      className="absolute z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
           role="listbox"
         >
           {filtered.length === 0 ? (
@@ -207,8 +207,8 @@ export function CitySelect({ value, onChange, error }: CitySelectProps) {
                 key={city}
                 role="option"
                 aria-selected={city === value}
-                className={`cursor-pointer px-4 py-2.5 text-sm transition hover:bg-[#fef6ed] ${
-                  city === value ? "bg-[#fef6ed] font-bold text-coral" : ""
+             className={`cursor-pointer px-4 py-2.5 text-sm transition hover:bg-[#fef6ed] dark:hover:bg-slate-700 ${
+                  city === value ? "bg-[#fef6ed] font-bold text-coral dark:bg-slate-700" : ""
                 }`}
                 onMouseDown={(e) => {
                   e.preventDefault();

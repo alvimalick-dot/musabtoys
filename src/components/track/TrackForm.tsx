@@ -175,7 +175,7 @@ export function TrackForm({
       </form>
 
       {order && (
-        <div className="mt-8 rounded-[1.5rem] bg-white p-6 ring-1 ring-black/5">
+      <div className="mt-8  rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
           <p className="font-display text-2xl font-semibold">{order.orderNumber}</p>
           <p className="mt-1 text-sm capitalize text-muted">
             Status: <span className="font-bold text-ink">{order.status}</span> ·{" "}
@@ -186,7 +186,7 @@ export function TrackForm({
           </p>
 
           {(order.trackingNumber || order.courierName) && (
-            <div className="mt-4 rounded-xl bg-[#fef6ed] px-4 py-3 text-sm">
+        <div className="mt-4 rounded-xl bg-[#fef6ed] px-4 py-3 text-sm dark:bg-slate-800">
               <p className="font-bold text-ink">Courier tracking</p>
               {order.courierName && (
                 <p className="mt-1 text-muted">Courier: {order.courierName}</p>
