@@ -71,7 +71,7 @@ scrolled
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6">
         <Link href="/" className="group flex min-w-0 items-center gap-2">
           <motion.div
-            className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 shadow-lg shadow-black/10 sm:h-10 sm:w-10"
+className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 shadow-lg shadow-black/10 sm:h-10 sm:w-10 dark:bg-slate-800"
             whileHover={{ rotate: -8, scale: 1.05 }}
             whileTap={{ scale: 0.92, rotate: 4 }}
             transition={{ type: "spring", stiffness: 400, damping: 14 }}
@@ -101,17 +101,17 @@ scrolled
               <Link
                 key={link.href}
                 href={link.href}
-                className={cn(
+className={cn(
                   "relative rounded-full px-3 py-2 text-sm font-semibold transition-colors",
                   active
-                    ? "text-white"
-                    : "text-ink/70 hover:text-ink"
+                    ? "text-white dark:text-slate-900"
+                    : "text-ink/70 hover:text-ink dark:text-white/70 dark:hover:text-white"
                 )}
               >
                 {active && (
                   <motion.span
                     layoutId="nav-active"
-                    className="absolute inset-0 -z-10 rounded-full bg-ink"
+className="absolute inset-0 -z-10 rounded-full bg-ink dark:bg-white"
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
@@ -127,14 +127,14 @@ scrolled
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Link
             href="/shop"
-            className="press hidden h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:flex"
+className="press hidden h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:flex dark:bg-slate-800 dark:text-white dark:ring-slate-700"
             aria-label="Search shop"
           >
             <Search className="h-4 w-4" />
           </Link>
           <Link
             href="/wishlist"
-            className="press relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md"
+className="press relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-slate-800 dark:text-white dark:ring-slate-700"
             aria-label="Wishlist"
           >
             <Heart
@@ -185,7 +185,7 @@ scrolled
           <ThemeToggle />
           <button
             type="button"
-            className="press flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 lg:hidden"
+className="press flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 lg:hidden dark:bg-slate-800 dark:text-white dark:ring-slate-700"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
             aria-expanded={open}
@@ -225,11 +225,11 @@ className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border
                 <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className={cn(
+className={cn(
                     "block rounded-xl px-3 py-3.5 text-base font-semibold transition",
                     pathname === link.href
-                      ? "bg-ink text-white"
-                      : "text-ink hover:bg-black/5"
+                      ? "bg-ink text-white dark:bg-white dark:text-slate-900"
+                      : "text-ink hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
                   )}
                 >
                   {link.label}
@@ -239,7 +239,7 @@ className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border
             <Link
               href="/shop"
               onClick={() => setOpen(false)}
-              className="mt-1 flex items-center gap-2 rounded-xl px-3 py-3.5 text-base font-semibold text-ink hover:bg-black/5 sm:hidden"
+className="mt-1 flex items-center gap-2 rounded-xl px-3 py-3.5 text-base font-semibold text-ink hover:bg-black/5 sm:hidden dark:text-white dark:hover:bg-white/10"
             >
               <Search className="h-4 w-4" /> Search shop
             </Link>

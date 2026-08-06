@@ -54,7 +54,7 @@ className="fixed right-0 top-0 z-70 flex h-dvh w-full max-w-md flex-col bg-surfa
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 380, damping: 34, mass: 0.9 }}
           >
-            <div className="flex items-center justify-between border-b border-black/5 px-5 py-4">
+<div className="flex items-center justify-between border-b border-black/5 px-5 py-4 dark:border-white/10">
               <div>
                 <p className="font-display text-xl font-semibold">Your Cart</p>
                 <p className="text-sm text-muted">{items.length} item(s)</p>
@@ -62,7 +62,7 @@ className="fixed right-0 top-0 z-70 flex h-dvh w-full max-w-md flex-col bg-surfa
               <button
                 type="button"
                 onClick={closeCart}
-                className="press flex h-11 w-11 items-center justify-center rounded-full bg-black/5 hover:bg-black/10"
+className="press flex h-11 w-11 items-center justify-center rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15"
                 aria-label="Close cart"
               >
                 <X className="h-4 w-4" />
@@ -70,7 +70,7 @@ className="fixed right-0 top-0 z-70 flex h-dvh w-full max-w-md flex-col bg-surfa
             </div>
 
             {items.length > 0 && (
-              <div className="border-b border-black/5 px-5 py-3">
+<div className="border-b border-black/5 px-5 py-3 dark:border-white/10">
                 <div className="flex items-center gap-2 text-xs font-semibold text-muted">
                   <Truck className="h-3.5 w-3.5 text-coral" />
                   {eligible ? (
@@ -87,7 +87,7 @@ className="fixed right-0 top-0 z-70 flex h-dvh w-full max-w-md flex-col bg-surfa
                     </span>
                   )}
                 </div>
-                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-black/5">
+<div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
                   <motion.div
                     className="h-full rounded-full bg-linear-to-r from-coral via-sun to-mint"
                     initial={{ width: 0 }}
@@ -134,7 +134,7 @@ className="fixed right-0 top-0 z-70 flex h-dvh w-full max-w-md flex-col bg-surfa
                         }}
 className="flex gap-3 rounded-2xl bg-background p-3"
                       >
-                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white">
+<div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white dark:bg-slate-700">
                           {item.image ? (
                             <Image
                               src={normalizeImagePath(item.image)}
@@ -161,7 +161,7 @@ className="flex gap-3 rounded-2xl bg-background p-3"
                             <button
                               type="button"
                               onClick={() => removeItem(item.productId)}
-                              className="press flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted hover:bg-white hover:text-coral"
+className="press flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted hover:bg-white hover:text-coral dark:hover:bg-slate-700"
                               aria-label="Remove item"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -173,7 +173,7 @@ className="flex gap-3 rounded-2xl bg-background p-3"
                           <div className="mt-auto flex items-center gap-1 pt-2">
                             <motion.button
                               type="button"
-                              className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5"
+className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-slate-700 dark:ring-slate-600"
                               whileTap={{ scale: 0.9 }}
 onClick={() =>
                                 updateQty(item.productId, item.quantity - 1)
@@ -195,7 +195,7 @@ onClick={() =>
                             </span>
                             <motion.button
                               type="button"
-                              className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5"
+className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-slate-700 dark:ring-slate-600"
                               whileTap={{ scale: 0.9 }}
                               onClick={() =>
                                 updateQty(item.productId, item.quantity + 1)
@@ -215,7 +215,7 @@ onClick={() =>
 
             {items.length > 0 && (
               <motion.div
-                className="border-t border-black/5 px-5 py-5"
+className="border-t border-black/5 px-5 py-5 dark:border-white/10"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}

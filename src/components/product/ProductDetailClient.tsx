@@ -86,7 +86,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
             </h1>
             <button
               type="button"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-black/5"
+className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
               aria-label="Wishlist"
               onClick={() => {
                 wishlistToggle({
@@ -180,7 +180,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
                   value ? (
                     <div
                       key={key}
-                      className="rounded-xl bg-white px-4 py-3 ring-1 ring-black/5"
+className="rounded-xl bg-white px-4 py-3 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
                     >
                       <dt className="text-xs font-bold uppercase tracking-wider text-muted">
                         {key}
@@ -194,7 +194,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
           )}
 
           {isOutOfStock ? (
-            <div className="mt-8 rounded-2xl bg-white p-4 ring-1 ring-black/5">
+<div className="mt-8 rounded-2xl bg-white p-4 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
               <p className="font-bold">Notify me when back</p>
               <p className="mt-1 text-sm text-muted">
                 Save your number, then WhatsApp us so we can alert you faster.
@@ -228,7 +228,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
             </div>
           ) : (
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <div className="flex w-fit items-center gap-1 rounded-full bg-white px-2 py-1.5 ring-1 ring-black/5">
+<div className="flex w-fit items-center gap-1 rounded-full bg-white px-2 py-1.5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
                 <button
                   type="button"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}

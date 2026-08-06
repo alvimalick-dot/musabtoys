@@ -91,7 +91,7 @@ export function ShopClient() {
         </div>
         <button
           type="button"
-          className="flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-black/5 lg:hidden"
+className="flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-black/5 lg:hidden dark:hover:bg-white/10"
           onClick={() => setFiltersOpen(false)}
           aria-label="Close filters"
         >
@@ -263,10 +263,10 @@ export function ShopClient() {
                   router.push(`/shop?${params.toString()}`);
                 });
               }}
-              className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-bold transition ${
+className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-bold transition ${
                 active
-                  ? "bg-ink text-white"
-                  : "bg-white text-ink ring-1 ring-black/5 hover:bg-black/5"
+                  ? "bg-ink text-white dark:bg-white dark:text-slate-900"
+                  : "bg-white text-ink ring-1 ring-black/5 hover:bg-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700 dark:hover:bg-slate-700"
               }`}
             >
               {b.label}
@@ -343,7 +343,7 @@ export function ShopClient() {
           </motion.div>
 
           {data && data.products.length === 0 && !error && (
-            <div className="rounded-1.5rem bg-white p-12 text-center ring-1 ring-black/5">
+<div className="rounded-1.5rem bg-white p-12 text-center ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
               <p className="font-display text-2xl">No toys match</p>
               <p className="mt-2 text-muted">
                 Try clearing filters or a different search.
@@ -358,8 +358,8 @@ export function ShopClient() {
                 disabled={currentPage <= 1}
                 aria-disabled={currentPage <= 1}
                 aria-label="Previous page"
-                onClick={() => updateParam("page", String(currentPage - 1))}
-                className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40"
+onClick={() => updateParam("page", String(currentPage - 1))}
+className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
               >
                 Prev
               </button>
@@ -375,10 +375,10 @@ export function ShopClient() {
                     aria-label={`Page ${page}`}
                     aria-current={page === currentPage ? "page" : undefined}
                     onClick={() => updateParam("page", String(page))}
-                    className={`h-11 w-11 rounded-full text-sm font-bold ${
+className={`h-11 w-11 rounded-full text-sm font-bold ${
                       page === currentPage
-                        ? "bg-ink text-white"
-                        : "bg-white ring-1 ring-black/5"
+                        ? "bg-ink text-white dark:bg-white dark:text-slate-900"
+                        : "bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
                     }`}
                   >
                     {page}
@@ -390,8 +390,8 @@ export function ShopClient() {
                 disabled={currentPage >= pages}
                 aria-disabled={currentPage >= pages}
                 aria-label="Next page"
-                onClick={() => updateParam("page", String(currentPage + 1))}
-                className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40"
+onClick={() => updateParam("page", String(currentPage + 1))}
+className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
               >
                 Next
               </button>

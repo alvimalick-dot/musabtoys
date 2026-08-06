@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode (`.dark` added to <html> by ThemeProvider) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Keep builds independent of Google Fonts. These stacks use locally installed
      system fonts, so Vercel never needs to fetch a font during compilation. */
