@@ -12,6 +12,7 @@ import {
   Rocket,
   Users,
 } from "lucide-react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const MotionLink = motion.create(Link);
 
@@ -71,12 +72,12 @@ export function CategoryStrip() {
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.5 }}
       >
-<p className="text-sm font-bold uppercase tracking-[0.22em] text-coral-deep">
-          Shop by age
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-          What&rsquo;s right for your kid
-        </h2>
+<SectionHeading
+          eyebrow="Shop by age"
+          title="What's right"
+          accent="for your kid"
+          eyebrowColor="text-coral-deep"
+        />
       </motion.div>
 
       <motion.div
@@ -118,12 +119,12 @@ export function CategoryStrip() {
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.5 }}
       >
-<p className="text-sm font-bold uppercase tracking-[0.22em] text-coral-deep">
-          Browse by play
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-          Find the right kind of fun
-        </h2>
+<SectionHeading
+          eyebrow="Browse by play"
+          title="Find the right"
+          accent="kind of fun"
+          eyebrowColor="text-coral-deep"
+        />
       </motion.div>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

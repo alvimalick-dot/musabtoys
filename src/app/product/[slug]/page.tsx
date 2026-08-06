@@ -6,6 +6,7 @@ import { Review } from "@/models/Review";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { productJsonLd, breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
 import type { ProductDTO } from "@/types";
@@ -194,8 +195,14 @@ export default async function ProductPage({ params }: Props) {
       <>
         <JsonLd data={productLd} />
         <JsonLd data={breadcrumb} />
-        <ProductDetailClient product={dto} />
+<ProductDetailClient product={dto} />
         <RelatedProducts products={relatedDto} />
+        <RecentlyViewed
+          currentSlug={product.slug}
+          currentName={product.name}
+          currentPrice={product.price}
+          currentImage={product.images?.[0] || ""}
+        />
         <ProductReviews
           slug={product.slug}
           initial={reviews.map((r) => ({

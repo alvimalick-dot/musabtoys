@@ -101,7 +101,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
             }
           : undefined
       }
-      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-[#f6d9c4] bg-white transition-transform duration-200 ease-out will-change-transform"
+className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-transform duration-200 ease-out will-change-transform"
     >
       <article className="relative flex h-full min-w-0 flex-col">
         <div className="relative aspect-square bg-[#fde8d4]">

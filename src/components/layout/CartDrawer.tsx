@@ -48,7 +48,7 @@ export function CartDrawer() {
             onClick={closeCart}
           />
           <motion.aside
-            className="fixed right-0 top-0 z-70 flex h-dvh w-full max-w-md flex-col bg-white shadow-2xl pb-[env(safe-area-inset-bottom)]"
+className="fixed right-0 top-0 z-70 flex h-dvh w-full max-w-md flex-col bg-surface shadow-2xl pb-[env(safe-area-inset-bottom)]"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -132,7 +132,7 @@ export function CartDrawer() {
                           stiffness: 380,
                           damping: 32,
                         }}
-                        className="flex gap-3 rounded-2xl bg-[#fef6ed] p-3"
+className="flex gap-3 rounded-2xl bg-background p-3"
                       >
                         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white">
                           {item.image ? (
@@ -175,13 +175,13 @@ export function CartDrawer() {
                               type="button"
                               className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5"
                               whileTap={{ scale: 0.9 }}
-                              onClick={() =>
+onClick={() =>
                                 updateQty(item.productId, item.quantity - 1)
                               }
                               aria-label="Decrease quantity"
                             >
                               <Minus className="h-3.5 w-3.5" />
-                            </motion.button>
+</motion.button>
                             <span className="w-8 text-center text-sm font-bold">
                               <motion.span
                                 key={item.quantity}

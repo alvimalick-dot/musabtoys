@@ -4,6 +4,7 @@ import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { NewArrivalProducts } from "@/components/home/NewArrivalProducts";
 import { FeatureBand } from "@/components/home/FeatureBand";
+import { SectionDivider } from "@/components/home/SectionDivider";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, getSiteUrl, absoluteUrl } from "@/lib/seo";
 
@@ -54,9 +55,11 @@ export default function HomePage() {
       <JsonLd
         data={breadcrumbJsonLd([{ name: "Home", url: "/" }])}
       />
-      <Hero />
+<Hero />
+      <SectionDivider />
       <FeaturedProducts />
       <NewArrivalProducts />
+      <SectionDivider />
       <CategoryStrip />
       <FeatureBand />
     </>

@@ -10,6 +10,7 @@ import { ProductCard } from "./ProductCard";
 import { ProductSkeletonGrid } from "./ProductSkeleton";
 import { formatPKR } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { PriceRangeSlider } from "@/components/ui/PriceRangeSlider";
 
 interface Facets {
   categories: string[];
@@ -128,28 +129,26 @@ export function ShopClient() {
         }}
       />
 
-      <div>
+<div>
         <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
-          Min price (PKR)
+          Price range (PKR)
         </label>
-        <input
-          type="number"
-          min={0}
-          className="input-field"
-          defaultValue={searchParams.get("minPrice") || ""}
-          onBlur={(e) => updateParam("minPrice", e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
-          Max price (PKR)
-        </label>
-        <input
-          type="number"
-          min={0}
-          className="input-field"
-          defaultValue={searchParams.get("maxPrice") || ""}
-          onBlur={(e) => updateParam("maxPrice", e.target.value)}
+        <PriceRangeSlider
+          min={Number(searchParams.get("minPrice") || 0)}
+          max={Number(searchParams.get("maxPrice") || 150000)}
+          minBound={0}
+          maxBound={150000}
+          unbounded
+          onChange={(lo, hi) => {
+            const params = new URLSearchParams(searchParams.toString());
+            if (lo > 0) params.set("minPrice", String(lo));
+            else params.delete("minPrice");
+            params.set("maxPrice", String(hi));
+            params.delete("page");
+            startTransition(() => {
+              router.push(`/shop?${params.toString()}`);
+            });
+          }}
         />
       </div>
 
@@ -278,7 +277,7 @@ export function ShopClient() {
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
         {/* Desktop sidebar — fixed width, never crushed by product grid */}
-        <aside className="hidden w-64 shrink-0 rounded-2xl bg-white p-5 ring-1 ring-black/5 lg:sticky lg:top-24 lg:block">
+<aside className="hidden w-64 shrink-0 rounded-2xl bg-surface p-5 ring-1 ring-border lg:sticky lg:top-24 lg:block">
           {filterPanel}
         </aside>
 
@@ -291,7 +290,7 @@ export function ShopClient() {
               aria-label="Close filters overlay"
               onClick={() => setFiltersOpen(false)}
             />
-            <div className="absolute bottom-0 left-0 right-0 max-h-[min(85vh,100dvh)] overflow-y-auto overscroll-contain rounded-t-3xl bg-white p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl">
+<div className="absolute bottom-0 left-0 right-0 max-h-[min(85vh,100dvh)] overflow-y-auto overscroll-contain rounded-t-3xl bg-surface p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl">
               {filterPanel}
             </div>
           </div>

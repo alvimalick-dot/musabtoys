@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { ProductDTO } from "@/types";
 
 async function getFeaturedProducts(): Promise<ProductDTO[]> {
@@ -42,23 +43,20 @@ export async function FeaturedProducts() {
   if (!products.length) return null;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
-            Handpicked for you
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-            Featured toys
-          </h2>
-        </div>
-        <Link
-          href="/shop?featured=true"
-          className="hidden shrink-0 text-sm font-bold text-coral hover:underline sm:block"
-        >
-          Shop all featured
-        </Link>
-      </div>
+<section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+      <SectionHeading
+        eyebrow="Handpicked for you"
+        title="Featured"
+        accent="toys"
+        action={
+          <Link
+            href="/shop?featured=true"
+            className="hidden shrink-0 text-sm font-bold text-coral hover:underline sm:block"
+          >
+            Shop all featured
+          </Link>
+        }
+      />
 
       <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
         {products.map((product) => (

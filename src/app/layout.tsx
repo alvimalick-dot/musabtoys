@@ -3,7 +3,10 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
 import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { MobileBottomBar } from "@/components/layout/MobileBottomBar";
 import { AppToaster } from "@/components/ui/AppToaster";
+import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { MouseTrail } from "@/components/ui/MouseTrail";
@@ -129,22 +132,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+return (
     <html lang="en-PK" data-scroll-behavior="smooth">
       <body className="antialiased">
-        <JsonLd data={storeJsonLd()} />
-        <JsonLd data={websiteJsonLd()} />
-        <MouseTrail />
-        <Header />
+        <ThemeProvider>
+          <JsonLd data={storeJsonLd()} />
+          <JsonLd data={websiteJsonLd()} />
+          <MouseTrail />
+          <AnnouncementBar />
+          <Header />
 
-        <main className="min-h-[70vh]">
-          <PageTransition>{children}</PageTransition>
-        </main>
+          <main className="min-h-[70vh]">
+            <PageTransition>{children}</PageTransition>
+          </main>
 
-        <Footer />
-        <CartDrawer />
-        <WhatsAppFab />
-        <AppToaster />
+<Footer />
+          <CartDrawer />
+          <WhatsAppFab />
+          <MobileBottomBar />
+          <AppToaster />
+        </ThemeProvider>
       </body>
     </html>
   );

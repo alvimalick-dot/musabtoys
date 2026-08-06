@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { ProductDTO } from "@/types";
 
 async function getNewArrivalProducts(): Promise<ProductDTO[]> {
@@ -42,23 +43,21 @@ export async function NewArrivalProducts() {
   if (!products.length) return null;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-sm font-bold uppercase tracking-[0.22em] text-sky">
-            Just landed
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-            New arrivals
-          </h2>
-        </div>
-        <Link
-          href="/shop?newArrival=true"
-          className="hidden shrink-0 text-sm font-bold text-sky hover:underline sm:block"
-        >
-          Shop all new arrivals
-        </Link>
-      </div>
+<section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+      <SectionHeading
+        eyebrow="Just landed"
+        title="New"
+        accent="arrivals"
+        eyebrowColor="text-sky"
+        action={
+          <Link
+            href="/shop?newArrival=true"
+            className="hidden shrink-0 text-sm font-bold text-sky hover:underline sm:block"
+          >
+            Shop all new arrivals
+          </Link>
+        }
+      />
 
       <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
         {products.map((product) => (
