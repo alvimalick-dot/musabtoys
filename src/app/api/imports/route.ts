@@ -4,6 +4,7 @@ import { ImportJob } from "@/models/ImportJob";
 import { getAdminSession } from "@/lib/auth";
 import { parseExcel, serializeMappedRow, DEFAULT_BATCH_SIZE } from "@/lib/import-processing";
 import { notifyImportWebhook } from "@/lib/import-notify";
+import { safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -100,10 +101,10 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
+} catch (error) {
     console.error("POST /api/imports", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to create import job" },
+      { error: safeErrorMessage(error, "Failed to create import job") },
       { status: 500 }
     );
   }
@@ -122,10 +123,10 @@ export async function GET() {
       .limit(20)
       .select("filename status totalRows processedRows successRows errorRows imagesSynced createdAt")
       .lean();
-    return NextResponse.json({ jobs });
+return NextResponse.json({ jobs });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch jobs" },
+      { error: safeErrorMessage(error, "Failed to fetch jobs") },
       { status: 500 }
     );
   }

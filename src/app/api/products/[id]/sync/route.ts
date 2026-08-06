@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
 import { syncProductImages, hasCloudinaryConfigured } from "@/lib/cloudinary-sync";
+import { isValidObjectId } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,9 @@ export async function POST(
 
   await connectDB();
   const { id } = await params;
+  if (!isValidObjectId(id)) {
+    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+  }
   const product = await Product.findById(id).select("_id sku images").lean();
   if (!product) return NextResponse.json({ error: "Product not found" }, { status: 404 });
 

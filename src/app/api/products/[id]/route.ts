@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
 import { normalizeImagePath } from "@/lib/image-path";
+import { isValidObjectId, safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
@@ -12,9 +13,16 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
   try {
     await connectDB();
     const { id } = await params;
-    const product = await Product.findOne({
-      $or: [{ _id: id }, { slug: id }],
-    }).lean();
+
+    // Look up by Mongo ObjectId when the segment is a valid ObjectId,
+    // otherwise treat it strictly as a slug string. This prevents NoSQL
+    // injection (operator objects) and redundant, error-prone casts.
+    let product;
+    if (isValidObjectId(id)) {
+      product = await Product.findOne({ _id: id }).lean();
+    } else {
+      product = await Product.findOne({ slug: id }).lean();
+    }
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
@@ -23,7 +31,7 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
     return NextResponse.json({ product });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch product" },
+      { error: safeErrorMessage(error, "Failed to fetch product") },
       { status: 500 }
     );
   }
@@ -38,6 +46,9 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
 
     await connectDB();
     const { id } = await params;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
     const body = await req.json();
 
     const product = await Product.findById(id);
@@ -92,7 +103,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     return NextResponse.json({ product });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to update product" },
+      { error: safeErrorMessage(error, "Failed to update product") },
       { status: 500 }
     );
   }
@@ -107,6 +118,9 @@ export async function DELETE(_req: NextRequest, { params }: Ctx) {
 
     await connectDB();
     const { id } = await params;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
     const product = await Product.findByIdAndDelete(id);
 
     if (!product) {
@@ -116,7 +130,7 @@ export async function DELETE(_req: NextRequest, { params }: Ctx) {
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to delete product" },
+      { error: safeErrorMessage(error, "Failed to delete product") },
       { status: 500 }
     );
   }

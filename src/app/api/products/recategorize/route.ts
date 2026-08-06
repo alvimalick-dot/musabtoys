@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
 import { inferAgeGroup, inferCategory } from "@/lib/categorize";
+import { safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -43,7 +44,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({
+return NextResponse.json({
       success: true,
       scanned: products.length,
       updated,
@@ -51,7 +52,7 @@ export async function POST() {
     });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Recategorize failed" },
+      { error: safeErrorMessage(error, "Recategorize failed") },
       { status: 500 }
     );
   }

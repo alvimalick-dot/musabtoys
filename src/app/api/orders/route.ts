@@ -4,6 +4,7 @@ import { Order } from "@/models/Order";
 import { getAdminSession } from "@/lib/auth";
 import { orderStatusSchema } from "@/lib/validators";
 import { sendFeedbackEmail } from "@/lib/notify";
+import { safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ orders });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch orders" },
+      { error: safeErrorMessage(error, "Failed to fetch orders") },
       { status: 500 }
     );
   }
@@ -89,10 +90,10 @@ export async function PATCH(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ order, feedbackSent });
+return NextResponse.json({ order, feedbackSent });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to update order" },
+      { error: safeErrorMessage(error, "Failed to update order") },
       { status: 400 }
     );
   }

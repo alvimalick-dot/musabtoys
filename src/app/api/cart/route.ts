@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
+import { isValidObjectId, safeErrorMessage } from "@/lib/security";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,17 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const body = cartSchema.parse(await req.json());
+
+    // Strictly validate every productId is a real ObjectId before it reaches
+    // a Mongo query. Rejects injected operator objects / malformed ids.
+    for (const item of body.items) {
+      if (!isValidObjectId(item.productId)) {
+        return NextResponse.json(
+          { error: "One or more cart items reference an invalid product" },
+          { status: 400 }
+        );
+      }
+    }
 
     const ids = body.items.map((i) => i.productId);
     const products = await Product.find({ _id: { $in: ids } }).lean();
@@ -63,7 +75,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ valid: allValid, items: validated, subtotal });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Cart validation failed" },
+      { error: safeErrorMessage(error, "Cart validation failed") },
       { status: 400 }
     );
   }

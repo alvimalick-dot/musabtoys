@@ -4,6 +4,7 @@ import { ImportJob } from "@/models/ImportJob";
 import { getAdminSession } from "@/lib/auth";
 import { processBatch } from "@/lib/import-processing";
 import { notifyImportWebhook } from "@/lib/import-notify";
+import { isValidObjectId, safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 // Vercel Hobby allows a maximum of 300 seconds per serverless function.
@@ -18,6 +19,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   try {
     const session = await getAdminSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    if (!isValidObjectId(resolvedParams.id)) {
+      return NextResponse.json({ error: "Job not found" }, { status: 404 });
+    }
 
     await connectDB();
     const job = await ImportJob.findById(resolvedParams.id);
@@ -59,8 +64,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       nextBatchIndex: job.nextBatchIndex,
       status: job.status,
     });
-  } catch (err) {
+} catch (err) {
     console.error("POST /api/imports/[id]/run", err);
-    return NextResponse.json({ error: err instanceof Error ? err.message : "Run failed" }, { status: 500 });
+    return NextResponse.json({ error: safeErrorMessage(err, "Run failed") }, { status: 500 });
   }
 }

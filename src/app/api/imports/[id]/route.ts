@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { ImportJob } from "@/models/ImportJob";
 import { getAdminSession } from "@/lib/auth";
 import { processBatch } from "@/lib/import-processing";
+import { isValidObjectId, safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -17,6 +18,9 @@ export async function GET(
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: "Job not found" }, { status: 404 });
+    }
     await connectDB();
     const job = await ImportJob.findById(id)
       .select("filename status totalRows processedRows successRows errorRows imagesSynced nextBatchIndex batchSize summary error createdAt")
@@ -27,7 +31,7 @@ export async function GET(
     return NextResponse.json({ job });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed" },
+      { error: safeErrorMessage(error, "Failed to fetch job") },
       { status: 500 }
     );
   }
@@ -43,6 +47,9 @@ export async function POST(
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: "Job not found" }, { status: 404 });
+    }
     await connectDB();
     const job = await ImportJob.findById(id);
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
@@ -79,7 +86,7 @@ export async function POST(
   } catch (error) {
     console.error("POST /api/imports/[id]", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Batch processing failed" },
+      { error: safeErrorMessage(error, "Batch processing failed") },
       { status: 500 }
     );
   }

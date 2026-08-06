@@ -7,6 +7,7 @@ import { checkoutSchema } from "@/lib/validators";
 import { calcShipping } from "@/lib/commerce";
 import { buildOrderConfirmation, sendEmail } from "@/lib/notify";
 import { Coupon } from "@/models/Coupon";
+import { isValidObjectId, safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -34,6 +35,14 @@ export async function POST(req: NextRequest) {
       throw new Error(
         "Online payment is not available yet. Please choose Cash on Delivery."
       );
+    }
+
+    // Strict ObjectId validation before any Mongo query. Rejects injected
+    // operator objects / malformed ids in the items array.
+    for (const item of body.items) {
+      if (!isValidObjectId(item.productId)) {
+        throw new Error("One or more items reference an invalid product");
+      }
     }
 
     const productIds = body.items.map((i) => i.productId);
@@ -227,7 +236,7 @@ export async function POST(req: NextRequest) {
     }
     console.error("POST /api/checkout", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Checkout failed" },
+      { error: safeErrorMessage(error, "Checkout failed") },
       { status: 400 }
     );
   } finally {

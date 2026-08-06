@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
+import { safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
@@ -44,14 +45,14 @@ export async function DELETE(req: NextRequest) {
     revalidatePath("/shop");
     revalidatePath("/sitemap.xml");
 
-    return NextResponse.json({
+return NextResponse.json({
       success: true,
       deletedCount: result.deletedCount,
     });
   } catch (error) {
     console.error("DELETE /api/products/clear", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to clear products" },
+      { error: safeErrorMessage(error, "Failed to clear products") },
       { status: 500 }
     );
   }

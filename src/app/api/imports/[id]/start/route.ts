@@ -4,6 +4,7 @@ import { ImportJob } from "@/models/ImportJob";
 import { getAdminSession } from "@/lib/auth";
 import { processBatch } from "@/lib/import-processing";
 import { notifyImportWebhook } from "@/lib/import-notify";
+import { isValidObjectId } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,10 @@ export async function POST(
   const resolvedParams = await params;
   const session = await getAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (!isValidObjectId(resolvedParams.id)) {
+    return NextResponse.json({ error: "Job not found" }, { status: 404 });
+  }
 
   await connectDB();
   const job = await ImportJob.findById(resolvedParams.id);

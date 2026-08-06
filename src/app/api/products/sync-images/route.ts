@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
 import { syncProductImages, isLocalImageUrl, hasCloudinaryConfigured } from "@/lib/cloudinary-sync";
+import { safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -50,7 +51,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({
+return NextResponse.json({
       success: true,
       message: `Synced ${totalSynced} image(s) across ${totalUpdated} product(s).`,
       synced: totalSynced,
@@ -59,7 +60,7 @@ export async function POST() {
   } catch (error) {
     console.error("POST /api/products/sync-images", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Sync failed" },
+      { error: safeErrorMessage(error, "Sync failed") },
       { status: 500 }
     );
   }

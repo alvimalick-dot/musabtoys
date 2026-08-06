@@ -3,11 +3,15 @@ import { connectDB } from "@/lib/mongodb";
 import { ImportJob } from "@/models/ImportJob";
 import { getAdminSession } from "@/lib/auth";
 import { notifyImportWebhook } from "@/lib/import-notify";
+import { isValidObjectId } from "@/lib/security";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isValidObjectId(id)) {
+    return NextResponse.json({ error: "Job not found" }, { status: 404 });
+  }
   await connectDB();
   const job = await ImportJob.findById(id);
   if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });

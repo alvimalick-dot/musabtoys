@@ -6,6 +6,7 @@ import { productFilterSchema } from "@/lib/validators";
 import { makeSlug } from "@/lib/utils";
 import { getAdminSession } from "@/lib/auth";
 import { normalizeImagePath } from "@/lib/image-path";
+import { safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
@@ -131,7 +132,7 @@ export async function GET(req: NextRequest) {
         .lean();
     }
 
-const { categories, brands, ageGroups } = await getFacets();
+    const { categories, brands, ageGroups } = await getFacets();
 
     const response = NextResponse.json({
       products: cardView
@@ -169,7 +170,7 @@ const { categories, brands, ageGroups } = await getFacets();
   } catch (error) {
     console.error("GET /api/products", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch products" },
+      { error: safeErrorMessage(error, "Failed to fetch products") },
       { status: 500 }
     );
   }
@@ -225,8 +226,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ product }, { status: 201 });
   } catch (error) {
     console.error("POST /api/products", error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to create product" },
+return NextResponse.json(
+      { error: safeErrorMessage(error, "Failed to create product") },
       { status: 500 }
     );
   }
