@@ -138,9 +138,10 @@ className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2
               )}
             </>
           )}
-          <button
+         <button
             type="button"
-className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105 dark:bg-slate-800 dark:ring-slate-700"
+            suppressHydrationWarning
+            className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105 dark:bg-slate-800 dark:ring-slate-700"
             aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
             onClick={(e) => {
               e.preventDefault();
@@ -158,6 +159,7 @@ className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-cente
             }}
           >
             <Heart
+              suppressHydrationWarning
               className={`h-4 w-4 transition ${
                 wished ? "fill-coral text-coral" : "text-ink/70"
               }`}
