@@ -10,6 +10,7 @@ import { useCartStore } from "@/store/cartStore";
 import { formatPKR } from "@/lib/utils";
 import { calcShipping, FREE_SHIPPING_THRESHOLD } from "@/lib/commerce";
 import { CitySelect } from "@/components/ui/CitySelect";
+import { Loader2 } from "lucide-react";
 import type { PaymentMethod } from "@/types";
 
 const formSchema = z.object({
@@ -25,18 +26,41 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+type CouponInfo = {
+  code: string;
+  discount: number;
+  type: string;
+  value: number;
+};
+
+type CartItemPayload = {
+  productId: string;
+  quantity: number;
+};
+
+/** Minimal typed JSON request that throws on non-2xx responses. */
+async function jsonRequest<T = unknown>(
+  url: string,
+  body: unknown,
+  method: "POST" | "PUT" = "POST"
+): Promise<T> {
+  const res = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.error || "Request failed");
+  return data as T;
+}
+
 export function CheckoutForm() {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCartStore();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<{
-    code: string;
-    discount: number;
-    type: string;
-    value: number;
-  } | null>(null);
+const [appliedCoupon, setAppliedCoupon] = useState<CouponInfo | null>(null);
   const [couponMsg, setCouponMsg] = useState<string | null>(null);
   const [couponBusy, setCouponBusy] = useState(false);
   const onlineEnabled =
@@ -68,23 +92,14 @@ export function CheckoutForm() {
     setCouponBusy(true);
     setCouponMsg(null);
     try {
-      const res = await fetch("/api/coupons", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, subtotal: sub }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Invalid coupon");
-      setAppliedCoupon({
-        code: data.code,
-        discount: data.discount,
-        type: data.type,
-        value: data.value,
-      });
-      setCouponInput("");
-      setCouponMsg(
-        `✓ Coupon ${data.code} applied — ${formatPKR(data.discount)} off`
+      const data = await jsonRequest<CouponInfo>(
+        "/api/coupons",
+        { code, subtotal: sub },
+        "PUT"
       );
+      setAppliedCoupon(data);
+      setCouponInput("");
+      setCouponMsg(`✓ Coupon ${data.code} applied — ${formatPKR(data.discount)} off`);
     } catch (err) {
       setAppliedCoupon(null);
       setCouponMsg(
@@ -134,20 +149,15 @@ export function CheckoutForm() {
       return;
     }
 
-    setLoading(true);
+setLoading(true);
     try {
-      const validateRes = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((i) => ({
-            productId: i.productId,
-            quantity: i.quantity,
-          })),
-        }),
-      });
-      const validated = await validateRes.json();
-      if (!validateRes.ok || !validated.valid) {
+      const cartItems: CartItemPayload[] = items.map((i) => ({
+        productId: i.productId,
+        quantity: i.quantity,
+      }));
+
+const validated = await jsonRequest<{ valid: boolean; items?: { valid?: boolean; error?: string }[]; subtotal?: number }>("/api/cart", { items: cartItems });
+      if (!validated.valid) {
         const bad = (validated.items || []).find(
           (i: { valid?: boolean; error?: string }) => !i.valid
         );
@@ -170,30 +180,20 @@ export function CheckoutForm() {
         toast.success(`Coupon applied — ${formatPKR(discount)} off`);
       }
 
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((i) => ({
-            productId: i.productId,
-            quantity: i.quantity,
-          })),
-          customer: {
-            name: values.name,
-            email: values.email,
-            phone: values.phone,
-            address: values.address,
-            city: values.city,
-            area: values.area || "",
-          },
-          paymentMethod,
-          notes: values.notes || "",
-          couponCode,
-        }),
+const data = await jsonRequest<{ order: { orderNumber: string; total: number }; paymentRedirect?: string | null }>("/api/checkout", {
+        items: cartItems,
+        customer: {
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          address: values.address,
+          city: values.city,
+          area: values.area || "",
+        },
+        paymentMethod,
+        notes: values.notes || "",
+        couponCode,
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Checkout failed");
 
       clearCart();
       toast.success("Order placed!");
@@ -272,13 +272,20 @@ export function CheckoutForm() {
                   Remove
                 </button>
               ) : (
-                <button
+<button
                   type="button"
-                  className="btn-primary min-h-11 shrink-0"
+                  className="btn-primary inline-flex min-h-11 shrink-0 items-center justify-center gap-2"
                   disabled={couponBusy}
                   onClick={applyCoupon}
                 >
-                  {couponBusy ? "Applying…" : "Apply"}
+                  {couponBusy ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Applying…
+                    </>
+                  ) : (
+                    "Apply"
+                  )}
                 </button>
               )}
             </div>
@@ -344,13 +351,19 @@ export function CheckoutForm() {
         <button
           type="submit"
           disabled={loading || !items.length}
-          className="btn-primary min-h-12 w-full sm:w-auto"
+          aria-busy={loading}
+          className="btn-primary inline-flex min-h-12 w-full items-center justify-center gap-2 sm:w-auto"
         >
-          {loading
-            ? "Placing order…"
-            : `Place order · ${formatPKR(total)}${
-                discount > 0 ? ` (was ${formatPKR(sub + shipping)})` : ""
-              }`}
+          {loading ? (
+            <>
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Placing order…</span>
+            </>
+          ) : (
+            `Place order · ${formatPKR(total)}${
+              discount > 0 ? ` (was ${formatPKR(sub + shipping)})` : ""
+            }`
+          )}
         </button>
       </form>
 
