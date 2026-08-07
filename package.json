@@ -41,6 +41,7 @@
     "lucide-react": "^1.28.0",
     "mongoose": "^9.8.1",
     "next": "15.5.22",
+    "nextjs-toploader": "^3.9.17",
     "react": "19.1.0",
     "react-confetti": "^6.4.0",
     "react-dom": "19.1.0",

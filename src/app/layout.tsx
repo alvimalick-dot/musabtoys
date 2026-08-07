@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import NextTopLoader from "nextjs-toploader";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
@@ -135,7 +136,14 @@ export default function RootLayout({
 }>) {
 return (
     <html lang="en-PK" data-scroll-behavior="smooth">
-      <body className="antialiased">
+<body className="antialiased">
+        <NextTopLoader
+          color="#ff3b30"
+          height={3}
+          showSpinner={false}
+          shadow="0 0 10px #ff3b30, 0 0 5px #ff3b30"
+          zIndex={1600}
+        />
         <ThemeProvider>
           <RouterRefreshOnFocus />
           <JsonLd data={storeJsonLd()} />
