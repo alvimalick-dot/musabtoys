@@ -137,16 +137,16 @@ export default function RootLayout({
 return (
     <html lang="en-PK" data-scroll-behavior="smooth">
 <body className="antialiased">
-        <NextTopLoader
-          color="#ff3b30"
-          height={3}
+<NextTopLoader
+          color="#ff8a00"
+          height={5}
           showSpinner={false}
-          shadow="0 0 10px #ff3b30, 0 0 5px #ff3b30"
+          shadow="0 0 12px #ff8a00, 0 0 24px #ff8a00"
           zIndex={1600}
         />
         <ThemeProvider>
           <RouterRefreshOnFocus />
-          <JsonLd data={storeJsonLd()} />
+
           <JsonLd data={websiteJsonLd()} />
           <MouseTrail />
           <AnnouncementBar />

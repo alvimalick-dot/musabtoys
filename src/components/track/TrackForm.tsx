@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -30,6 +29,62 @@ type Tracked = {
   createdAt?: string;
 };
 
+const ORDER_STEPS = [
+  { key: "pending", label: "Placed" },
+  { key: "processing", label: "Processing" },
+  { key: "shipped", label: "Shipped" },
+  { key: "delivered", label: "Delivered" },
+] as const;
+
+function OrderTimeline({ status }: { status: string }) {
+  const currentIdx = ORDER_STEPS.findIndex((s) => s.key === status);
+  const isCancelled = status === "cancelled";
+
+  if (isCancelled) {
+    return (
+      <div className="mt-5 rounded-xl bg-coral/10 px-4 py-3 text-sm font-semibold text-coral-deep">
+        This order was cancelled.
+      </div>
+    );
+  }
+
+  return (
+    <ol className="mt-6 space-y-3">
+      {ORDER_STEPS.map((step, i) => {
+        const done = i < currentIdx;
+        const active = i === currentIdx;
+        return (
+          <li key={step.key} className="flex items-center gap-3">
+            <span
+              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                done || active
+                  ? "bg-coral text-white"
+                  : "bg-black/5 text-muted dark:bg-white/10"
+              }`}
+            >
+              {done ? "✓" : i + 1}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p
+                className={`text-sm font-semibold ${
+                  done || active ? "text-ink" : "text-muted"
+                }`}
+              >
+                {step.label}
+              </p>
+              {active && (
+                <p className="text-xs capitalize text-coral-deep">
+                  Current status
+                </p>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export function TrackForm({
   initialOrder = "",
   initialEmail = "",
@@ -51,7 +106,7 @@ export function TrackForm({
     setError(null);
     setOrder(null);
     try {
-const res = await fetch("/api/orders/track", {
+      const res = await fetch("/api/orders/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderNumber, email }),
@@ -217,8 +272,10 @@ const res = await fetch("/api/orders/track", {
             {order.customer.name} · {order.customer.city}
           </p>
 
+          <OrderTimeline status={order.status} />
+
           {(order.trackingNumber || order.courierName) && (
-        <div className="mt-4 rounded-xl bg-[#fef6ed] px-4 py-3 text-sm dark:bg-raised">
+            <div className="mt-4 rounded-xl bg-[#fef6ed] px-4 py-3 text-sm dark:bg-raised">
               <p className="font-bold text-ink">Courier tracking</p>
               {order.courierName && (
                 <p className="mt-1 text-muted">Courier: {order.courierName}</p>
@@ -263,7 +320,7 @@ const res = await fetch("/api/orders/track", {
             >
               WhatsApp us about this order
             </a>
-<Link
+            <Link
               href={`/invoice/${order.orderNumber}?email=${encodeURIComponent(email)}`}
               className="btn-secondary min-h-11"
             >

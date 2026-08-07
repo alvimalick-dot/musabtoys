@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
+import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
 import { orderStatusSchema } from "@/lib/validators";
 import { sendFeedbackEmail, buildShippedEmail, sendEmail } from "@/lib/notify";
@@ -57,14 +58,46 @@ export async function PATCH(req: NextRequest) {
       update.trackingNumber = parsed.trackingNumber.trim();
     }
 
-    if (!Object.keys(update).length) {
+if (!Object.keys(update).length) {
       return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
     }
+
+    // Fetch the current status BEFORE overwriting it, so we can detect a fresh
+    // transition to "cancelled" (and restock inventory exactly once).
+    const existing = await Order.findById(orderId).select("status items").lean();
+    if (!existing) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+    const becomingCancelled =
+      parsed.status === "cancelled" && existing.status !== "cancelled";
 
     const order = await Order.findByIdAndUpdate(orderId, update, { new: true });
 
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    // When an order is cancelled for the first time, return the reserved stock
+    // to the products. findByIdAndUpdate skips the pre-validate hook that
+    // derives stockStatus, so re-derive it manually (same as checkout does).
+    if (becomingCancelled) {
+      for (const item of order.items?? []) {
+        if (!item.productId) continue;
+        const updated = await Product.findByIdAndUpdate(
+          item.productId,
+          { $inc: { stock: item.quantity } },
+          { new: true }
+        );
+        if (updated) {
+          updated.stockStatus =
+            updated.stock <= 0
+              ? "out_of_stock"
+              : updated.stock <= 5
+                ? "low_stock"
+                : "in_stock";
+          await updated.save();
+        }
+      }
     }
 
     // When the order is marked shipped OR courier/tracking details are first

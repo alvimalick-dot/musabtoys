@@ -212,7 +212,7 @@ const data = await jsonRequest<{ order: { orderNumber: string; total: number }; 
   }
 
   return (
-    <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.2fr_0.8fr]">
+<div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
@@ -367,7 +367,7 @@ const data = await jsonRequest<{ order: { orderNumber: string; total: number }; 
         </button>
       </form>
 
-      <aside className="h-fit rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
+<aside className="h-fit rounded-3xl bg-white p-6 ring-1 ring-black/5 lg:sticky lg:top-24 dark:bg-raised dark:ring-white/10">
         <h2 className="font-display text-2xl font-semibold">Order summary</h2>
         {items.length === 0 ? (
           <p className="mt-4 text-sm text-muted">Your cart is empty.</p>

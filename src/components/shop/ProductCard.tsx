@@ -29,10 +29,10 @@ export function ProductCard({ product }: { product: ProductDTO }) {
       (product.stock > 0 && product.stock <= 5)) &&
     !isOutOfStock;
 
-  const activateGlow = () => {
-    const palette = ["#e11d48", "#d4a017", "#0891b2", "#22c55e", "#f97316", "#be123c"];
-    const nextColor = palette[Math.floor(Math.random() * palette.length)];
-    setGlowColor(nextColor);
+const activateGlow = () => {
+    // Single theme-orange accent (matches the black+orange dark theme) — no
+    // random rainbow colors that clash with the brand.
+    setGlowColor("#f97316");
   };
 
   const resetGlow = () => setGlowColor(null);
@@ -76,11 +76,11 @@ export function ProductCard({ product }: { product: ProductDTO }) {
     toast.success("Added to cart");
     // Load this visual-only library only after the user actually adds an item.
     const { default: confetti } = await import("canvas-confetti");
-    confetti({
+confetti({
       particleCount: 30,
       spread: 60,
       origin: { y: 0.6 },
-      colors: ["#e11d48", "#d4a017", "#0891b2", "#22c55e"],
+      colors: ["#f97316", "#ea580c", "#fb923c", "#ff8a00"],
     });
   }
 

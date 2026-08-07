@@ -20,10 +20,10 @@ type BubbleTitleProps = {
 };
 
 const DEFAULT_PALETTE = [
-  "linear-gradient(180deg, #a78bfa 0%, #7c3aed 45%, #6d28d9 100%)", // purple
-  "linear-gradient(180deg, #86efac 0%, #22c55e 45%, #16a34a 100%)", // green
-  "linear-gradient(180deg, #7dd3fc 0%, #0ea5e9 45%, #0284c7 100%)", // blue
   "linear-gradient(180deg, #fdba74 0%, #f97316 45%, #ea580c 100%)", // orange
+  "linear-gradient(180deg, #fbbf24 0%, #f59e0b 45%, #d97706 100%)", // gold
+  "linear-gradient(180deg, #fb923c 0%, #f97316 45%, #c2410c 100%)", // deep orange
+  "linear-gradient(180deg, #fde68a 0%, #f59e0b 45%, #b45309 100%)", // amber
 ];
 
 const TILTS = [-3, 2.5, -2, 3, -2.5, 2];

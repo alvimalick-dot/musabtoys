@@ -42,7 +42,12 @@ export async function middleware(req: NextRequest) {
   // ── Admin API protection (defense-in-depth) ─────────────────────────
   // Reject unauthenticated or expired-token requests immediately. The route
   // handlers also re-verify the session, so this is a first line of defense.
-  if (ADMIN_API_PREFIXES.some((p) => pathname.startsWith(p))) {
+if (ADMIN_API_PREFIXES.some((p) => pathname.startsWith(p))) {
+    // /api/orders/track is a public, self-service endpoint — customers use it
+    // to look up their own order. Do NOT require admin auth for it.
+    if (pathname === "/api/orders/track") {
+      return NextResponse.next();
+    }
     const authed = await hasAdminSession(req);
     if (!authed) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -392,15 +392,17 @@ select.input-field {
   animation: kt-pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-/* Dark mode skeleton shimmer */
+/* Dark mode skeleton shimmer — bright orange so placeholder "lines" are clearly
+   visible against the near-black background and match the brand accent. */
 [data-theme="dark"] .kt-shimmer {
   background: linear-gradient(
     90deg,
-    #1a1a1a 0%,
-    #242424 50%,
-    #1a1a1a 100%
+    #2a2a2a 0%,
+    #ff8a00 50%,
+    #2a2a2a 100%
   );
   background-size: 800px 100%;
+  animation: kt-shimmer 1.4s ease-in-out infinite;
 }
 
 /* ------------------------------------------------------------------
