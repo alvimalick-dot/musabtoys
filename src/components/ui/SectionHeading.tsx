@@ -14,6 +14,8 @@ interface SectionHeadingProps {
   action?: ReactNode;
   /** Tint color for the eyebrow — maps to a Tailwind text color */
   eyebrowColor?: string;
+  /** Tint color for the accent word in the title — maps to a Tailwind text color */
+  accentColor?: string;
   className?: string;
   align?: "left" | "center";
 }
@@ -29,6 +31,7 @@ export function SectionHeading({
   description,
   action,
   eyebrowColor = "text-coral",
+  accentColor = "text-coral",
   className,
   align = "left",
 }: SectionHeadingProps) {
@@ -56,8 +59,8 @@ export function SectionHeading({
             "mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl"
           )}
         >
-          {title}
-          {accent && <span className="text-coral"> {accent}</span>}
+{title}
+          {accent && <span className={accentColor}> {accent}</span>}
         </h2>
         {description && (
           <p className="mt-3 max-w-xl text-muted">{description}</p>

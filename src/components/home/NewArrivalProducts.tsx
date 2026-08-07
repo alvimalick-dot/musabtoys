@@ -42,13 +42,15 @@ export async function NewArrivalProducts() {
 
   if (!products.length) return null;
 
-  return (
-<section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+return (
+    <section className="bg-sky/5 py-14 dark:bg-sky/10 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
       <SectionHeading
         eyebrow="Just landed"
         title="New"
         accent="arrivals"
         eyebrowColor="text-sky"
+        accentColor="text-sky"
         action={
           <Link
             href="/shop?newArrival=true"
@@ -72,6 +74,7 @@ export async function NewArrivalProducts() {
         >
           Shop all new arrivals
         </Link>
+      </div>
       </div>
     </section>
   );

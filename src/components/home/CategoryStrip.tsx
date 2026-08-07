@@ -10,7 +10,6 @@ import {
   Gamepad2,
   Puzzle,
   Rocket,
-  Users,
 } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -55,65 +54,10 @@ const categories = [
   },
 ];
 
-const ages = [
-  { label: "0–3 yrs", href: "/shop?ageGroup=0-3%20years" },
-  { label: "3–5 yrs", href: "/shop?ageGroup=3-5%20years" },
-  { label: "6–9 yrs", href: "/shop?ageGroup=6-9%20years" },
-  { label: "10+ yrs", href: "/shop?ageGroup=10%2B%20years" },
-  { label: "All ages", href: "/shop?ageGroup=All%20Ages" },
-];
-
 export function CategoryStrip() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.5 }}
-      >
-<SectionHeading
-          eyebrow="Shop by age"
-          title="What's right"
-          accent="for your kid"
-          eyebrowColor="text-coral-deep"
-        />
-      </motion.div>
-
-      <motion.div
-        className="mt-8 flex gap-3 overflow-x-auto overscroll-x-contain pb-2 sm:flex-wrap sm:overflow-visible"
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-60px" }}
-        variants={{
-          hidden: {},
-          show: { transition: { staggerChildren: 0.05 } },
-        }}
-      >
-        {ages.map((a) => (
-          <motion.div
-            key={a.label}
-            variants={{
-              hidden: { opacity: 0, y: 10 },
-              show: { opacity: 1, y: 0 },
-            }}
-          >
-            <MotionLink
-              href={a.href}
-className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-ink ring-1 ring-black/5 transition hover:shadow-md dark:bg-slate-800 dark:text-white dark:ring-slate-700"
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 400, damping: 22 }}
-            >
-              <Users className="h-4 w-4 text-coral transition group-hover:scale-110" />
-              {a.label}
-            </MotionLink>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      <motion.div
-        className="mt-14 sm:mt-16"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}

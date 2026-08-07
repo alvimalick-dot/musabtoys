@@ -10,6 +10,7 @@ type ProductRow = {
   name: string;
   sku: string;
   price: number;
+  compareAtPrice?: number;
   stock: number;
   stockStatus?: string;
   category: string;
@@ -49,6 +50,7 @@ export function ProductAdmin() {
     name: "",
     sku: "",
     price: "",
+    compareAtPrice: "",
     stock: "10",
     category: "Toys",
     brand: "Generic",
@@ -114,6 +116,7 @@ useEffect(() => {
       name: "",
       sku: "",
       price: "",
+      compareAtPrice: "",
       stock: "10",
       category: "Toys",
       brand: "Generic",
@@ -131,6 +134,7 @@ useEffect(() => {
       name: p.name,
       sku: p.sku || "",
       price: String(p.price),
+      compareAtPrice: p.compareAtPrice ? String(p.compareAtPrice) : "",
       stock: String(p.stock),
       category: p.category,
       brand: p.brand,
@@ -202,6 +206,9 @@ useEffect(() => {
       name: form.name,
       sku: form.sku || undefined,
       price: Number(form.price),
+      compareAtPrice: form.compareAtPrice
+        ? Number(form.compareAtPrice)
+        : undefined,
       stock: Number(form.stock),
       category: form.category,
       brand: form.brand,
@@ -409,6 +416,20 @@ useEffect(() => {
           </div>
           <div>
             <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
+              Compare-at price (PKR)
+            </label>
+            <input
+              className="input-field"
+              type="number"
+              placeholder="Optional — original price (strikethrough)"
+              value={form.compareAtPrice}
+              onChange={(e) =>
+                setForm({ ...form, compareAtPrice: e.target.value })
+              }
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
               Stock (0 = out of stock)
             </label>
             <input
@@ -608,7 +629,14 @@ useEffect(() => {
                 <p className="truncate font-semibold">{p.name}</p>
                 <p className="text-xs text-muted">
                   {p.sku} · <strong>{p.brand}</strong> · {p.category} ·{" "}
-                  {p.ageGroup} · {formatPKR(p.price)} ·{" "}
+                  {p.ageGroup} · {formatPKR(p.price)}
+                  {p.compareAtPrice && p.compareAtPrice > p.price ? (
+                    <span className="line-through opacity-70">
+                      {" "}
+                      {formatPKR(p.compareAtPrice)}
+                    </span>
+                  ) : null}{" "}
+                  ·{" "}
                   <span
                     className={
                       p.stock <= 0

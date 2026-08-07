@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
+import { AgeShopBadges } from "@/components/home/AgeShopBadges";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { NewArrivalProducts } from "@/components/home/NewArrivalProducts";
@@ -56,6 +57,7 @@ export default function HomePage() {
         data={breadcrumbJsonLd([{ name: "Home", url: "/" }])}
       />
 <Hero />
+      <AgeShopBadges />
       <SectionDivider />
       <FeaturedProducts />
       <NewArrivalProducts />
