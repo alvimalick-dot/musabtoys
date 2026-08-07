@@ -59,7 +59,7 @@ export function ProductReviews({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
-      toast.success("Thanks for your review!");
+      toast.success("Thanks! Your review is pending approval.");
       setAuthorName("");
       setComment("");
       setRating(5);

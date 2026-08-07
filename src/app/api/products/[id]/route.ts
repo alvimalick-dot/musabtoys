@@ -4,6 +4,7 @@ import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
 import { normalizeImagePath } from "@/lib/image-path";
 import { isValidObjectId, safeErrorMessage } from "@/lib/security";
+import { notifyRestockAlerts } from "@/lib/stock-alerts";
 
 export const dynamic = "force-dynamic";
 
@@ -51,10 +52,14 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     }
     const body = await req.json();
 
-    const product = await Product.findById(id);
+const product = await Product.findById(id);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
+
+    // Capture the old stock value before applying changes so we can detect
+    // a restock transition (0 → >0) and notify waiting customers.
+    const oldStock = product.stock;
 
     const allowed = [
       "name",
@@ -99,6 +104,22 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     }
 
     await product.save(); // runs validate hook → stockStatus
+
+    // When stock transitions from 0 → >0, email everyone who signed up for a
+    // back-in-stock alert on this product. Non-blocking: failures are logged
+    // inside notifyRestockAlerts and never break the PATCH response.
+    if (oldStock <= 0 && product.stock > 0) {
+      try {
+        await notifyRestockAlerts({
+          productId: String(product._id),
+          productName: product.name,
+          productSlug: product.slug,
+          price: product.price,
+        });
+      } catch (err) {
+        console.error("Restock notification failed:", err);
+      }
+    }
 
     return NextResponse.json({ product });
   } catch (error) {

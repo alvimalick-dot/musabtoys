@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatPKR } from "@/lib/utils";
 
 type Analytics = {
@@ -20,15 +20,42 @@ export function AdminAnalytics() {
   const [data, setData] = useState<Analytics | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch("/api/admin/analytics")
       .then(async (r) => {
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || "Failed");
         setData(j);
+        setError(null);
       })
       .catch((e) => setError(e.message));
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  // Refetch the dashboard when the tab regains focus after being backgrounded
+  // for a while, so revenue / stock stats never silently go stale.
+  useEffect(() => {
+    let hiddenAt: number | null = null;
+    const STALE_AFTER_MS = 30_000;
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        hiddenAt = Date.now();
+      } else if (document.visibilityState === "visible") {
+        if (hiddenAt && Date.now() - hiddenAt > STALE_AFTER_MS) {
+          load();
+        }
+        hiddenAt = null;
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [load]);
 
   if (error) {
     return <p className="mt-8 text-sm text-coral-deep">{error}</p>;

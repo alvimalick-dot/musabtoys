@@ -24,6 +24,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
   const wished = useWishlistStore((s) => s.has(product._id));
   const [qty, setQty] = useState(1);
   const [alertPhone, setAlertPhone] = useState("");
+  const [alertEmail, setAlertEmail] = useState("");
   const images = product.images?.length
     ? product.images.map(normalizeImagePath).filter(Boolean)
     : [];
@@ -38,7 +39,11 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
       const res = await fetch("/api/stock-alert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productSlug: product.slug, phone: alertPhone }),
+        body: JSON.stringify({
+          productSlug: product.slug,
+          phone: alertPhone,
+          email: alertEmail,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
@@ -54,6 +59,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
         "noopener,noreferrer"
       );
       setAlertPhone("");
+      setAlertEmail("");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed");
     }
@@ -197,11 +203,19 @@ className="rounded-xl bg-white px-4 py-3 ring-1 ring-black/5 dark:bg-slate-800 d
 <div className="mt-8 rounded-2xl bg-white p-4 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
               <p className="font-bold">Notify me when back</p>
               <p className="mt-1 text-sm text-muted">
-                Save your number, then WhatsApp us so we can alert you faster.
+                Leave your email and phone — we&apos;ll email you the moment it&apos;s
+                back in stock.
               </p>
-              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <div className="mt-3 flex flex-col gap-2">
                 <input
-                  className="input-field min-w-0 flex-1"
+                  className="input-field"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={alertEmail}
+                  onChange={(e) => setAlertEmail(e.target.value)}
+                />
+                <input
+                  className="input-field"
                   placeholder="03XXXXXXXXX"
                   value={alertPhone}
                   onChange={(e) => setAlertPhone(e.target.value)}
@@ -211,7 +225,7 @@ className="rounded-xl bg-white px-4 py-3 ring-1 ring-black/5 dark:bg-slate-800 d
                   className="btn-primary shrink-0"
                   onClick={notifyStock}
                 >
-                  Notify + WhatsApp
+                  Notify me
                 </button>
               </div>
               <a

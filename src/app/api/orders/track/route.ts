@@ -16,7 +16,7 @@ function normalizeEmail(e: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const limited = rateLimit(`track:${clientIp(req)}`, 20, 15 * 60 * 1000);
+  const limited = await rateLimit(`track:${clientIp(req)}`, 20, 15 * 60 * 1000);
   if (!limited.ok) {
     return NextResponse.json(
       { error: "Too many tracking attempts. Try again later." },

@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const ip = clientIp(req);
-    const limited = rateLimit(`admin-login:${ip}`, 5, 15 * 60 * 1000);
+    const limited = await rateLimit(`admin-login:${ip}`, 5, 15 * 60 * 1000);
     if (!limited.ok) {
       return NextResponse.json(
         {

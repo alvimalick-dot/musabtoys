@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
 import { getAdminSession } from "@/lib/auth";
 import { orderStatusSchema } from "@/lib/validators";
-import { sendFeedbackEmail } from "@/lib/notify";
+import { sendFeedbackEmail, buildShippedEmail, sendEmail } from "@/lib/notify";
 import { safeErrorMessage } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
@@ -65,6 +65,36 @@ export async function PATCH(req: NextRequest) {
 
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    // When the order is marked shipped OR courier/tracking details are first
+    // entered, send a one-time "shipped" email to the customer (guarded by
+    // shippedEmailSent so admins can edit tracking without spamming).
+    let shippedEmailSent = false;
+    const becameShipped =
+      parsed.status === "shipped" ||
+      (parsed.trackingNumber !== undefined && parsed.trackingNumber.trim().length > 0) ||
+      (parsed.courierName !== undefined && parsed.courierName.trim().length > 0);
+    if (becameShipped && order.customer.email && !order.shippedEmailSent) {
+      try {
+        const { emailSubject, emailText, emailReact } = buildShippedEmail({
+          orderNumber: order.orderNumber,
+          customerName: order.customer.name,
+          courierName: order.courierName,
+          trackingNumber: order.trackingNumber,
+        });
+        shippedEmailSent = await sendEmail({
+          to: order.customer.email,
+          subject: emailSubject,
+          text: emailText,
+          react: emailReact,
+        });
+        order.shippedEmailSent = shippedEmailSent;
+        await order.save();
+      } catch (err) {
+        console.error("Shipped email failed for", order.orderNumber, err);
+        shippedEmailSent = false;
+      }
     }
 
     // When an order transitions to "delivered" for the first time,

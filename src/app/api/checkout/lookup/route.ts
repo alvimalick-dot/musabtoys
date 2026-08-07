@@ -16,7 +16,7 @@ const schema = z.object({
  * up an arbitrary phone number would expose private addresses and email.
  */
 export async function POST(req: NextRequest) {
-  const limited = rateLimit(`lookup:${clientIp(req)}`, 30, 15 * 60 * 1000);
+  const limited = await rateLimit(`lookup:${clientIp(req)}`, 30, 15 * 60 * 1000);
   if (!limited.ok) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }

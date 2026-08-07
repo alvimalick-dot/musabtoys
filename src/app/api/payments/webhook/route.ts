@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
+import { safeErrorMessage } from "@/lib/security";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Webhook error", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Webhook failed" },
+      { error: safeErrorMessage(error, "Webhook failed") },
       { status: 500 }
     );
   }

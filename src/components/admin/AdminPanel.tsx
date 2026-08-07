@@ -7,6 +7,7 @@ import type { OrderStatus } from "@/types";
 import { ProductAdmin } from "@/components/admin/ProductAdmin";
 import { CouponAdmin } from "@/components/admin/CouponAdmin";
 import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
+import { ReviewAdmin } from "@/components/admin/ReviewAdmin";
 
 interface OrderRow {
   _id: string;
@@ -35,7 +36,7 @@ export function AdminPanel() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
   const [tab, setTab] = useState<
-    "dashboard" | "upload" | "products" | "orders" | "coupons" | "seed"
+    "dashboard" | "upload" | "products" | "orders" | "coupons" | "reviews" | "seed"
   >("dashboard");
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
   const [uploadBusy, setUploadBusy] = useState(false);
@@ -115,6 +116,33 @@ export function AdminPanel() {
 
   useEffect(() => {
     if (auth === "in" && tab === "orders") loadOrders();
+  }, [auth, tab, loadOrders]);
+
+  // Refetch orders when the admin tab regains focus after being backgrounded
+  // for a while, so the list never silently goes stale.
+  useEffect(() => {
+    let hiddenAt: number | null = null;
+    const STALE_AFTER_MS = 30_000;
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        hiddenAt = Date.now();
+      } else if (document.visibilityState === "visible") {
+        if (
+          hiddenAt &&
+          Date.now() - hiddenAt > STALE_AFTER_MS &&
+          auth === "in" &&
+          tab === "orders"
+        ) {
+          loadOrders();
+        }
+        hiddenAt = null;
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [auth, tab, loadOrders]);
 
   async function login(e: React.FormEvent) {
@@ -202,12 +230,19 @@ export function AdminPanel() {
   }
 
   async function updateStatus(orderId: string, status: OrderStatus) {
+    // Optimistic update — flip the UI instantly, don't wait on the network
+    setOrders((prev) =>
+      prev.map((o) => (o._id === orderId ? { ...o, status } : o))
+    );
     const res = await fetch("/api/orders", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orderId, status }),
     });
-    if (res.ok) loadOrders();
+    if (!res.ok) {
+      // Roll back by re-syncing with the server
+      loadOrders();
+    }
   }
 
   async function saveTracking(
@@ -215,12 +250,21 @@ export function AdminPanel() {
     courierName: string,
     trackingNumber: string
   ) {
+    // Optimistic update — flip the UI instantly
+    setOrders((prev) =>
+      prev.map((o) =>
+        o._id === orderId ? { ...o, courierName, trackingNumber } : o
+      )
+    );
     const res = await fetch("/api/orders", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orderId, courierName, trackingNumber }),
     });
-    if (res.ok) loadOrders();
+    if (!res.ok) {
+      // Roll back by re-syncing with the server
+      loadOrders();
+    }
   }
 
   async function seedProducts() {
@@ -330,6 +374,7 @@ export function AdminPanel() {
             ["products", "Products"],
             ["orders", "Orders"],
             ["coupons", "Coupons"],
+            ["reviews", "Reviews"],
             ["seed", "Sample data"],
           ] as const
         ).map(([id, label]) => (
@@ -351,6 +396,8 @@ export function AdminPanel() {
       {tab === "products" && <ProductAdmin />}
 
       {tab === "coupons" && <CouponAdmin />}
+
+      {tab === "reviews" && <ReviewAdmin />}
 
       {tab === "upload" && (
         <div className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">

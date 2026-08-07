@@ -7,6 +7,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { MobileBottomBar } from "@/components/layout/MobileBottomBar";
 import { AppToaster } from "@/components/ui/AppToaster";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
+import { RouterRefreshOnFocus } from "@/components/ui/RouterRefreshOnFocus";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { MouseTrail } from "@/components/ui/MouseTrail";
@@ -136,6 +137,7 @@ return (
     <html lang="en-PK" data-scroll-behavior="smooth">
       <body className="antialiased">
         <ThemeProvider>
+          <RouterRefreshOnFocus />
           <JsonLd data={storeJsonLd()} />
           <JsonLd data={websiteJsonLd()} />
           <MouseTrail />

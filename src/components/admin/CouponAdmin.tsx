@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Coupon = {
   _id: string;
@@ -24,15 +24,37 @@ export function CouponAdmin() {
     maxUses: "0",
   });
 
-  async function load() {
+  const load = useCallback(async () => {
     const res = await fetch("/api/coupons");
     const data = await res.json();
     if (res.ok) setCoupons(data.coupons || []);
-  }
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
+
+  // Refetch when the coupon tab regains focus after being backgrounded
+  // for a while, so usedCount / active state never silently goes stale.
+  useEffect(() => {
+    let hiddenAt: number | null = null;
+    const STALE_AFTER_MS = 30_000;
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        hiddenAt = Date.now();
+      } else if (document.visibilityState === "visible") {
+        if (hiddenAt && Date.now() - hiddenAt > STALE_AFTER_MS) {
+          load();
+        }
+        hiddenAt = null;
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [load]);
 
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();

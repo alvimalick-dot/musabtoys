@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Review } from "@/models/Review";
 import { Product } from "@/models/Product";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { requireAdmin } from "@/lib/security";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,22 @@ const reviewSchema = z.object({
 
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get("slug");
+  const all = req.nextUrl.searchParams.get("all") === "true";
+
+  // Admin view — list every review (pending + approved). Requires admin.
+  if (all) {
+    const session = await requireAdmin();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    await connectDB();
+    const reviews = await Review.find()
+      .sort({ createdAt: -1 })
+      .limit(200)
+      .lean();
+    return NextResponse.json({ reviews });
+  }
+
   if (!slug) {
     return NextResponse.json({ error: "slug required" }, { status: 400 });
   }
@@ -36,7 +53,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const limited = rateLimit(`review:${clientIp(req)}`, 10, 60 * 60 * 1000);
+  const limited = await rateLimit(`review:${clientIp(req)}`, 10, 60 * 60 * 1000);
   if (!limited.ok) {
     return NextResponse.json({ error: "Too many reviews. Try later." }, { status: 429 });
   }
@@ -55,7 +72,8 @@ export async function POST(req: NextRequest) {
       authorName: body.authorName,
       rating: body.rating,
       comment: body.comment,
-      approved: true,
+      // New reviews are hidden until an admin approves them.
+      approved: false,
     });
 
     return NextResponse.json({ review }, { status: 201 });

@@ -1,20 +1,30 @@
-# TODO — Order Tracking (Email) + Product Staleness Fixes
+# TODO — Functionality Gaps (priority order)
 
-## Tracking — Order ID + Email (DONE)
-- [x] 1. `src/app/api/orders/track/route.ts` — verify order by email instead of phone
-- [x] 2. `src/components/track/TrackForm.tsx` — replace phone field with email field, link with ?email=
-- [x] 3. `src/app/track/page.tsx` — accept `email` searchParam, pass as initialEmail
-- [x] 4. `src/app/invoice/[orderNumber]/page.tsx` — authorize via ?email= instead of ?phone=
-- [x] 5. `src/app/faq/page.tsx` — update track FAQ to mention email
-- [x] 6. `src/lib/notify.ts` — include &email= in trackUrl
-- [x] 7. `src/components/emails/OrderConfirmationEmail.tsx` — update track hint + URL with email
+## Phase A — Admin orders tab (low-risk refactors) — DONE
+- [x] `AdminPanel.tsx`: optimistic local update in `updateStatus()` with `loadOrders()` rollback on failure
+- [x] `AdminPanel.tsx`: optimistic local update in `saveTracking()` with `loadOrders()` rollback on failure
 
-## Bug 1 — Admin sees stale/new products late (DONE)
-- [x] `src/app/api/products/route.ts` — admin GET requests set `Cache-Control: no-store`; public requests keep CDN caching
+## Phase B — Focus-refetch for stale admin tabs — DONE
+- [x] `AdminPanel.tsx`: visibility-change refetch for orders tab (>30s hidden)
+- [x] `CouponAdmin.tsx`: visibility-change refetch (>30s hidden)
+- [x] `AdminAnalytics.tsx`: visibility-change refetch (>30s hidden)
 
-## Bug 2 — Left-open tabs show stale data (DONE)
-- [x] `src/components/shop/ShopClient.tsx` — refetch on tab focus (visibilitychange) when hidden 30s+
-- [x] `src/components/admin/ProductAdmin.tsx` — refetch on tab focus (visibilitychange) when hidden 30s+
+## Phase C — Site-wide server-page refresh — DONE
+- [x] `src/components/ui/RouterRefreshOnFocus.tsx` (new): `router.refresh()` when tab regains focus after >30s
+- [x] `src/app/layout.tsx`: mount `<RouterRefreshOnFocus />` inside `<ThemeProvider>`
 
-## Verification (DONE)
-- [x] `tsc --noEmit` passed — exit code 0
+## Phase D — Stock alerts actually notify (email-only) — DONE
+- [x] Make email **required** on stock-alert form + API schema (phone stays for dedup/reference)
+- [x] `src/lib/stock-alerts.ts` (new): `notifyRestockAlerts()` — email customers, mark `notified: true`
+- [x] `src/app/api/products/[id]/route.ts`: trigger restock alerts when stock goes `0 → >0`
+
+## Phase E — "Order shipped" email (one-time) — DONE
+- [x] `src/models/Order.ts`: add `shippedEmailSent?: boolean`
+- [x] `src/components/emails/OrderShippedEmail.tsx` (new): react-email template
+- [x] `src/lib/notify.ts`: add `buildShippedEmail()`
+- [x] `src/app/api/orders/route.ts`: send once when status→shipped or tracking first set
+
+## Verification
+- [ ] `npx tsc --noEmit` passes
+
+

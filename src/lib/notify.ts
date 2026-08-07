@@ -2,6 +2,7 @@ import * as React from "react";
 import { whatsappOrderUrl } from "@/lib/whatsapp";
 import { resendSend } from "@/lib/resend";
 import { OrderConfirmationEmail } from "@/components/emails/OrderConfirmationEmail";
+import { OrderShippedEmail } from "@/components/emails/OrderShippedEmail";
 
 const FROM = "orders@karachitoys.com";
 const BCC  = "karachitoyshop@gmail.com";
@@ -47,10 +48,7 @@ export function buildOrderConfirmation(opts: {
   items?: { name: string; quantity: number; price: number; image?: string }[];
 }) {
   const whatsappUrl = whatsappOrderUrl(opts.orderNumber, opts.total);
-  const emailQuery = opts.customerEmail
-    ? `&email=${encodeURIComponent(opts.customerEmail)}`
-    : "";
-  const trackUrl = `${baseUrl()}/track?order=${opts.orderNumber}${emailQuery}`;
+  const trackUrl = `${baseUrl()}/track?order=${opts.orderNumber}`;
 
   const text = `Hi ${opts.customerName}! Your Karachi Toy Shop order ${opts.orderNumber} (PKR ${opts.total}) is confirmed. COD — pay when it arrives. Track: ${trackUrl}`;
 
@@ -74,6 +72,33 @@ export function buildOrderConfirmation(opts: {
     whatsappUrl,
     trackUrl,
     emailSubject: `Order confirmed — ${opts.orderNumber}`,
+    emailText: text,
+    emailReact: react,
+  };
+}
+
+/** Build a one-time "order shipped" email */
+export function buildShippedEmail(opts: {
+  orderNumber: string;
+  customerName: string;
+  courierName?: string;
+  trackingNumber?: string;
+}) {
+  const text = `Hi ${opts.customerName}! 🎉\n\nGreat news! Your Karachi Toy Shop order ${opts.orderNumber} has been shipped and is on its way to you.${
+    opts.courierName ? `\nCourier: ${opts.courierName}` : ""
+  }${
+    opts.trackingNumber ? `\nTracking #: ${opts.trackingNumber}` : ""
+  }\n\nTrack it anytime: ${baseUrl()}/track?order=${opts.orderNumber}\n\n— Karachi Toy Shop`;
+
+  const react = React.createElement(OrderShippedEmail, {
+    customerName: opts.customerName,
+    orderId: opts.orderNumber,
+    courierName: opts.courierName,
+    trackingNumber: opts.trackingNumber,
+  });
+
+  return {
+    emailSubject: `Your order ${opts.orderNumber} is on its way! 🚚`,
     emailText: text,
     emailReact: react,
   };
@@ -117,3 +142,4 @@ export async function sendFeedbackEmail(opts: {
   const { subject, text } = buildFeedbackEmail(opts);
   return sendEmail({ to: opts.email, subject, text });
 }
+

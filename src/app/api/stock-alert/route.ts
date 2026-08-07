@@ -10,11 +10,11 @@ export const dynamic = "force-dynamic";
 const schema = z.object({
   productSlug: z.string().min(1),
   phone: z.string().min(10),
-  email: z.string().email().optional().or(z.literal("")),
+  email: z.string().email(),
 });
 
 export async function POST(req: NextRequest) {
-  const limited = rateLimit(`stock-alert:${clientIp(req)}`, 10, 60 * 60 * 1000);
+  const limited = await rateLimit(`stock-alert:${clientIp(req)}`, 10, 60 * 60 * 1000);
   if (!limited.ok) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         productId: product._id,
         productSlug: product.slug,
         phone: body.phone,
-        email: body.email || undefined,
+        email: body.email.trim().toLowerCase(),
         notified: false,
       },
       { upsert: true, new: true }
@@ -44,9 +44,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message:
-        "Saved! WhatsApp will open so you can also message us about this toy.",
-      whatsappHint: true,
+      message: "Saved! We'll email you the moment it's back in stock.",
     });
   } catch (error) {
     return NextResponse.json(

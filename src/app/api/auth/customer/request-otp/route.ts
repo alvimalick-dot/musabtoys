@@ -23,8 +23,8 @@ const schema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = schema.parse(await req.json());
-    const ipLimited = rateLimit(`otp-req:ip:${clientIp(req)}`, 5, 15 * 60 * 1000);
-    const emailLimited = rateLimit(`otp-req:email:${body.email}`, 5, 15 * 60 * 1000);
+    const ipLimited = await rateLimit(`otp-req:ip:${clientIp(req)}`, 5, 15 * 60 * 1000);
+    const emailLimited = await rateLimit(`otp-req:email:${body.email}`, 5, 15 * 60 * 1000);
     if (!ipLimited.ok || !emailLimited.ok) {
       const retryAfterSec = Math.max(ipLimited.retryAfterSec, emailLimited.retryAfterSec);
       return NextResponse.json(

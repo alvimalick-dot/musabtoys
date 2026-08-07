@@ -24,6 +24,8 @@
     "@react-email/row": "^0.0.13",
     "@react-email/section": "^0.0.17",
     "@react-email/text": "^0.1.6",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.2",
     "@vercel/blob": "^2.6.1",
     "bcryptjs": "^3.0.3",
     "canvas-confetti": "^1.9.4",

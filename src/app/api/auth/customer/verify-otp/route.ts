@@ -27,7 +27,7 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const limited = rateLimit(`otp-verify:${clientIp(req)}`, 10, 15 * 60 * 1000);
+  const limited = await rateLimit(`otp-verify:${clientIp(req)}`, 10, 15 * 60 * 1000);
   if (!limited.ok) {
     return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
   }

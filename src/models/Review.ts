@@ -16,7 +16,7 @@ const ReviewSchema = new Schema<IReview>(
     authorName: { type: String, required: true, trim: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
     comment: { type: String, required: true, maxlength: 1000 },
-    approved: { type: Boolean, default: true },
+    approved: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
