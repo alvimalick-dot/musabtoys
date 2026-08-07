@@ -31,11 +31,13 @@ type Tracked = {
 
 export function TrackForm({
   initialOrder = "",
+  initialEmail = "",
 }: {
   initialOrder?: string;
+  initialEmail?: string;
 }) {
   const [orderNumber, setOrderNumber] = useState(initialOrder);
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState(initialEmail);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [order, setOrder] = useState<Tracked | null>(null);
@@ -48,10 +50,10 @@ export function TrackForm({
     setError(null);
     setOrder(null);
     try {
-      const res = await fetch("/api/orders/track", {
+const res = await fetch("/api/orders/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderNumber, phone }),
+        body: JSON.stringify({ orderNumber, email }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Not found");
@@ -135,8 +137,8 @@ export function TrackForm({
       <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
         Track your order
       </h1>
-      <p className="mt-2 text-sm text-muted">
-        Enter your order number and the phone used at checkout.
+<p className="mt-2 text-sm text-muted">
+        Enter your order number and the email used at checkout.
       </p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-4">
@@ -152,15 +154,16 @@ export function TrackForm({
             required
           />
         </div>
-        <div>
+<div>
           <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
-            Phone
+            Email
           </label>
           <input
             className="input-field"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="03XXXXXXXXX"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@email.com"
             required
           />
         </div>
@@ -231,8 +234,8 @@ export function TrackForm({
             >
               WhatsApp us about this order
             </a>
-            <Link
-              href={`/invoice/${order.orderNumber}?phone=${encodeURIComponent(phone)}`}
+<Link
+              href={`/invoice/${order.orderNumber}?email=${encodeURIComponent(email)}`}
               className="btn-secondary min-h-11"
             >
               Print invoice

@@ -3,14 +3,14 @@ import { TrackForm } from "@/components/track/TrackForm";
 
 export const metadata: Metadata = {
   title: "Track Your Order | Karachi Toys",
-  description: "Track your Karachi Toys order in real-time using your order number and phone.",
+  description: "Track your Karachi Toys order using your order number and email address.",
   alternates: { canonical: "/track" },
   robots: { index: true, follow: true },
 };
 
-type Props = { searchParams: Promise<{ order?: string }> };
+type Props = { searchParams: Promise<{ order?: string; email?: string }> };
 
 export default async function TrackPage({ searchParams }: Props) {
-  const { order } = await searchParams;
-  return <TrackForm initialOrder={order || ""} />;
+  const { order, email } = await searchParams;
+  return <TrackForm initialOrder={order || ""} initialEmail={email || ""} />;
 }

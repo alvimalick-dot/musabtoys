@@ -8,11 +8,11 @@ export const dynamic = "force-dynamic";
 
 const trackSchema = z.object({
   orderNumber: z.string().min(5),
-  phone: z.string().min(10),
+  email: z.string().email("Enter a valid email address"),
 });
 
-function normalizePhone(p: string) {
-  return p.replace(/\D/g, "").slice(-10);
+function normalizeEmail(e: string): string {
+  return e.trim().toLowerCase();
 }
 
 export async function POST(req: NextRequest) {
@@ -36,9 +36,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    if (normalizePhone(order.customer.phone) !== normalizePhone(body.phone)) {
+    const orderEmail = normalizeEmail(order.customer.email || "");
+    const inputEmail = normalizeEmail(body.email);
+
+    if (!orderEmail) {
       return NextResponse.json(
-        { error: "Phone number does not match this order" },
+        { error: "This order has no email on file. Contact support." },
+        { status: 403 }
+      );
+    }
+
+    if (orderEmail !== inputEmail) {
+      return NextResponse.json(
+        { error: "Email address does not match this order" },
         { status: 403 }
       );
     }

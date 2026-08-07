@@ -47,7 +47,10 @@ export function buildOrderConfirmation(opts: {
   items?: { name: string; quantity: number; price: number; image?: string }[];
 }) {
   const whatsappUrl = whatsappOrderUrl(opts.orderNumber, opts.total);
-  const trackUrl = `${baseUrl()}/track?order=${opts.orderNumber}`;
+  const emailQuery = opts.customerEmail
+    ? `&email=${encodeURIComponent(opts.customerEmail)}`
+    : "";
+  const trackUrl = `${baseUrl()}/track?order=${opts.orderNumber}${emailQuery}`;
 
   const text = `Hi ${opts.customerName}! Your Karachi Toy Shop order ${opts.orderNumber} (PKR ${opts.total}) is confirmed. COD — pay when it arrives. Track: ${trackUrl}`;
 

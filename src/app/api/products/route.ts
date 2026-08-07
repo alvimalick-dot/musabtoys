@@ -51,6 +51,7 @@ function buildFilterQuery(filters: ReturnType<typeof productFilterSchema.parse>)
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await getAdminSession();
     await connectDB();
     const params = Object.fromEntries(req.nextUrl.searchParams);
     const filters = productFilterSchema.parse(params);
@@ -163,9 +164,17 @@ export async function GET(req: NextRequest) {
       },
       facets: { categories, brands, ageGroups },
     });
-    // This response contains public catalog data only. CDN caching avoids
-    // repeated identical database reads while still refreshing quickly.
-    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+    // Admin requests must always see the live database state — never a
+    // stale cached copy. Public shop requests can still be CDN-cached,
+    // since a shopper seeing inventory that's a few seconds old is fine.
+    if (session) {
+      response.headers.set("Cache-Control", "no-store");
+    } else {
+      response.headers.set(
+        "Cache-Control",
+        "public, s-maxage=60, stale-while-revalidate=300"
+      );
+    }
     return response;
   } catch (error) {
     console.error("GET /api/products", error);

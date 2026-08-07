@@ -59,7 +59,10 @@ export function OrderConfirmationEmail({
   total,
   paymentMethod = "cod",
 }: OrderConfirmationEmailProps) {
-  const trackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://karachitoys.com/"}/track?order=${orderId}`;
+  const emailQuery = customerEmail
+    ? `&email=${encodeURIComponent(customerEmail)}`
+    : "";
+  const trackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://karachitoys.com/"}/track?order=${orderId}${emailQuery}`;
   const displayDate = orderDate ?? new Date().toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" });
 
   return (
@@ -185,7 +188,12 @@ export function OrderConfirmationEmail({
             <Text style={trackLabel}>Track Your Order</Text>
             <Text style={trackCode}>{orderId}</Text>
             <Text style={trackHint}>
-              Visit <a href={trackUrl} style={link}>karachitoys.com/track</a> and enter your Order ID above.
+              Visit <a href={trackUrl} style={link}>karachitoys.com/track</a> and enter your Order ID above
+              {customerEmail ? (
+                <> together with the email <strong>{customerEmail}</strong> used at checkout.</>
+              ) : (
+                " together with the email used at checkout."
+              )}
             </Text>
           </Section>
 

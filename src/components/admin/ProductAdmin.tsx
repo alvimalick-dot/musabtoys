@@ -82,9 +82,31 @@ export function ProductAdmin() {
     [q, stockFilter]
   );
 
-  useEffect(() => {
+useEffect(() => {
     load(1);
   }, [load]);
+
+  // Same as the shop page — refetch when the admin tab regains focus after
+  // being left open/idle, so the list never silently goes stale.
+  useEffect(() => {
+    let hiddenAt: number | null = null;
+    const STALE_AFTER_MS = 30_000;
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        hiddenAt = Date.now();
+      } else if (document.visibilityState === "visible") {
+        if (hiddenAt && Date.now() - hiddenAt > STALE_AFTER_MS) {
+          load(pagination.page);
+        }
+        hiddenAt = null;
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [load, pagination.page]);
 
   function resetForm() {
     setEditingId(null);

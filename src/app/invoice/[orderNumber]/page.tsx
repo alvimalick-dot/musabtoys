@@ -16,16 +16,16 @@ export const metadata: Metadata = {
 
 type Props = {
   params: Promise<{ orderNumber: string }>;
-  searchParams: Promise<{ phone?: string }>;
+  searchParams: Promise<{ email?: string }>;
 };
 
-function normalizePhone(p: string) {
-  return p.replace(/\D/g, "").slice(-10);
+function normalizeEmail(e: string): string {
+  return e.trim().toLowerCase();
 }
 
 export default async function InvoicePage({ params, searchParams }: Props) {
   const { orderNumber } = await params;
-  const { phone } = await searchParams;
+  const { email } = await searchParams;
 
   try {
     await connectDB();
@@ -34,8 +34,8 @@ export default async function InvoicePage({ params, searchParams }: Props) {
     }).lean();
     if (!order) notFound();
     if (
-      !phone ||
-      normalizePhone(order.customer.phone) !== normalizePhone(phone)
+      !email ||
+      normalizeEmail(order.customer.email || "") !== normalizeEmail(email)
     ) {
       notFound();
     }

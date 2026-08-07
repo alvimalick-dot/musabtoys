@@ -54,9 +54,9 @@ const faqs = [
     q: "Are products original?",
     a: "We source from trusted suppliers. If you receive a defective item, we’ll arrange a replacement as per our 7-day policy.",
   },
-  {
+{
     q: "How do I track my order?",
-    a: "Use the Track order page with your order number and the phone number used at checkout.",
+    a: "Use the Track order page with your order number and the email address used at checkout.",
   },
 ];
 

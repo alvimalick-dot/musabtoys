@@ -56,8 +56,31 @@ export function ShopClient() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
+useEffect(() => {
     fetchProducts();
+  }, [fetchProducts]);
+
+  // Refetch silently whenever the tab regains focus after being hidden for
+  // a while (e.g. left open in a background tab for an hour). This keeps
+  // data fresh without requiring the user to manually reload the page.
+  useEffect(() => {
+    let hiddenAt: number | null = null;
+    const STALE_AFTER_MS = 30_000; // only refetch if hidden 30s+
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        hiddenAt = Date.now();
+      } else if (document.visibilityState === "visible") {
+        if (hiddenAt && Date.now() - hiddenAt > STALE_AFTER_MS) {
+          fetchProducts();
+        }
+        hiddenAt = null;
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [fetchProducts]);
 
   useEffect(() => {
