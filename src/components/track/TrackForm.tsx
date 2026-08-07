@@ -138,48 +138,76 @@ const res = await fetch("/api/orders/track", {
       <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
         Track your order
       </h1>
-<p className="mt-2 text-sm text-muted">
+      <p className="mt-2 text-sm text-muted">
         Enter your order number and the email used at checkout.
       </p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-4">
         <div>
-          <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
+          <label
+            htmlFor="track-order"
+            className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted"
+          >
             Order number
           </label>
           <input
+            id="track-order"
             className="input-field"
             value={orderNumber}
             onChange={(e) => setOrderNumber(e.target.value)}
             placeholder="KTS-XXXX-XXXX"
+            autoComplete="off"
+            spellCheck={false}
+            autoCapitalize="characters"
             required
           />
+          <p className="mt-1.5 text-xs text-muted">
+            Find it in your confirmation email or WhatsApp message — it starts
+            with <span className="font-semibold text-ink">KTS-</span>.
+          </p>
         </div>
-<div>
-          <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted">
+        <div>
+          <label
+            htmlFor="track-email"
+            className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted"
+          >
             Email
           </label>
           <input
+            id="track-email"
             className="input-field"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
+            autoComplete="email"
+            inputMode="email"
             required
           />
         </div>
         {error && (
-          <p className="rounded-xl bg-coral/10 px-4 py-3 text-sm text-coral-deep">
+          <p
+            role="alert"
+            className="rounded-xl bg-coral/10 px-4 py-3 text-sm text-coral-deep"
+          >
             {error}
           </p>
         )}
-        <button type="submit" className="btn-primary min-h-12 w-full sm:w-auto" disabled={loading}>
+        <button
+          type="submit"
+          className="btn-primary min-h-12 w-full sm:w-auto"
+          disabled={loading}
+          aria-busy={loading}
+        >
           {loading ? "Checking…" : "Track order"}
         </button>
       </form>
 
       {order && (
-      <div className="mt-8  rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+        <div
+          aria-live="polite"
+          className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
+        >
           <p className="font-display text-2xl font-semibold">{order.orderNumber}</p>
           <p className="mt-1 text-sm capitalize text-muted">
             Status: <span className="font-bold text-ink">{order.status}</span> ·{" "}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { normalizeEmail, emailsMatch } from "@/lib/email";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -10,10 +11,6 @@ const trackSchema = z.object({
   orderNumber: z.string().min(5),
   email: z.string().email("Enter a valid email address"),
 });
-
-function normalizeEmail(e: string): string {
-  return e.trim().toLowerCase();
-}
 
 export async function POST(req: NextRequest) {
   const limited = await rateLimit(`track:${clientIp(req)}`, 20, 15 * 60 * 1000);
@@ -46,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (orderEmail !== inputEmail) {
+    if (!emailsMatch(orderEmail, inputEmail)) {
       return NextResponse.json(
         { error: "Email address does not match this order" },
         { status: 403 }

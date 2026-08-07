@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
 import { formatPKR } from "@/lib/utils";
+import { emailsMatch } from "@/lib/email";
 import { PrintButton } from "@/components/invoice/PrintButton";
 import {
   BRAND_ADDRESS,
@@ -19,10 +20,6 @@ type Props = {
   searchParams: Promise<{ email?: string }>;
 };
 
-function normalizeEmail(e: string): string {
-  return e.trim().toLowerCase();
-}
-
 export default async function InvoicePage({ params, searchParams }: Props) {
   const { orderNumber } = await params;
   const { email } = await searchParams;
@@ -35,7 +32,7 @@ export default async function InvoicePage({ params, searchParams }: Props) {
     if (!order) notFound();
     if (
       !email ||
-      normalizeEmail(order.customer.email || "") !== normalizeEmail(email)
+      !emailsMatch(order.customer.email || "", email)
     ) {
       notFound();
     }

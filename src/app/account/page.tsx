@@ -299,7 +299,11 @@ export default function AccountPage() {
                 <p className="font-bold text-coral">{formatPKR(o.total)}</p>
                 <div className="mt-1 flex flex-col items-end gap-1">
                   <Link
-                    href={`/track?order=${o.orderNumber}`}
+                    href={`/track?order=${o.orderNumber}${
+                      data.customer.email
+                        ? `&email=${encodeURIComponent(data.customer.email)}`
+                        : ""
+                    }`}
                     className="text-xs font-bold text-sky-deep"
                   >
                     Track / Reorder

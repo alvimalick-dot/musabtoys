@@ -12,6 +12,7 @@ import {
   Rocket,
 } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Section } from "@/components/ui/Section";
 
 const MotionLink = motion.create(Link);
 
@@ -56,7 +57,7 @@ const categories = [
 
 export function CategoryStrip() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+    <Section>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -105,6 +106,6 @@ className="group flex items-center gap-4 rounded-3xl bg-white p-5 ring-1 ring-bl
           </motion.div>
         ))}
       </div>
-    </section>
+    </Section>
   );
 }

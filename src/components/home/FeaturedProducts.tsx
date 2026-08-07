@@ -3,6 +3,8 @@ import { connectDB } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Section } from "@/components/ui/Section";
+import { toProductDTO } from "@/lib/product-dto";
 import type { ProductDTO } from "@/types";
 
 async function getFeaturedProducts(): Promise<ProductDTO[]> {
@@ -13,24 +15,7 @@ async function getFeaturedProducts(): Promise<ProductDTO[]> {
       .limit(8)
       .lean();
 
-    return products.map((p) => ({
-      _id: String(p._id),
-      name: p.name,
-      slug: p.slug,
-      description: p.description,
-      price: p.price,
-      compareAtPrice: p.compareAtPrice,
-      category: p.category,
-      brand: p.brand,
-      ageGroup: p.ageGroup,
-      stock: p.stock,
-      stockStatus: p.stockStatus,
-      images: p.images || [],
-      specs: p.specs || {},
-      featured: p.featured,
-      newArrival: p.newArrival,
-      sku: p.sku,
-    }));
+    return products.map((p) => toProductDTO(p));
   } catch (error) {
     console.error("Failed to load featured products", error);
     return [];
@@ -43,7 +28,7 @@ export async function FeaturedProducts() {
   if (!products.length) return null;
 
   return (
-<section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+    <Section>
       <SectionHeading
         eyebrow="Handpicked for you"
         title="Featured"
@@ -72,6 +57,6 @@ export async function FeaturedProducts() {
           Shop all featured
         </Link>
       </div>
-    </section>
+    </Section>
   );
 }
