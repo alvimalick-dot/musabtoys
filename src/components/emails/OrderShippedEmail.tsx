@@ -124,7 +124,7 @@ const container: React.CSSProperties = {
 };
 
 const header: React.CSSProperties = {
-  backgroundColor: "#1a1530",
+  backgroundColor: "#0a0a0a",
   padding: "28px 32px",
   textAlign: "center",
 };
@@ -150,7 +150,7 @@ const section: React.CSSProperties = { padding: "24px 32px" };
 const h2: React.CSSProperties = {
   fontSize: "20px",
   fontWeight: "700",
-  color: "#1a1530",
+  color: "#0a0a0a",
   margin: "0 0 8px",
 };
 
@@ -190,7 +190,7 @@ const trackLabel: React.CSSProperties = {
 const trackCode: React.CSSProperties = {
   fontSize: "20px",
   fontWeight: "800",
-  color: "#1a1530",
+  color: "#0a0a0a",
   letterSpacing: "0.08em",
   margin: "0 0 6px",
   fontFamily: "'Courier New', Courier, monospace",
@@ -203,7 +203,7 @@ const trackHint: React.CSSProperties = {
 };
 
 const footerSection: React.CSSProperties = {
-  backgroundColor: "#1a1530",
+  backgroundColor: "#0a0a0a",
   padding: "20px 32px",
   textAlign: "center",
 };

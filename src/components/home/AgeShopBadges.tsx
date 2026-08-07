@@ -44,7 +44,7 @@ const ages = [
     sub: "Any age",
     href: "/shop?ageGroup=All%20Ages",
     ring: "ring-black/10 dark:ring-white/20",
-    bg: "bg-white dark:bg-slate-800",
+    bg: "bg-white dark:bg-raised",
     text: "text-ink dark:text-white",
   },
 ];

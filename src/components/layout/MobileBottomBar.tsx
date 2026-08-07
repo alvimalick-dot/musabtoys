@@ -38,7 +38,7 @@ export function MobileBottomBar() {
         </button>
         <Link
           href="/wishlist"
-className="relative flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 py-2.5 text-ink ring-1 ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+className="relative flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 py-2.5 text-ink ring-1 ring-black/5 dark:bg-raised dark:text-white dark:ring-white/10"
           aria-label="Wishlist"
         >
           <Heart
@@ -55,7 +55,7 @@ className="relative flex flex-1 items-center justify-center gap-2 rounded-full b
           href={whatsappChatUrl()}
           target="_blank"
           rel="noreferrer"
-className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 py-2.5 text-ink ring-1 ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 py-2.5 text-ink ring-1 ring-black/5 dark:bg-raised dark:text-white dark:ring-white/10"
           aria-label="Chat on WhatsApp"
         >
           <MessageCircle className="h-4 w-4 text-[#25D366]" />

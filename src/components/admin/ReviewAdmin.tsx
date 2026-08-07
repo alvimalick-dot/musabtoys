@@ -89,8 +89,8 @@ export function ReviewAdmin() {
             onClick={() => setFilter(id)}
             className={`rounded-full px-4 py-2 text-sm font-bold ${
               filter === id
-                ? "bg-ink text-white dark:bg-white dark:text-slate-900"
-                : "bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
+                ? "bg-ink text-white dark:bg-white dark:text-black"
+                : "bg-white ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
             }`}
           >
             {label}
@@ -108,7 +108,7 @@ export function ReviewAdmin() {
       {loading && <p className="py-8 text-center text-muted">Loading…</p>}
 
       {!loading && visible.length === 0 && (
-        <p className="rounded-2xl bg-white p-8 text-center text-muted ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+        <p className="rounded-2xl bg-white p-8 text-center text-muted ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
           No {filter !== "all" ? filter : ""} reviews.
         </p>
       )}
@@ -117,7 +117,7 @@ export function ReviewAdmin() {
         {visible.map((r) => (
           <div
             key={r._id}
-            className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
+            className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">

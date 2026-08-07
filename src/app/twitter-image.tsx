@@ -15,7 +15,7 @@ export default function TwitterImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #1a1530 0%, #312e81 55%, #4338ca 100%)",
+          background: "linear-gradient(135deg, #0a0a0a 0%, #f97316 55%, #ea580c 100%)",
           position: "relative",
         }}
       >

@@ -71,7 +71,7 @@ scrolled
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6">
         <Link href="/" className="group flex min-w-0 items-center gap-2">
           <motion.div
-className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 shadow-lg shadow-black/10 sm:h-10 sm:w-10 dark:bg-slate-800"
+className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 shadow-lg shadow-black/10 sm:h-10 sm:w-10 dark:bg-raised"
             whileHover={{ rotate: -8, scale: 1.05 }}
             whileTap={{ scale: 0.92, rotate: 4 }}
             transition={{ type: "spring", stiffness: 400, damping: 14 }}
@@ -104,7 +104,7 @@ className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-h
 className={cn(
                   "relative rounded-full px-3 py-2 text-sm font-semibold transition-colors",
                   active
-                    ? "text-white dark:text-slate-900"
+                    ? "text-white dark:text-black"
                     : "text-ink/70 hover:text-ink dark:text-white/70 dark:hover:text-white"
                 )}
               >
@@ -127,14 +127,14 @@ className="absolute inset-0 -z-10 rounded-full bg-ink dark:bg-white"
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Link
             href="/shop"
-className="press hidden h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:flex dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+className="press hidden h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:flex dark:bg-raised dark:text-white dark:ring-white/10"
             aria-label="Search shop"
           >
             <Search className="h-4 w-4" />
           </Link>
           <Link
             href="/wishlist"
-className="press relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+className="press relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-raised dark:text-white dark:ring-white/10"
             aria-label="Wishlist"
           >
             <Heart
@@ -185,7 +185,6 @@ className="press relative flex h-10 w-10 items-center justify-center rounded-ful
           <ThemeToggle />
           <button
             type="button"
-className="press flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 lg:hidden dark:bg-slate-800 dark:text-white dark:ring-slate-700"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
             aria-expanded={open}
@@ -228,7 +227,7 @@ className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border
 className={cn(
                     "block rounded-xl px-3 py-3.5 text-base font-semibold transition",
                     pathname === link.href
-                      ? "bg-ink text-white dark:bg-white dark:text-slate-900"
+                      ? "bg-ink text-white dark:bg-white dark:text-black"
                       : "text-ink hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
                   )}
                 >

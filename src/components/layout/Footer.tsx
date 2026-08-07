@@ -39,7 +39,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t border-black/5 bg-[#1a1530] text-white">
+    <footer className="border-t border-black/5 bg-[#0a0a0a] text-white">
       <div className="mx-auto max-w-7xl px-4 pt-10 pb-28 sm:px-6 sm:pt-14 md:pb-14">
         {/* Top: brand + newsletter */}
         <div className="grid gap-10 lg:grid-cols-3 lg:gap-8">

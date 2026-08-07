@@ -229,7 +229,7 @@ const container: React.CSSProperties = {
 };
 
 const header: React.CSSProperties = {
-  backgroundColor: "#1a1530",
+  backgroundColor: "#0a0a0a",
   padding: "28px 32px",
   textAlign: "center",
 };
@@ -268,7 +268,7 @@ const section: React.CSSProperties = { padding: "24px 32px" };
 const h2: React.CSSProperties = {
   fontSize: "20px",
   fontWeight: "700",
-  color: "#1a1530",
+  color: "#0a0a0a",
   margin: "0 0 8px",
 };
 
@@ -304,7 +304,7 @@ const detailLabel: React.CSSProperties = {
 const detailValue: React.CSSProperties = {
   fontSize: "13px",
   fontWeight: "700",
-  color: "#1a1530",
+  color: "#0a0a0a",
   margin: 0,
 };
 
@@ -372,12 +372,12 @@ const summaryValue: React.CSSProperties = {
   textAlign: "right",
 };
 
-const totalRow: React.CSSProperties = { borderTop: "2px solid #1a1530" };
+const totalRow: React.CSSProperties = { borderTop: "2px solid #0a0a0a" };
 
 const totalLabel: React.CSSProperties = {
   fontSize: "15px",
   fontWeight: "700",
-  color: "#1a1530",
+  color: "#0a0a0a",
   margin: "12px 0",
   padding: "0 6px",
 };
@@ -408,7 +408,7 @@ const trackLabel: React.CSSProperties = {
 const trackCode: React.CSSProperties = {
   fontSize: "20px",
   fontWeight: "800",
-  color: "#1a1530",
+  color: "#0a0a0a",
   letterSpacing: "0.08em",
   margin: "0 0 6px",
   fontFamily: "'Courier New', Courier, monospace",
@@ -421,7 +421,7 @@ const trackHint: React.CSSProperties = {
 };
 
 const footerSection: React.CSSProperties = {
-  backgroundColor: "#1a1530",
+  backgroundColor: "#0a0a0a",
   padding: "20px 32px",
   textAlign: "center",
 };

@@ -51,7 +51,7 @@ export default function WishlistPage() {
       <p className="mt-2 text-muted">Saved toys — buy when you&apos;re ready.</p>
 
       {items.length === 0 ? (
-       <div className="mt-10 rounded-2xl bg-white p-10 text-center ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+       <div className="mt-10 rounded-2xl bg-white p-10 text-center ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
           <p className="font-display text-2xl">No saved toys yet</p>
           <Link href="/shop" className="btn-primary mt-6 inline-flex">
             Browse shop
@@ -62,9 +62,9 @@ export default function WishlistPage() {
           {items.map((item) => (
             <li
               key={item.productId}
-           className="flex flex-wrap items-center gap-4 rounded-2xl bg-white p-4 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
+           className="flex flex-wrap items-center gap-4 rounded-2xl bg-white p-4 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
             >
-              <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-[#fde8d4] dark:bg-slate-700">
+              <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-[#fde8d4] dark:bg-raised">
                 {item.image ? (
                   <Image src={normalizeImagePath(item.image)} alt={item.name} fill className="object-cover" sizes="64px" />
                 ) : (

@@ -288,8 +288,8 @@ className="flex h-11 w-11 items-center justify-center rounded-full text-muted ho
               }}
 className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-bold transition ${
                 active
-                  ? "bg-ink text-white dark:bg-white dark:text-slate-900"
-                  : "bg-white text-ink ring-1 ring-black/5 hover:bg-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700 dark:hover:bg-slate-700"
+                  ? "bg-ink text-white dark:bg-white dark:text-black"
+                  : "bg-white text-ink ring-1 ring-black/5 hover:bg-black/5 dark:bg-raised dark:text-white dark:ring-white/10 dark:hover:bg-raised"
               }`}
             >
               {b.label}
@@ -366,7 +366,7 @@ className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-bold transition ${
           </motion.div>
 
           {data && data.products.length === 0 && !error && (
-<div className="rounded-1.5rem bg-white p-12 text-center ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+<div className="rounded-1.5rem bg-white p-12 text-center ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
               <p className="font-display text-2xl">No toys match</p>
               <p className="mt-2 text-muted">
                 Try clearing filters or a different search.
@@ -382,7 +382,7 @@ className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-bold transition ${
                 aria-disabled={currentPage <= 1}
                 aria-label="Previous page"
 onClick={() => updateParam("page", String(currentPage - 1))}
-className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40 dark:bg-raised dark:text-white dark:ring-white/10"
               >
                 Prev
               </button>
@@ -400,8 +400,8 @@ className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5
                     onClick={() => updateParam("page", String(page))}
 className={`h-11 w-11 rounded-full text-sm font-bold ${
                       page === currentPage
-                        ? "bg-ink text-white dark:bg-white dark:text-slate-900"
-                        : "bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+                        ? "bg-ink text-white dark:bg-white dark:text-black"
+                        : "bg-white ring-1 ring-black/5 dark:bg-raised dark:text-white dark:ring-white/10"
                     }`}
                   >
                     {page}
@@ -414,7 +414,7 @@ className={`h-11 w-11 rounded-full text-sm font-bold ${
                 aria-disabled={currentPage >= pages}
                 aria-label="Next page"
 onClick={() => updateParam("page", String(currentPage + 1))}
-className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40 dark:bg-slate-800 dark:text-white dark:ring-slate-700"
+className="h-11 rounded-full bg-white px-4 text-sm font-bold ring-1 ring-black/5 disabled:opacity-40 dark:bg-raised dark:text-white dark:ring-white/10"
               >
                 Next
               </button>

@@ -79,7 +79,7 @@ const container: React.CSSProperties = {
   boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
 };
 const header: React.CSSProperties = {
-  backgroundColor: "#1a1530",
+  backgroundColor: "#0a0a0a",
   padding: "32px 40px 24px",
   textAlign: "center",
 };
@@ -102,7 +102,7 @@ const content: React.CSSProperties = { padding: "36px 40px 28px" };
 const h2: React.CSSProperties = {
   fontSize: "20px",
   fontWeight: "700",
-  color: "#1a1530",
+  color: "#0a0a0a",
   margin: "0 0 12px",
 };
 const para: React.CSSProperties = {
@@ -123,7 +123,7 @@ const codeText: React.CSSProperties = {
   fontSize: "42px",
   fontWeight: "800",
   letterSpacing: "0.3em",
-  color: "#1a1530",
+  color: "#0a0a0a",
   margin: 0,
   fontFamily: "'Courier New', Courier, monospace",
 };

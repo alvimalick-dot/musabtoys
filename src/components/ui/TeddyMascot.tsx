@@ -50,12 +50,12 @@ export function TeddyMascot({
 
         {/* Eyes */}
         <motion.circle
-          cx={s * 0.38} cy={s * 0.5} r={eyeSize} fill="#1a1530"
+          cx={s * 0.38} cy={s * 0.5} r={eyeSize} fill="#0a0a0a"
           animate={{ scaleY: [1, 0.1, 1] }}
           transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
         />
         <motion.circle
-          cx={s * 0.62} cy={s * 0.5} r={eyeSize} fill="#1a1530"
+          cx={s * 0.62} cy={s * 0.5} r={eyeSize} fill="#0a0a0a"
           animate={{ scaleY: [1, 0.1, 1] }}
           transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
         />
@@ -71,7 +71,7 @@ export function TeddyMascot({
         {mood === "happy" ? (
           <path
             d={`M ${s * 0.38} ${s * 0.64} Q ${s * 0.5} ${s * 0.74} ${s * 0.62} ${s * 0.64}`}
-            stroke="#1a1530"
+            stroke="#0a0a0a"
             strokeWidth={s * 0.02}
             strokeLinecap="round"
             fill="none"
@@ -79,7 +79,7 @@ export function TeddyMascot({
         ) : (
           <path
             d={`M ${s * 0.38} ${s * 0.7} Q ${s * 0.5} ${s * 0.62} ${s * 0.62} ${s * 0.7}`}
-            stroke="#1a1530"
+            stroke="#0a0a0a"
             strokeWidth={s * 0.02}
             strokeLinecap="round"
             fill="none"

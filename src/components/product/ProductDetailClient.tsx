@@ -92,7 +92,7 @@ export function ProductDetailClient({ product }: { product: ProductDTO }) {
             </h1>
             <button
               type="button"
-className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
+className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
               aria-label="Wishlist"
               onClick={() => {
                 wishlistToggle({
@@ -186,7 +186,7 @@ className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-w
                   value ? (
                     <div
                       key={key}
-className="rounded-xl bg-white px-4 py-3 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
+className="rounded-xl bg-white px-4 py-3 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
                     >
                       <dt className="text-xs font-bold uppercase tracking-wider text-muted">
                         {key}
@@ -200,7 +200,7 @@ className="rounded-xl bg-white px-4 py-3 ring-1 ring-black/5 dark:bg-slate-800 d
           )}
 
           {isOutOfStock ? (
-<div className="mt-8 rounded-2xl bg-white p-4 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+<div className="mt-8 rounded-2xl bg-white p-4 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
               <p className="font-bold">Notify me when back</p>
               <p className="mt-1 text-sm text-muted">
                 Leave your email and phone — we&apos;ll email you the moment it&apos;s
@@ -242,7 +242,7 @@ className="rounded-xl bg-white px-4 py-3 ring-1 ring-black/5 dark:bg-slate-800 d
             </div>
           ) : (
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-<div className="flex w-fit items-center gap-1 rounded-full bg-white px-2 py-1.5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+<div className="flex w-fit items-center gap-1 rounded-full bg-white px-2 py-1.5 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
                 <button
                   type="button"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}

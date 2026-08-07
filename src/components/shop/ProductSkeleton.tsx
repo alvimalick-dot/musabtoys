@@ -8,16 +8,16 @@ export function ProductSkeletonGrid({ count = 8 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
+          className="overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
         >
-          <div className="flex aspect-square items-center justify-center bg-[#fcf4ec] dark:bg-slate-700">
+          <div className="flex aspect-square items-center justify-center bg-[#fcf4ec] dark:bg-raised">
             <LottieAnimation path="/lottie/loading.json" size={48} />
           </div>
           <div className="space-y-2 p-3">
-            <div className="h-3 w-1/2 rounded-full bg-[#fcf4ec] dark:bg-slate-700 animate-pulse" /> 
-            <div className="h-4 w-full rounded-full bg-[#fcf4ec] dark:bg-slate-700 animate-pulse" /> 
-            <div className="h-4 w-1/3 rounded-full bg-[#fcf4ec] dark:bg-slate-700 animate-pulse" /> 
-            <div className="mt-3 h-9 w-full rounded-full bg-[#fcf4ec]  dark:bg-slate-700 animate-pulse" />
+            <div className="h-3 w-1/2 rounded-full bg-[#fcf4ec] dark:bg-raised animate-pulse" /> 
+            <div className="h-4 w-full rounded-full bg-[#fcf4ec] dark:bg-raised animate-pulse" /> 
+            <div className="h-4 w-1/3 rounded-full bg-[#fcf4ec] dark:bg-raised animate-pulse" /> 
+            <div className="mt-3 h-9 w-full rounded-full bg-[#fcf4ec]  dark:bg-raised animate-pulse" />
           </div>
         </div>
       ))}

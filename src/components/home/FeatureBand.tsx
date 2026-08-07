@@ -37,7 +37,7 @@ const stats = [
 
 export function FeatureBand() {
   return (
-<section className="relative overflow-hidden bg-ink text-white dark:bg-slate-900">
+<section className="relative overflow-hidden bg-ink text-white dark:bg-deep">
       <motion.div
         className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-coral/30 blur-3xl"
         animate={{ scale: [1, 1.15, 1] }}

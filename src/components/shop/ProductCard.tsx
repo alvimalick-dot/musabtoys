@@ -104,7 +104,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
 className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-transform duration-200 ease-out will-change-transform"
     >
       <article className="relative flex h-full min-w-0 flex-col">
-<div className="relative aspect-square bg-[#fde8d4] dark:bg-slate-700">
+<div className="relative aspect-square bg-[#fde8d4] dark:bg-raised">
           <Link href={`/product/${product.slug}`} className="absolute inset-0 block">
             {image ? (
               <Image
@@ -141,7 +141,7 @@ className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2
          <button
             type="button"
             suppressHydrationWarning
-            className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105 dark:bg-slate-800 dark:ring-slate-700"
+            className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105 dark:bg-raised dark:ring-white/10"
             aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
             onClick={(e) => {
               e.preventDefault();
@@ -175,7 +175,7 @@ className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2
             href={`/product/${product.slug}`}
             className="mt-1 line-clamp-2 min-w-0 font-display text-sm font-semibold leading-snug hover:text-coral sm:text-base"
           >
-<BubbleTitle variant="standard" colorClass="text-slate-800 dark:text-slate-100">
+<BubbleTitle variant="standard" colorClass="text-slate-800 dark:text-white">
               {product.name}
             </BubbleTitle>
           </Link>

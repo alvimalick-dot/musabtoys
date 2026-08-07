@@ -75,7 +75,7 @@ export function AdminAnalytics() {
           ["Orders (30d)", String(data.summary.orders30d)],
           ["Products", String(data.summary.productCount)],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+          <div key={label} className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
             <p className="text-xs font-bold uppercase tracking-wider text-muted">
               {label}
             </p>
@@ -84,7 +84,7 @@ export function AdminAnalytics() {
         ))}
       </div>
 
-      <div className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+      <div className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
         <h3 className="font-display text-xl font-semibold">Sales (30 days)</h3>
         <div className="mt-4 flex h-40 items-end gap-1">
           {data.salesByDay.map((d) => (
@@ -99,7 +99,7 @@ export function AdminAnalytics() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700">
+        <div className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10">
           <h3 className="font-display text-xl font-semibold">Top products</h3>
           <ul className="mt-4 space-y-2 text-sm">
             {data.topProducts.length === 0 && (
@@ -115,7 +115,7 @@ export function AdminAnalytics() {
             ))}
           </ul>
         </div>
-        <div className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700" >
+        <div className="rounded-2xl bg-white p-5 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10" >
           <h3 className="font-display text-xl font-semibold">
             Low stock ({data.summary.lowStockCount})
           </h3>

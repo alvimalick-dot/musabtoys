@@ -35,7 +35,7 @@ export function CtaBanner() {
         </p>
         <MotionLink
           href="/shop"
-       className="group relative mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/25 dark:bg-white dark:text-slate-900"
+       className="group relative mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/25 dark:bg-white dark:text-black"
           whileHover={{ y: -2, scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           transition={{ type: "spring", stiffness: 380, damping: 22 }}

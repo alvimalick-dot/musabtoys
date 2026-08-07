@@ -83,7 +83,7 @@ export function CategoryStrip() {
           >
             <MotionLink
               href={cat.href}
-className="group flex items-center gap-4 rounded-3xl bg-white p-5 ring-1 ring-black/5 transition hover:shadow-lg dark:bg-slate-800 dark:ring-slate-700 dark:hover:shadow-black/30"
+className="group flex items-center gap-4 rounded-3xl bg-white p-5 ring-1 ring-black/5 transition hover:shadow-lg dark:bg-raised dark:ring-white/10 dark:hover:shadow-black/30"
               whileHover={{ y: -4 }}
               whileTap={{ scale: 0.985 }}
               transition={{ type: "spring", stiffness: 340, damping: 24 }}

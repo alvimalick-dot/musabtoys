@@ -98,7 +98,7 @@ export default function FaqPage() {
         {faqs.map((f) => (
           <details
             key={f.q}
-        className="group rounded-2xl bg-white p-5 ring-1 ring-black/5 open:shadow-md dark:bg-slate-800 dark:ring-slate-700"
+        className="group rounded-2xl bg-white p-5 ring-1 ring-black/5 open:shadow-md dark:bg-raised dark:ring-white/10"
           >
             <summary className="cursor-pointer list-none py-1 pr-2 font-display text-lg font-semibold leading-snug sm:text-xl">
               {f.q}
@@ -117,7 +117,7 @@ export default function FaqPage() {
         </Link>
       </div>
 
-    <div className="mt-14 rounded-3xl bg-ink p-6 text-white sm:p-8 dark:bg-slate-900">
+    <div className="mt-14 rounded-3xl bg-ink p-6 text-white sm:p-8 dark:bg-deep">
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-sun">
           Get in touch
         </p>

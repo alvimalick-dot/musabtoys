@@ -206,7 +206,7 @@ const res = await fetch("/api/orders/track", {
       {order && (
         <div
           aria-live="polite"
-          className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-slate-800 dark:ring-slate-700"
+          className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
         >
           <p className="font-display text-2xl font-semibold">{order.orderNumber}</p>
           <p className="mt-1 text-sm capitalize text-muted">
@@ -218,7 +218,7 @@ const res = await fetch("/api/orders/track", {
           </p>
 
           {(order.trackingNumber || order.courierName) && (
-        <div className="mt-4 rounded-xl bg-[#fef6ed] px-4 py-3 text-sm dark:bg-slate-800">
+        <div className="mt-4 rounded-xl bg-[#fef6ed] px-4 py-3 text-sm dark:bg-raised">
               <p className="font-bold text-ink">Courier tracking</p>
               {order.courierName && (
                 <p className="mt-1 text-muted">Courier: {order.courierName}</p>

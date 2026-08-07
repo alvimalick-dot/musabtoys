@@ -134,7 +134,7 @@ className="press flex h-11 w-11 items-center justify-center rounded-full bg-blac
                         }}
 className="flex gap-3 rounded-2xl bg-background p-3"
                       >
-<div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white dark:bg-slate-700">
+<div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white dark:bg-raised">
                           {item.image ? (
                             <Image
                               src={normalizeImagePath(item.image)}
@@ -161,7 +161,7 @@ className="flex gap-3 rounded-2xl bg-background p-3"
                             <button
                               type="button"
                               onClick={() => removeItem(item.productId)}
-className="press flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted hover:bg-white hover:text-coral dark:hover:bg-slate-700"
+className="press flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted hover:bg-white hover:text-coral dark:hover:bg-raised"
                               aria-label="Remove item"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -173,7 +173,7 @@ className="press flex h-10 w-10 shrink-0 items-center justify-center rounded-ful
                           <div className="mt-auto flex items-center gap-1 pt-2">
                             <motion.button
                               type="button"
-className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-slate-700 dark:ring-slate-600"
+className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
                               whileTap={{ scale: 0.9 }}
 onClick={() =>
                                 updateQty(item.productId, item.quantity - 1)
@@ -195,7 +195,7 @@ onClick={() =>
                             </span>
                             <motion.button
                               type="button"
-className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-slate-700 dark:ring-slate-600"
+className="flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-black/5 dark:bg-raised dark:ring-white/10"
                               whileTap={{ scale: 0.9 }}
                               onClick={() =>
                                 updateQty(item.productId, item.quantity + 1)
