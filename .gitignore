@@ -48,3 +48,9 @@ next-env.d.ts
 # cloudinary sync state / failure reports (never commit these)
 .cloudinary-sync-state.json
 import-failures.csv
+
+# MongoDB local backups / dumps — NEVER commit raw database dumps
+# (they contain real customer PII: names, phones, emails, addresses)
+mongodb-backup/
+*.bson
+*.agg

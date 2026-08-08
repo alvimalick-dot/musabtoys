@@ -8,6 +8,7 @@ import { calcShipping } from "@/lib/commerce";
 import { buildOrderConfirmation, sendEmail } from "@/lib/notify";
 import { Coupon } from "@/models/Coupon";
 import { isValidObjectId, safeErrorMessage } from "@/lib/security";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -22,6 +23,25 @@ export async function POST(req: NextRequest) {
   let session: mongoose.ClientSession | null = null;
 
   try {
+    // Rate-limit checkout by IP BEFORE touching the DB / stock / email.
+    // This is the money-touching route: an unthrottled script could exhaust
+    // stock on popular items or spam the Resend quota. Uses Upstash Redis
+    // when configured (distributed across serverless instances); falls back
+    // to in-memory for local dev.
+    const limited = await rateLimit(
+      `checkout:ip:${clientIp(req)}`,
+      10,
+      15 * 60 * 1000
+    );
+    if (!limited.ok) {
+      return NextResponse.json(
+        {
+          error: `Too many checkout attempts. Please try again in ${limited.retryAfterSec}s.`,
+        },
+        { status: 429 }
+      );
+    }
+
     await connectDB();
     session = await mongoose.startSession();
     session.startTransaction();
