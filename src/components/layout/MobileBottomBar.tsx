@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Heart, MessageCircle, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
@@ -10,14 +11,21 @@ import { formatPKR } from "@/lib/utils";
 /**
  * Sticky bottom action bar for mobile — keeps cart, wishlist and chat
  * one thumb-tap away. Hidden on desktop (lg:hidden).
+ *
+ * Hidden on the checkout page so the "Place order" button is the only
+ * call to action and no screen real estate is given to nav chrome.
  */
 export function MobileBottomBar() {
+  const pathname = usePathname();
   const totalItems = useCartStore((s) =>
     s.items.reduce((sum, i) => sum + i.quantity, 0)
   );
-  const subtotal = useCartStore((s) => s.subtotal());
+const subtotal = useCartStore((s) => s.subtotal());
   const openCart = useCartStore((s) => s.openCart);
   const wishlistCount = useWishlistStore((s) => s.items.length);
+
+  // Hide nav chrome on the checkout page — keep "Place order" the focus.
+  if (pathname === "/checkout") return null;
 
   return (
 <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-header-solid/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg lg:hidden">

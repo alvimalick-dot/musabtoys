@@ -18,5 +18,14 @@
 - [ ] **USER ACTION (deploy):** Confirm Upstash Redis env vars are set in Vercel → Project → Settings → Environment Variables (make rate limiting functional in prod)
 - [x] Sentry deferred (documented future task) — rely on Vercel function logs for now
 
+## Frontend / Mobile UX fixes (audit #2)
+- [x] `CheckoutForm.tsx` — added `autoComplete` to all fields (name, tel, email, street-address, address-line2)
+- [x] `CheckoutForm.tsx` — phone field now `type="tel"` + `inputMode="tel"` + `autoComplete="tel"` (opens numeric keypad)
+- [x] `CheckoutForm.tsx` — order summary now renders above "Place order" on mobile (submit moved out of form via `form="checkout-form"` + `lg:col-start-1` keeps desktop layout)
+- [x] `Header.tsx` — hamburger menu button now has a proper 40px touch target (was bare 16px icon)
+- [x] `Header.tsx` — removed "Checkout" from persistent top-level nav
+- [x] `Header.tsx` — search icon now always visible (was hidden on mobile); removed redundant "Search shop" dropdown link
+- [x] `MobileBottomBar.tsx` — hidden on `/checkout` so "Place order" is the only call to action
+
 ## Verify
-- [x] `npx tsc --noEmit` — passed (exit 0, no errors)
+- [x] `npx tsc --noEmit` — passed (exit 0, no errors) after both DevSecOps + frontend changes

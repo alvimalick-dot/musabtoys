@@ -213,7 +213,11 @@ const data = await jsonRequest<{ order: { orderNumber: string; total: number }; 
 
   return (
 <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form
+        id="checkout-form"
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5"
+      >
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.22em] text-coral">
             Checkout
@@ -224,12 +228,19 @@ const data = await jsonRequest<{ order: { orderNumber: string; total: number }; 
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Full name" error={errors.name?.message}>
-            <input className="input-field" {...register("name")} />
+<Field label="Full name" error={errors.name?.message}>
+            <input
+              className="input-field"
+              autoComplete="name"
+              {...register("name")}
+            />
           </Field>
           <Field label="Phone" error={errors.phone?.message}>
             <input
               className="input-field"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
               placeholder="03XXXXXXXXX"
               {...register("phone")}
               onBlur={(e) => {
@@ -239,10 +250,19 @@ const data = await jsonRequest<{ order: { orderNumber: string; total: number }; 
             />
           </Field>
           <Field label="Email" error={errors.email?.message} className="sm:col-span-2">
-            <input className="input-field" type="email" {...register("email")} />
+            <input
+              className="input-field"
+              type="email"
+              autoComplete="email"
+              {...register("email")}
+            />
           </Field>
           <Field label="Street address" error={errors.address?.message} className="sm:col-span-2">
-            <input className="input-field" {...register("address")} />
+            <input
+              className="input-field"
+              autoComplete="street-address"
+              {...register("address")}
+            />
           </Field>
           <Field label="City" error={errors.city?.message}>
             <CitySelect
@@ -252,7 +272,11 @@ const data = await jsonRequest<{ order: { orderNumber: string; total: number }; 
             />
           </Field>
           <Field label="Area / landmark">
-            <input className="input-field" {...register("area")} />
+            <input
+              className="input-field"
+              autoComplete="address-line2"
+              {...register("area")}
+            />
           </Field>
           <Field label="Coupon code" className="sm:col-span-2">
             <div className="flex flex-col gap-2 sm:flex-row">
@@ -348,24 +372,7 @@ const data = await jsonRequest<{ order: { orderNumber: string; total: number }; 
           )}
         </div>
 
-        <button
-          type="submit"
-          disabled={loading || !items.length}
-          aria-busy={loading}
-          className="btn-primary inline-flex min-h-12 w-full items-center justify-center gap-2 sm:w-auto"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Placing order…</span>
-            </>
-          ) : (
-            `Place order · ${formatPKR(total)}${
-              discount > 0 ? ` (was ${formatPKR(sub + shipping)})` : ""
-            }`
-          )}
-        </button>
-      </form>
+</form>
 
 <aside className="h-fit rounded-3xl bg-white p-6 ring-1 ring-black/5 lg:sticky lg:top-24 dark:bg-raised dark:ring-white/10">
         <h2 className="font-display text-2xl font-semibold">Order summary</h2>
@@ -410,13 +417,35 @@ const data = await jsonRequest<{ order: { orderNumber: string; total: number }; 
             <span>Total</span>
             <span className="text-coral">{formatPKR(total)}</span>
           </div>
-          <p className="pt-2 text-xs text-muted">
+<p className="pt-2 text-xs text-muted">
             {hasCoupon
               ? "Coupon orders are charged a flat PKR 250 shipping fee."
               : `Free shipping on orders ${formatPKR(FREE_SHIPPING_THRESHOLD)}+`}
           </p>
         </div>
       </aside>
+
+      {/* Submit button lives outside the form so it renders AFTER the order
+          summary in mobile DOM order (summary → total → pay), while remaining
+          in the form column on desktop via lg:col-start-1. */}
+      <button
+        type="submit"
+        form="checkout-form"
+        disabled={loading || !items.length}
+        aria-busy={loading}
+        className="btn-primary inline-flex min-h-12 w-full items-center justify-center gap-2 lg:col-start-1 sm:w-auto"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="h-5 w-5 animate-spin" />
+            <span>Placing order…</span>
+          </>
+        ) : (
+          `Place order · ${formatPKR(total)}${
+            discount > 0 ? ` (was ${formatPKR(sub + shipping)})` : ""
+          }`
+        )}
+      </button>
     </div>
   );
 }

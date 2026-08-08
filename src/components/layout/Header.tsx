@@ -18,7 +18,6 @@ const links = [
   { href: "/account", label: "Account" },
   { href: "/track", label: "Track" },
   { href: "/faq", label: "FAQ" },
-  { href: "/checkout", label: "Checkout" },
 ];
 
 export function Header() {
@@ -127,7 +126,7 @@ className="absolute inset-0 -z-10 rounded-full bg-ink dark:bg-white"
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Link
             href="/shop"
-className="press hidden h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:flex dark:bg-raised dark:text-white dark:ring-white/10"
+className="press flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-raised dark:text-white dark:ring-white/10"
             aria-label="Search shop"
           >
             <Search className="h-4 w-4" />
@@ -188,6 +187,7 @@ className="press relative flex h-10 w-10 items-center justify-center rounded-ful
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
             aria-expanded={open}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-raised dark:text-white dark:ring-white/10"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
@@ -234,14 +234,7 @@ className={cn(
                   {link.label}
                 </Link>
               </motion.div>
-            ))}
-            <Link
-              href="/shop"
-              onClick={() => setOpen(false)}
-className="mt-1 flex items-center gap-2 rounded-xl px-3 py-3.5 text-base font-semibold text-ink hover:bg-black/5 sm:hidden dark:text-white dark:hover:bg-white/10"
-            >
-              <Search className="h-4 w-4" /> Search shop
-            </Link>
+))}
           </motion.div>
         )}
       </AnimatePresence>
